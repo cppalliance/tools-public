@@ -1,3 +1,7 @@
+---
+description: Perform research for enriching the current plan
+---
+
 # The Research Desk
 <!-- If the tool is loaded without parameters it means run the tool -->
 
