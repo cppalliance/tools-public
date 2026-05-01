@@ -1,6 +1,18 @@
+---
+description: Refine any plan through numbering, audit, and compression
+---
+
 # Refine Plan
 
 Point this tool at any plan. It applies three passes in sequence - number, audit, compress - and rewrites the plan in place. One invocation, one output.
+
+---
+
+```mermaid
+flowchart LR
+    P1[1 Number] --> P2[2 Audit]
+    P2 --> P3[3 Compress]
+```
 
 ---
 

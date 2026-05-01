@@ -1,6 +1,17 @@
+---
+description: Compress a document to half its length while preserving voice
+---
+
 # Tighten
 
 Point this tool at any document that has grown past its payload. It performs a provenance-aware quality audit, identifies what is load-bearing versus decorative, and rewrites the document at roughly half its original line count without changing its voice, register, or structural intent. The tool does not add material. It subtracts everything that is not doing work.
+
+---
+
+```mermaid
+flowchart LR
+    D[Diagnostic] --> R[Rewrite]
+```
 
 ---
 

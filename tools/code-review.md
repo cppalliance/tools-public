@@ -1,3 +1,7 @@
+---
+description: Language-agnostic code review with adversarial challenge
+---
+
 # Code Review
 
 Language-agnostic code review. Takes one or more files, discovers companion artifacts, and runs a structured analysis pipeline. Sub-agents read all code and perform all inspection. The main context orchestrates, filters, and renders the report. Raw code never enters the main context.
