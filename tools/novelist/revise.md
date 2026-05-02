@@ -65,6 +65,13 @@ Main context passes the file path to the detection sub-agent. Main context never
 
 The detection sub-agent reads the chapter and applies the rule checklist below. Each check is binary: violation or not. Checks that pass are not reported.
 
+Before applying rules, the sub-agent scans the chapter for passages that carry irreplaceable load. Two categories:
+
+- **Sole carrier** -- the only instance of a specific physical detail, named object, or sensory element in the chapter.
+- **Juxtaposition half** -- one side of a paired contrast where both halves are rendered at comparable resolution (a demo kitchen vs. a real kitchen, filtered air vs. open air). Cutting one half collapses the pair into a statement.
+
+Annotated passages are not exempt from detection. If a rule fires on an annotated passage, the finding carries a bracketed tag -- `[sole-carrier]` or `[juxtaposition-half]` -- after the group label. The tag is informational; the revision agent makes the final call.
+
 The rules are organized into three groups -- Trust, Architecture, Dialogue -- applied in that order. The groups are not separate steps; the sub-agent applies all rules in a single pass over the chapter.
 
 ### Trust
@@ -85,6 +92,7 @@ Does the chapter's structure reveal the machine?
 
 - **RULE: TRIPLE RENDERING** The same thesis or argument appears in three or more locations across different modes -- narration, dialogue, interiority, or exposition. Search for any claim that appears in both narration and dialogue. If it also appears in a third location (a different passage of narration, a different speech, interiority), the weakest of the three is the tell. CUT the weakest rendering. Test: state the thesis in one sentence. Search the chapter for every passage that makes this claim. Count the locations. Three or more is triple rendering.
 - **RULE: ATMOSPHERIC INVENTORY** A paragraph or block of sensory or environmental detail where the POV character is not acting in, moving through, or perceiving-in-response-to the described space during that paragraph. The block sits inert. CUT or REDISTRIBUTE the details into nearby paragraphs where the character is acting in the space. Test: is the POV character's body doing something in this space during this paragraph -- walking, looking, reaching, reacting? If the character is stationary and the paragraph is pure description, it is inventory.
+- **RULE: FRONT-LOADED ESTABLISHMENT** Three or more consecutive paragraphs at the start of a chapter or scene in which the POV character does not perform a volitional action, speak, or move through the space. Static perception -- taking in a scene without responding to a specific stimulus -- does not count as action. (Contrast with ATMOSPHERIC INVENTORY, where reactive perception -- looking at something, reaching, reacting to a change -- does count.) The block stalls momentum before the reader has any. REDISTRIBUTE details into later paragraphs where character action provides a vehicle. Test: from the chapter opening (or the first paragraph after a scene break), count consecutive paragraphs where the character's only role is static presence or passive intake. Three or more is front-loaded.
 - **RULE: UNIFORM ALTITUDE** Sentence-length variance falls below 20% of mean sentence length for five or more consecutive paragraphs. FLAG with location and the measured variance. Detection only -- the fix requires authorial judgment about where to break the pattern.
 
 ### Dialogue
@@ -100,7 +108,7 @@ This tool cannot detect evenness of quality -- the subtlest AI tell. When every 
 
 ### Detection Output
 
-Each finding is numbered and carries: rule name, quoted evidence (the passage), location (paragraph number or approximate position), and group (Trust / Architecture / Dialogue). Checks that pass are not reported. No commentary on things that work.
+Each finding is numbered and carries: rule name, quoted evidence (the passage), location (paragraph number or approximate position), group (Trust / Architecture / Dialogue), and an optional carrier tag (`[sole-carrier]` or `[juxtaposition-half]`) if the passage was annotated during the pre-scan. Checks that pass are not reported. No commentary on things that work.
 
 Verdict:
 
@@ -118,7 +126,7 @@ If the verdict is CLEAN, the main context reports it and stops. No further steps
 If the verdict is REVISE, the main context forwards the numbered findings to the revision sub-agent. The revision sub-agent receives:
 
 1. **The chapter prose** -- the full chapter file.
-2. **The numbered findings** from Step 2 (rule, evidence, location). No pre-computed directives; the revision agent determines the fix.
+2. **The numbered findings** from Step 2 (rule, evidence, location, and carrier tags where present). No pre-computed directives; the revision agent determines the fix.
 
 The main context never reads the chapter prose.
 
@@ -144,7 +152,7 @@ Findings fall into three tiers. The tier determines how aggressively the sub-age
 
 **Tier 1: Trust findings.** Show-then-tell, declarative frame, explicit bridge, recursive restatement, redundant interiority, over-attribution, editorial intrusion. Almost always clean cuts -- the showing is the good prose, the explaining is the fat. CUT the explanation. Keep the image. Do not backfill with new material. After cutting, check the seam: if the remaining prose flows, done. If the cut creates an abrupt join, smooth the seam with minimum cosmetic change. No new events, no new action, no new beats. The chapter will get shorter. That is acceptable.
 
-**Tier 2: Architecture findings.** Triple rendering, atmospheric inventory. May require deletion of a full paragraph or redistribution of sensory details into nearby action beats. Higher risk. More likely to need the adjust path. New prose for redistribution must draw from the chapter's existing object inventory and sensory environment.
+**Tier 2: Architecture findings.** Triple rendering, atmospheric inventory, front-loaded establishment. May require deletion of a full paragraph or redistribution of sensory details into nearby action beats. Higher risk. More likely to need the adjust path. New prose for redistribution must draw from the chapter's existing object inventory and sensory environment.
 
 **Tier 3: Dialogue findings.** Essayistic speech. Requires rewriting, not cutting. The content of the dialogue survives; the argument structure does not. The fix is constrained to the four-operation menu in the rule definition. Hardest tier. Most likely to be skipped if the fix sounds worse than the original.
 
@@ -153,7 +161,7 @@ Findings fall into three tiers. The tier determines how aggressively the sub-age
 For each numbered finding, the sub-agent follows this sequence:
 
 1. **Read the passage in full paragraph context.**
-2. **Triage.** Does the passage carry something that would be lost -- a plot-essential detail, the chapter's only instance of a specific image, a transition the surrounding prose depends on? If removing it orphans something downstream, **skip**. If not, proceed.
+2. **Triage.** Does the passage carry something that would be lost -- a plot-essential detail, the chapter's only instance of a specific image, a transition the surrounding prose depends on? Findings tagged `[sole-carrier]` or `[juxtaposition-half]` are strong skip candidates; the passage's carrier role outweighs the violation unless keeping the passage actively damages the chapter. If removing it orphans something downstream, **skip**. If not, proceed.
 3. **Apply the fix.**
 4. **Compare the old passage to the new passage.**
 5. **Judge: accept, adjust, or reject.**
