@@ -13,25 +13,38 @@ No cache. The tool runs on a different chapter each time.
 
 ```mermaid
 flowchart TD
-  subgraph main [Main Context]
+  subgraph mainCtx [Main Context]
     S0["0 Resolve"]
     S1["1 Dispatch"]
     S3["3 Dispatch"]
-    S5["5 Write"]
+    S5["5 Report + cleanup"]
   end
   subgraph detect [Detection Sub-Agent]
     S2["2 Detect"]
   end
-  subgraph revise [Revision Sub-Agent]
+  subgraph temp [temp/]
+    F["findings file"]
+    R["report file"]
+  end
+  subgraph reviseAgent [Revision Sub-Agent]
     S4["4 Revise"]
   end
   S0 --> S1
-  S1 -->|"prose"| S2
-  S2 -->|"findings"| S3
+  S1 -->|"paths"| S2
+  S2 -->|write| F
+  S2 -->|"verdict + count"| S3
   S3 -->|"CLEAN: stop"| S5
-  S3 -->|"REVISE"| S4
-  S4 -->|"revised prose + report"| S5
+  S3 -->|"paths"| S4
+  S4 -->|read| F
+  S4 -->|write| R
+  S4 -->|"write chapter"| ChFile["chapter file"]
+  S4 -->|"summary stats"| S5
+  S5 -->|read| R
+  S5 -->|"delete"| F
+  S5 -->|"delete"| R
 ```
+
+**Sub-agent handoff rule (HARD).** Sub-agents write structured output to files in `temp/` (sibling to `chapters/`) and return only a status line. The main context reads structured output from files, never from sub-agent return values. Return values are summarized by the runtime and cannot be relied on for structured data.
 
 Main context never reads chapter prose. Both sub-agents do.
 
@@ -57,7 +70,12 @@ Input is one chapter file. No other inputs. If invoked with a chapter number, re
 
 ## Step 1: Dispatch to Detection (fast)
 
-Main context passes the file path to the detection sub-agent. Main context never reads chapter prose.
+Main context computes two paths from the chapter path:
+
+- `findings_path`: `temp/{stem}.findings.md` (sibling to `chapters/`)
+- `report_path`: `temp/{stem}.report.md` (sibling to `chapters/`)
+
+Create `temp/` if it does not exist. Pass the chapter path and `findings_path` to the detection sub-agent. Main context never reads chapter prose.
 
 ---
 
@@ -110,10 +128,9 @@ This tool cannot detect evenness of quality -- the subtlest AI tell. When every 
 
 Each finding is numbered and carries: rule name, quoted evidence (the passage), location (paragraph number or approximate position), group (Trust / Architecture / Dialogue), and an optional carrier tag (`[sole-carrier]` or `[juxtaposition-half]`) if the passage was annotated during the pre-scan. Checks that pass are not reported. No commentary on things that work.
 
-Verdict:
+The sub-agent writes all numbered findings to `findings_path`, grouped by Trust, Architecture, Dialogue, separated by blank lines. No findings in the return value.
 
-- **CLEAN** -- all rules clear. The main context tells the user the chapter is clean and stops. Skip to Step 6.
-- **REVISE** -- one or more violations found. Numbered findings, grouped by Trust, Architecture, Dialogue, separated by blank lines.
+The sub-agent returns only a status line: `"CLEAN"` or `"REVISE: {N} findings written to {findings_path}."` Nothing else.
 
 No preference-level notes. No alternative phrasing. No findings that cannot cite a specific rule from the checklist above.
 
@@ -121,14 +138,9 @@ No preference-level notes. No alternative phrasing. No findings that cannot cite
 
 ## Step 3: Dispatch to Revision (fast)
 
-If the verdict is CLEAN, the main context reports it and stops. No further steps.
+If the verdict is CLEAN, the main context reports it to the user and stops. Delete the findings file if it exists. No further steps.
 
-If the verdict is REVISE, the main context forwards the numbered findings to the revision sub-agent. The revision sub-agent receives:
-
-1. **The chapter prose** -- the full chapter file.
-2. **The numbered findings** from Step 2 (rule, evidence, location, and carrier tags where present). No pre-computed directives; the revision agent determines the fix.
-
-The main context never reads the chapter prose.
+If the verdict is REVISE, the main context passes the chapter path, `findings_path`, and `report_path` to the revision sub-agent. The main context never reads the findings file. The main context never reads chapter prose.
 
 ---
 
@@ -190,21 +202,23 @@ Two shots maximum. No infinite refinement.
 
 ### Revision Output
 
-The sub-agent returns:
+The sub-agent writes two files and returns a status line:
 
-1. **The revised chapter** -- the full chapter text with accepted and adjusted-then-accepted fixes applied. Skipped and rejected findings leave the original text in place.
-2. **Per-finding report** -- one line per finding:
+1. **The revised chapter** -- written directly to the chapter file, replacing the previous contents. Accepted and adjusted-then-accepted fixes are applied. Skipped and rejected findings leave the original text in place.
+2. **Per-finding report** -- written to `report_path`. One line per finding:
    - Skip: the finding, plus what load the passage carries.
    - Accept: what was done.
    - Adjust (accepted): what the first pass lost, what the second pass restored, what was done.
    - Reject: the original finding restated, plus why the fix failed.
-3. **Deviation notes** -- any deviations from the system prompt, with significance rating.
+   - Deviation notes at the end, if any deviations from the system prompt occurred, with significance rating.
+
+The sub-agent returns only a summary stats line: `{"applied": K, "skipped": J, "rejected": M, "deviations": D}`. No prose, no findings, no report text in the return value.
 
 ---
 
-## Step 5: Write and Report (fast)
+## Step 5: Report and Cleanup (fast)
 
-The main context writes the revised chapter back to the chapter file, replacing the previous contents. The per-finding report is displayed to the user but not written to disk.
+The main context reads the report from `report_path` and displays it to the user. The report is not kept on disk after display.
 
 The report groups outcomes under headers. Each entry is a bullet. Empty groups are omitted. The report is prose and wraps to the reader's window; do not enclose it in a code fence.
 
@@ -228,11 +242,13 @@ The report groups outcomes under headers. Each entry is a bullet. Empty groups a
 
 If no deviations, omit this group.
 
-After the groups, emit a completion breadcrumb:
+After the groups, emit a completion breadcrumb from the summary stats returned by the revision sub-agent:
 
 ```
 {"findings": N, "applied": K, "skipped": J, "rejected": M, "deviations": D}
 ```
+
+Delete `findings_path` and `report_path`. Delete `temp/` if empty.
 
 Closing line: Run "Revise [path]" again to retry unresolved findings.
 
