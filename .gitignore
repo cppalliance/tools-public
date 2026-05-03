@@ -1,2 +1,6 @@
+cache/*
+!cache/README.md
+reports/*
+!reports/README.md
 .cache/
 .reports/

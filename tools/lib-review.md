@@ -72,8 +72,8 @@ Every phase that produces output reports one generated sentence to the user spec
 
 ## Commands
 
-- **Review [subject]** - run the full pipeline. The subject can be a URL, local file paths, or a project name. If a fresh cache exists for domain brief and competitive map, skip those phases. If a prior report exists, import context for comparison.
-- **Status [subject]** - report cache freshness, last collection date, and whether a prior report exists. Does not run the pipeline.
+- **Review [subject]** - run the full pipeline. The subject can be a URL, local file paths, or a project name. If a fresh cache exists for domain brief and competitive map, skip those phases. If a prior report exists in `reports/`, import context for comparison and version the new report.
+- **Status [subject]** - report cache freshness, last collection date, and whether prior reports exist. Does not run the pipeline.
 - **Invalidate [subject]** - delete the cache file for the named subject. The next Review runs full collection.
 
 ---
@@ -717,11 +717,11 @@ Formatting rules:
 - Every sentence earns its place. No restatement. If a sentence could be cut without losing information, cut it.
 - Any paragraph whose findings rest on confidence below High carries the confidence level in parentheses at the end: (medium-high), (medium), (low-medium), or (low).
 
-Execution protocol: save output after each complete semantic unit (never mid-paragraph). Save output before marking plan items done. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content. Write new output to `.cache/{slug}-eval.tmp.md`. Rename to final path only after the Review is complete. On resumption, check for `.tmp.md` and continue from its tail.
+Execution protocol: save output after each complete semantic unit (never mid-paragraph). Save output before marking plan items done. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content. Write new output to `cache/_lib-review-{slug}.tmp.md`. Rename to final path only after the Review is complete. On resumption, check for `.tmp.md` and continue from its tail.
 
-Output location: `.report/{subject-slug}-eval.md` relative to this tool's directory.
+Output location: `reports/lib-review-{subject-slug}.md` relative to the repository root. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc. Import prior versions for comparison.
 
-Diagnostic detail goes to cache, not the output. Full per-test findings, evidence, challenge outcomes, and clean results are written to the cache file under the Diagnostic Detail section.
+Diagnostic detail goes to cache, not the output. Full per-test findings, evidence, challenge outcomes, and clean results are written to the cache file (`cache/_lib-review-{subject-slug}.cache.md`) under the Diagnostic Detail section.
 
 ### Review Template
 
@@ -829,7 +829,7 @@ Write findings concise but complete. A finding requiring a paragraph of evidence
 
 ## Cache Infrastructure
 
-Cache location: `.cache/_{subject-slug}.md` relative to this tool's directory.
+Cache location: `cache/_lib-review-{subject-slug}.cache.md` relative to the repository root.
 
 Cached:
 - Domain brief (Phase 4 output) - domains change slowly
@@ -877,7 +877,7 @@ Validation. On cache read, verify the header contains all required fields (`vers
 
 Versioning. If the cache `version` field does not match the current spec version, treat as cache miss.
 
-Prior reports: search `.report/` for prior reviews of the same subject. Import context for comparison but always run fresh analysis.
+Prior reports: search `reports/` for files prefixed with `lib-review-` matching the subject. Import context for comparison but always run fresh analysis.
 
 ---
 
