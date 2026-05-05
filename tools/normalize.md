@@ -83,9 +83,12 @@ Iterate over step_index. For each step at the given line range:
 
 **2. Sharpen.** Rewrite surviving instructions as strong imperative statements referencing state fields by name. Use **BOLD**/CAPS on hard constraints and NEVER/ALWAYS rules. Short declarative sentences. No hedging. No "consider." No "you may want to."
 
-**3. Classify execution.** Assign `main` or `subagent`.
-- **Subagent:** ingests raw external content (web search, MCP query, file system scan, API call).
-- **Main:** synthesizes, judges, interacts with user, or operates on already-collected data.
+**3. Classify execution and tools.** Assign `main` or `subagent`. `subagent` means the step runs in a separate context. It does **NOT** imply tool access.
+
+Assign `**Tools:**` from: `none`, `web_search`, `mcp`, `file_system` (comma-separated). Default `none`. A runner that cannot provide the declared tools must skip the step or fail loudly.
+
+- **Subagent:** runs in a separate context (parallel, isolated memory).
+- **Main:** runs in the primary context with access to accumulated state.
 
 **4. Assign model tier.** `fast` for mechanical/retrieval work. `default` for judgment, synthesis, or creative work.
 
@@ -201,6 +204,7 @@ The normalized document conforms to this strict markdown schema. Section heading
 ```
 - **Model:** fast | default
 - **Execution:** main | subagent
+- **Tools:** none | web_search | mcp | file_system (comma-separated, optional, default none)
 - **Reads:** field_a, field_b (comma-separated state field names)
 - **Writes:** field_c, field_d (comma-separated state field names)
 - **Condition:** {boolean expression} (optional, omit if unconditional)
