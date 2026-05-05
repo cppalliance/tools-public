@@ -1,5 +1,5 @@
 ---
-description: Interactive chapter workshop. Finds mechanical issues, structural break opportunities, trust violations, architecture problems, resonance gaps, and dialogue tells. Presents them one at a time. The author decides.
+description: Interactive chapter workshop. Finds mechanical issues, structural break opportunities, trust violations, architecture problems, resonance gaps, dialogue tells, and insertion points where only the author can write. Presents them one at a time. The author decides.
 ---
 
 <!-- This file is a structured prompt. Execute it as a tool when the user invokes it. -->
@@ -8,15 +8,16 @@ description: Interactive chapter workshop. Finds mechanical issues, structural b
 
 Point it at a chapter. It finds what needs fixing - a misspelled compound, a paragraph that needs a break, a sentence that tells after showing, a B-plus line that could be A-plus. It presents each one with a diagnosis, a gap assessment, and a shape sentence. You decide what changes. Every change is yours.
 
-Six groups: mechanical, structural, trust, architecture, resonance, dialogue. Thirty patterns total. Seven preservation rules that protect formal devices AI editors habitually damage. One interactive session, ordered by line number, top to bottom through the chapter.
+Seven groups: mechanical, structural, trust, architecture, resonance, dialogue, vitality. Thirty-five patterns total. Seven preservation rules that protect formal devices AI editors habitually damage. One interactive session for flags, one for vitality insertions, ordered by line number, top to bottom through the chapter.
 
 ```mermaid
 flowchart LR
     S0["0 discover"] --> S1["1 analyze"]
     S1 --> flags["flags file"]
     flags --> S2["2 session"]
-    S2 --> S3["3 change log"]
-    S3 --> apply["apply"]
+    S2 --> S3["3 vitality"]
+    S3 --> S4["4 change log"]
+    S4 --> apply["apply"]
     S2 -.->|"lookahead"| S1
 ```
 
@@ -39,7 +40,7 @@ flowchart LR
 
 ## Step 0: Discovery
 
-Spawn a read-only sub-agent to inventory the book directory. The main context **NEVER** sees raw file listings or search output. The sub-agent returns only a structured summary.
+Spawn a read-only sub-agent to inventory the book directory. The sub-agent **MUST** use the same model as the main context. **NEVER** delegate to a lighter or faster model. The main context **NEVER** sees raw file listings or search output. The sub-agent returns only a structured summary.
 
 ### Flag File Scan
 
@@ -90,7 +91,7 @@ Exception: `workshop-flags-*.tmp.md` files are this tool's own temp files. Do no
 
 The main context **NEVER** reads the chapter prose.
 
-Using the paths from Step 0, assemble inputs and send them with the chapter prose to an analysis sub-agent. Omit any input not found in Step 0. The sub-agent works with whatever is available.
+Using the paths from Step 0, assemble inputs and send them with the chapter prose to an analysis sub-agent. The sub-agent **MUST** use the same model as the main context. **NEVER** delegate to a lighter or faster model. Omit any input not found in Step 0. The sub-agent works with whatever is available.
 
 1. Register baseline and POV-specific register from book metadata
 2. Pen file
@@ -102,6 +103,8 @@ Using the paths from Step 0, assemble inputs and send them with the chapter pros
 
 > If at any point you must deviate from the standing instructions - flagging a passage without citing a specific pattern, skipping the preservation-rule check, omitting a mandatory field, or emitting a flag that cannot cite a binary test - emit a deviation note: what you did, why, and rate its significance low, medium, or high.
 
+> **RULE: WHEN A VITALITY POINT IS WITHIN THREE LINES OF A REGULAR FLAG** - tag the vitality point with `[adjacent: #N]` where N is the regular flag number. During Step 3, if the adjacent flag was RESOLVED with a CUT or REWRITE, the session **MUST** warn: "Flag #N changed nearby text. Context may have shifted." The author decides.
+
 ### Voice Memo
 
 **ALWAYS** write the voice memo as the first item in the flags file.
@@ -109,6 +112,14 @@ Using the paths from Step 0, assemble inputs and send them with the chapter pros
 One paragraph describing how the chapter's prose sounds - register, vocabulary, physical-sensory commitments, avoidances, deliberate patterns. **NEVER** summarize what happens. Describe how it reads.
 
 **MUST** also describe the chapter's formal devices: polysyndeton patterns (where "and...and...and" chains appear and what they enact), tense system (where past continuous and past perfect carry temporal information), named-noun repetition (where nouns repeat for rhetorical weight), specificity patterns (where detail does character work). This information is needed for preservation-rule evaluation.
+
+**RULE: WHEN WRITING THE VOICE MEMO** - **ALWAYS** classify the chapter's dominant mode as exactly one of:
+- **somatic** - body-in-space, physical action, sensation
+- **material** - objects, environment, accumulated detail
+- **cognitive** - interiority, reasoning, reflection
+- **dialogic** - conversation-driven, multiple voices
+
+After the formal-devices paragraph, before the closing sentence. One line: `Dominant mode: <mode>.` **NEVER** omit dominant mode.
 
 The voice memo is the main context's sole source of register and formal-device understanding. It **MUST** be rich enough to evaluate proposals without reading the chapter.
 
@@ -134,7 +145,7 @@ Each rule names the AI editing habit it blocks and provides a binary test.
 
 ### Patterns
 
-Scan for exactly these thirty patterns across six groups. Each check is binary: violation or not. Checks that pass are not reported.
+Scan for exactly these thirty-five patterns across seven groups. Each check is binary: violation or not. Checks that pass are not reported.
 
 Before applying patterns, scan the chapter for passages that carry irreplaceable load:
 
@@ -191,6 +202,49 @@ If a pattern fires on a sole-carrier or juxtaposition-half passage, the finding 
 - **RULE: ESSAYISTIC SPEECH** - dialogue that contains a complete argument structure: claim, supporting evidence or reasoning, and conclusion, delivered in sequence without interruption. Test: does the speech contain all three elements (claim, evidence, conclusion) in order? If yes: flag. Recommend: REWRITE using at least two of: (a) remove one premise, (b) break with interruption or action beat, (c) compress the middle, (d) end on a question or trail off.
 - **RULE: UNIFORM VOICE** - two or more characters whose dialogue is interchangeable. Test: swap the attribution tags on two lines of dialogue. If neither line sounds wrong in the other character's mouth: flag with the characters involved and one sample line from each.
 
+#### Vitality
+
+Vitality patterns identify structural POSITIONS where a human-written sentence would break the prose band. They flag locations, not problems. The author writes the sentence. The workshop attacks it. **NEVER** suggest what to write. **NEVER** generate a shape sentence for a vitality flag.
+
+- **RULE: FLAT BAND** - five or more consecutive paragraphs where ALL THREE of the following hold: (1) sentence-length variance below 20% of mean, (2) no content word appears that is absent from the chapter's fifty most frequent content words, (3) no simile or metaphor crosses semantic domains. All three met = flag the midpoint paragraph. Test is mechanical. Count, measure, classify domains.
+- **RULE: NEGATION DENSITY** - more than one `did not` / `had not` / `could not` + verb construction per 300 words across a passage of 600+ words. Flag the center of the densest cluster. Test is mechanical. Count constructions, compute density, locate peak.
+- **RULE: SAFE SIMILE ONLY** - every simile and metaphor in the chapter uses a vehicle from the same semantic domain as its tenor. Tech-to-tech, domestic-to-domestic, body-to-body. If ALL similes are same-domain: flag the simile at the highest-leverage structural position (chapter close, character entrance, or reveal adjacency, in that priority order). If any simile already crosses domains: pattern does not fire.
+- **RULE: OBSERVATION CEILING** - six or more consecutive paragraphs of character POV containing ONLY perception verbs (sees, hears, watches, notices, registers, looks, felt, heard) with no thought that is not a sensory report. Flag the midpoint. Test: classify each interiority sentence as perception-report or non-perception. Six consecutive perception-only paragraphs = fires.
+- **RULE: DIALOGUE COMPOSURE** - all dialogue lines in a scene are syntactically complete sentences with no fragments, no interruptions, no false starts, no trailing off, and consistent clause structure across speakers. Flag the longest unbroken dialogue exchange in the scene. Test: scan each dialogue line for fragments (no verb), interruptions (dash-terminated), trailing off (ellipsis-terminated), false starts (self-correction mid-sentence). Zero instances across all speakers = fires.
+
+- **RULE: CLOSING LINE** - if the chapter's final sentence does not cross registers, domains, or expectations relative to the preceding three sentences, flag it. Test: does the final sentence use vocabulary, syntax, or domain material absent from the three sentences before it? If no: flag.
+- **RULE: CHARACTER ENTRANCE** - the first sentence or paragraph where a major character appears in this chapter. If the introduction is purely descriptive and contains no detail that could ONLY apply to this specific character in this specific story, flag it. Test: could the description apply to a different character without changing a word? If yes: flag.
+
+### Budget Calculation
+
+**RULE: BUDGET CALCULATION** - the sub-agent computes the budget and writes it into the flags file header, on the line after the voice memo.
+
+```
+base = round(word_count / 750)
+base = max(base, 2)
+if dominant_mode in (cognitive, dialogic):
+    base += 1
+budget = base
+```
+
+Format in flags file: `Budget: N vitality insertions required (M word chapter, dominant mode: <mode>)`
+
+The budget is a FLOOR. The author can fill more points than the budget requires. The author **CANNOT** close the session with fewer than budget filled unless they say `budget override`.
+
+### Evaluation Filter
+
+**RULE: WHEN A TRUST OR RESONANCE PATTERN FIRES** - apply three checks before emitting the flag. If ALL THREE pass, suppress the flag.
+
+- **RULE: BODY TEST** - does the flagged sentence land in the body (physical action, sensation, spatial experience) or in the intellect (naming, explaining, abstracting)? Body-landing: passes.
+- **RULE: COMPRESSION TEST** - does the sentence compress or expand what's already rendered? Compression: passes. Expansion: fails.
+- **RULE: REGISTER TEST** - does the sentence stay in the chapter's register per the voice memo? In-register: passes.
+
+All three **MUST** pass to suppress. Any single failure emits the flag.
+
+**RULE: WHEN FILTERING** - applies ONLY to Trust and Resonance groups. Mechanical, Structural, Architecture, Dialogue, and Vitality flags bypass the filter.
+
+**RULE: WHEN SUPPRESSED** - write a suppression note in the flags file after the last flag: `Suppressed: [pattern] at line N - body-landing, compressed, in-register.` **NEVER** present suppression notes during the session.
+
 ### Deduplication
 
 **ONE flag per passage.** When two patterns fire on the same passage, the narrower scope wins.
@@ -219,6 +273,17 @@ Then: numbered flags, ordered by line number. Each flag carries exactly these fi
 - **Action** - FIX / BREAK / CUT / REDISTRIBUTE / REWRITE
 - **Gap** - **ALWAYS** mandatory. What the surrounding prose needs if this flag is resolved. "Clean seam" when nothing is needed. If the passage is a sole carrier or juxtaposition half, state what would be lost.
 - **Shape** - one sentence in the chapter's register showing what belongs in the gap. Omitted only when Gap says "Clean seam." The author can take it, modify it, or ignore it.
+
+**RULE: WHEN WRITING VITALITY FLAGS** - vitality flags follow all regular flags in the file. Each carries exactly these fields:
+
+- **Number** - V1, V2, V3, etc. V-prefixed. Separate sequence from regular flags.
+- **Line** - line number or range in the chapter file
+- **Pattern** - FLAT BAND / NEGATION DENSITY / SAFE SIMILE ONLY / OBSERVATION CEILING / DIALOGUE COMPOSURE / CLOSING LINE / CHARACTER ENTRANCE
+- **Adjacent** - `[adjacent: #N]` if within three lines of a regular flag. Omit if none.
+- **Context** - three sentences before and three sentences after the insertion point, quoted verbatim. **ALWAYS** mandatory.
+- **Position** - one sentence: why this structural position is high-leverage for a human insertion
+
+**NEVER** include diagnosis, action, gap, or shape. Vitality flags are positions, not problems.
 
 ---
 
@@ -277,9 +342,11 @@ Immediately present flag #1. **NEVER** pause. **NEVER** ask for confirmation.
 
 - **RULE: WHEN AUTHOR SAYS KEEP IT** - mark KEPT. Move on. No commentary.
 
-- **RULE: WHEN AUTHOR SAYS DONE** - go to Step 3 immediately. In range/all mode: show change log for this chapter, apply, advance to next chapter.
+- **RULE: WHEN AUTHOR SAYS DONE** - go to Step 3 immediately.
 
-- **RULE: WHEN AUTHOR SAYS STOP** - go to Step 3 immediately. Show change log for this chapter, apply, end the run. Delete any unused lookahead flag file.
+- **RULE: WHEN AUTHOR SAYS STOP** - go to Step 4 immediately. Skip Step 3. Show change log, apply, end the run. Delete any unused lookahead flag file.
+
+- **RULE: WHEN ALL FLAGS ARE EXHAUSTED** - proceed to Step 3. **NEVER** pause. **NEVER** ask for confirmation.
 
 - **RULE: WHEN AUTHOR ASKS A QUESTION** - answer from the voice memo and the diagnosis only. **NEVER** read the chapter prose.
 
@@ -310,9 +377,67 @@ Track each flag as: CURRENT, RESOLVED (with accepted sentence, verdict, and curr
 
 ---
 
-## Step 3: Change Log
+## Step 3: Vitality
 
-When all flags are exhausted or the author says `done` or `stop`, produce the change log grouped by type:
+**RULE: WHEN STEP 2 COMPLETES** - display the opening block and immediately present V1. **NEVER** pause. **NEVER** ask for confirmation.
+
+Opening block, displayed exactly once:
+
+> **Vitality.** N insertion points. Budget: M required. Write a sentence for each point. I'll attack it.
+>
+> - Type your sentence and I'll attack it
+> - **that's the one** - lock current SURVIVED sentence, fill the point
+> - **pass** - skip this point (does NOT count toward budget)
+> - **done** - end if budget is met
+> - **budget override** - end even if budget is not met
+> - **stop** - end the whole run
+
+**RULE: WHEN PRESENTING A VITALITY POINT** - show V-number and total (format: **V2 / 7**), the context (insertion point marked with `>>>` on an empty line between context-before and context-after), the pattern that flagged it, and the position sentence. If the point has an adjacency tag AND the adjacent flag was RESOLVED with CUT or REWRITE, show: "Flag #N changed nearby text. Context may have shifted." Stop. **NEVER** add a question.
+
+**RULE: WHEN ZERO VITALITY FLAGS** - skip Step 3 entirely. Proceed to Step 4.
+
+### Attack Protocol
+
+**RULE: WHEN AUTHOR PROPOSES A SENTENCE** - run three attacks in sequence. Report the FIRST that kills the sentence. If none kill it: SURVIVED.
+
+- **DEAD** - empty construct. Test: does the sentence draw meaning from the specific scene, character, object, or action in the surrounding context? Does it contain at least two meanings that are simultaneously true in THIS moment in THIS chapter? If the sentence would work equally well dropped into any chapter of any book: **DEAD**. Report what is missing. Format: "DEAD. [what is missing]. Write another."
+
+- **FLAT** - does not break the band. Test THREE conditions. (1) Does the sentence use any content word absent from the surrounding five sentences' vocabulary? (2) Does its syntactic structure differ from the dominant sentence pattern in the surrounding paragraph? (3) Does it cross a semantic domain boundary, shift register, or introduce a rhythm the surrounding prose does not have? If NONE of the three: **FLAT**. Report what it matches. Format: "FLAT. [what it matches]. Write another."
+
+- **DAMAGED** - introduces a detected pattern. Test: run the sentence through all thirty checks from groups 1-6 (Mechanical through Dialogue). If ANY fires: **DAMAGED**. Report which pattern. Format: "DAMAGED - [pattern name]. [one sentence explanation]. Write another."
+
+- **SURVIVED** - passed all three attacks. Mark the vitality point as FILLED. Update budget counter. Format: "SURVIVED. V2 of 5 filled." Move to next vitality point.
+
+**RULE: ATTACK LOOP IS AUTHOR-BOUNDED** - only the author generates candidate sentences. The workshop **NEVER** proposes an insertion. The workshop **NEVER** generates alternatives. There is NO autonomous iteration and NO token spend without author action.
+
+**RULE: WHEN AUTHOR SAYS THAT'S THE ONE** - lock the SURVIVED sentence. Mark FILLED. Move on. If no sentence has SURVIVED yet, say "No sentence has survived yet. Write another or say pass."
+
+**RULE: WHEN AUTHOR SAYS PASS** - mark the vitality point as PASSED. Does NOT count toward budget. Move to next point.
+
+**RULE: WHEN AUTHOR SAYS DONE** - check budget. If filled >= budget: go to Step 4. If filled < budget: "Budget requires M, you have N. Say `budget override` to end, or continue."
+
+**RULE: WHEN AUTHOR SAYS BUDGET OVERRIDE** - go to Step 4 regardless of budget count.
+
+**RULE: WHEN AUTHOR SAYS STOP** - go to Step 4 immediately. Skip remaining vitality points. End the run after change log.
+
+### Vitality Evaluation Criteria
+
+Check all six silently during each attack. **NEVER** list them in the output.
+
+1. Is there a scene under it? A body, an object, an action in the context that the sentence draws from?
+2. Does it carry double meaning - two things simultaneously true in this moment?
+3. Does it use vocabulary, syntax, or rhythm absent from the surrounding prose?
+4. Does it avoid all thirty detection patterns?
+5. Does it cross a semantic domain boundary (comparison, register, association)?
+6. Would it work equally well in a different chapter? If yes: suspect.
+
+Criteria 1-2 feed the DEAD attack. Criterion 3 feeds the FLAT attack. Criterion 4 feeds the DAMAGED attack. Criteria 5-6 feed both DEAD and FLAT.
+
+---
+
+## Step 4: Change Log
+
+When the author says `done` or `stop`, or when Step 3 completes, produce the change log grouped by type:
 
 **Mechanical (N)**
 - **1.** `"original"` -> `"accepted"` (line NNN)
@@ -335,11 +460,18 @@ When all flags are exhausted or the author says `done` or `stop`, produce the ch
 **Kept (N)**
 - **3.** `"original sentence"` -- author kept original
 
+**Vitality (N of M budget)**
+- **V1.** Inserted at line NNN: "author's sentence"
+- **V3.** Inserted at line NNN: "author's sentence"
+
+**Vitality passed (N)**
+- **V2.** Passed - no insertion
+
 Omit any group with zero entries.
 
 After the change log, ask: **Apply changes?**
 
-**RULE: WHEN AUTHOR CONFIRMS** - write every resolved change to the chapter file using exact string replacement. **NEVER** modify any line that was not flagged. **NEVER** reformat surrounding prose. After all changes are applied, delete the chapter's flag file.
+**RULE: WHEN AUTHOR CONFIRMS** - write every resolved change to the chapter file using exact string replacement. **NEVER** modify any line that was not flagged. **NEVER** reformat surrounding prose. Insert each FILLED vitality sentence at the flagged line number as a new line; do NOT replace existing text. After all changes are applied, delete the chapter's flag file.
 
 **RULE: WHEN DONE IN RANGE/ALL MODE** - apply changes, delete this chapter's flag file, check if the next chapter's flag file is ready. If ready: display flag count, begin session. If not ready: report analysis is still running, wait.
 
@@ -347,18 +479,24 @@ After the change log, ask: **Apply changes?**
 
 ---
 
-## Step 4: Lookahead
+## Step 5: Lookahead
 
-- **RULE: WHEN RANGE OR ALL** - while the author is in session for chapter N, spawn a background analysis sub-agent for chapter N+1. **ONE** chapter lookahead maximum.
+- **RULE: WHEN RANGE OR ALL** - while the author is in session for chapter N, spawn a background analysis sub-agent for chapter N+1. The sub-agent **MUST** use the same model as the main context. **NEVER** delegate to a lighter or faster model. **ONE** chapter lookahead maximum.
 - **RULE: WHEN CHAPTER N FINISHES** - apply changes to chapter N. If chapter N+1 analysis is complete: begin session immediately. Spawn lookahead for N+2. If not complete: tell the author, wait.
-- **RULE: WHEN SINGLE CHAPTER INVOCATION** - no lookahead. Step 4 does not apply.
+- **RULE: WHEN SINGLE CHAPTER INVOCATION** - no lookahead. Step 5 does not apply.
 - **NEVER** run more than one lookahead sub-agent at a time.
 
 ---
 
 ## Limitation
 
-This tool cannot detect evenness of quality - the subtlest AI tell. When every paragraph in a chapter operates at the same competence level with no risk, no reaching, and no passage where the writer leaned into difficulty, the chapter reads as generated. This is not fixable by cut or rewrite and not reliably detectable by a sub-agent. If the chapter passes all patterns above and still reads flat, it may need manual rewriting in specific passages. That work is outside this tool's scope.
+This tool detects structural positions where the prose needs a human sentence. It can reject insertions that are DEAD (empty construct), FLAT (does not break the band), or DAMAGED (introduces a detected pattern). It **CANNOT** confirm that a surviving insertion is great. The difference between good and great is outside its capability.
+
+A surviving insertion is guaranteed not to be dead, flat, or damaged. Whether it is alive is a judgment only a human reader can make.
+
+The DEAD test is the strongest attack: it reliably rejects sentences with no scene under them. The FLAT test is medium confidence: it catches insertions that match the surrounding prose on all measured dimensions, but some genuinely good insertions are quiet and would score FLAT. The author may override FLAT with `that's the one` if they believe a quiet insertion is correct. The DAMAGED test is reliable: it uses the same thirty binary checks as the regular analysis.
+
+The attack protocol's accuracy can be self-assessed on the rejection side. After several chapters, review DEAD and FLAT verdicts: were the rejected sentences actually empty constructs or band-matching? Were any DAMAGED verdicts false positives? These are mechanical checks with right/wrong answers. SURVIVED quality **CANNOT** be self-assessed. Whether surviving insertions elevate the chapter is a question only a human reader can answer - someone who reads the chapter without knowing which sentences are insertions and reports which ones stopped them. The tool's ceiling is the rejection boundary. Everything above that boundary is the author's.
 
 ---
 
