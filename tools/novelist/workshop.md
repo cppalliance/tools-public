@@ -8,7 +8,7 @@ description: Interactive chapter workshop. Finds mechanical issues, structural b
 
 Point it at a chapter. It finds what needs fixing - a misspelled compound, a paragraph that needs a break, a sentence that tells after showing, a B-plus line that could be A-plus. It presents each one with a diagnosis, a gap assessment, and a shape sentence. You decide what changes. Every change is yours.
 
-Seven groups: mechanical, structural, trust, architecture, resonance, dialogue, vitality. Thirty-five patterns total. Seven preservation rules that protect formal devices AI editors habitually damage. One interactive session for flags, one for vitality insertions, ordered by line number, top to bottom through the chapter.
+Seven groups: mechanical, structural, trust, architecture, resonance, dialogue, vitality. Thirty-five patterns total. Seven preservation rules that protect formal devices AI editors habitually damage. Five serial analysis passes - each a sub-agent with its own pattern scope - merged into one flags file. One interactive session for flags, one for vitality insertions, ordered by line number, top to bottom through the chapter.
 
 ```mermaid
 flowchart LR
@@ -63,7 +63,9 @@ Spawn a read-only sub-agent to inventory the book directory. The sub-agent **MUS
 
 **NEVER** read or inventory: `draft/`, `temp/`, `tmp/`, `orig/`, `bak/`, `*.bak.*`, `*.tmp.*`.
 
-Exception: `workshop-flags-*.tmp.md` files are this tool's own temp files. Do not ignore them.
+Exception: `workshop-flags-*.tmp.md` and `workshop-*.tmp.md` files are this tool's own temp files. Do not ignore them.
+
+- **RULE: WHEN ORPHANED PASS FILES EXIST** scan for `workshop-memo-*.tmp.md`, `workshop-surface-*.tmp.md`, `workshop-trust-*.tmp.md`, `workshop-resonance-*.tmp.md`, `workshop-vitality-*.tmp.md` without a corresponding `workshop-flags-*.tmp.md`. Delete any found. They indicate an interrupted analysis.
 
 ### Sub-Agent Returns
 
@@ -83,15 +85,44 @@ Exception: `workshop-flags-*.tmp.md` files are this tool's own temp files. Do no
 
 ### Temp File Naming
 
-`workshop-flags-{stem}.tmp.md` where `{stem}` is the chapter filename without extension. Example: chapter `ch-05.md` produces `workshop-flags-ch-05.tmp.md`.
+`{stem}` is the chapter filename without extension. Example: chapter `ch-05.md` uses stem `ch-05`.
+
+Final flags file (persists until session completes):
+- `workshop-flags-{stem}.tmp.md`
+
+Intermediate pass files (deleted after merge):
+- `workshop-memo-{stem}.tmp.md`
+- `workshop-surface-{stem}.tmp.md`
+- `workshop-trust-{stem}.tmp.md`
+- `workshop-resonance-{stem}.tmp.md`
+- `workshop-vitality-{stem}.tmp.md`
+
+**NEVER** preserve pass files after merge. If pass files exist without a corresponding flags file, the analysis was interrupted.
 
 ---
 
 ## Step 1: Analysis
 
-The main context **NEVER** reads the chapter prose.
+The main context **NEVER** reads the chapter prose. The main context orchestrates passes, reads pass files, and merges. Nothing else.
 
-Using the paths from Step 0, assemble inputs and send them with the chapter prose to an analysis sub-agent. The sub-agent **MUST** use the same model as the main context. **NEVER** delegate to a lighter or faster model. Omit any input not found in Step 0. The sub-agent works with whatever is available.
+Analysis runs as a five-pass serial pipeline. Each pass is a sub-agent. **NEVER** run two passes at the same time. **NEVER** run any pass in the main context.
+
+```mermaid
+flowchart LR
+    P0["Pass 0: Memo"] --> PA["Pass A: Surface"]
+    PA --> PB["Pass B: Trust"]
+    PB --> PC["Pass C: Resonance"]
+    PC --> PD["Pass D: Vitality"]
+    PD --> merge["Merge"]
+```
+
+- **RULE: WHEN RUNNING ANALYSIS** spawn five sub-agents in sequence: Pass 0, then Pass A, then Pass B, then Pass C, then Pass D. Each sub-agent completes and writes its file before the next is spawned. **NEVER** run passes concurrently. **NEVER** overlap.
+- **RULE: WHEN SPAWNING A PASS** the sub-agent **MUST** use the same model as the main context. **NEVER** delegate to a lighter or faster model.
+- **NEVER** run two analysis sub-agents at the same time. One pass. One sub-agent. One file. Then the next.
+
+### Inputs
+
+Assemble inputs from Step 0 paths. Omit any input not found. Each pass receives whatever is available.
 
 1. Register baseline and POV-specific register from book metadata
 2. Pen file
@@ -101,17 +132,17 @@ Using the paths from Step 0, assemble inputs and send them with the chapter pros
 
 ### Sub-Agent Directive
 
+Every pass sub-agent receives this directive:
+
 > If at any point you must deviate from the standing instructions - flagging a passage without citing a specific pattern, skipping the preservation-rule check, omitting a mandatory field, or emitting a flag that cannot cite a binary test - emit a deviation note: what you did, why, and rate its significance low, medium, or high.
 
-> **RULE: WHEN A VITALITY POINT IS WITHIN THREE LINES OF A REGULAR FLAG** - tag the vitality point with `[adjacent: #N]` where N is the regular flag number. During Step 3, if the adjacent flag was RESOLVED with a CUT or REWRITE, the session **MUST** warn: "Flag #N changed nearby text. Context may have shifted." The author decides.
+### Pass 0: Voice Memo
 
-### Voice Memo
-
-**ALWAYS** write the voice memo as the first item in the flags file.
+Reads the chapter prose and all available inputs. Writes **ONLY** the voice memo. No flags. No pattern checks. Output: `workshop-memo-{stem}.tmp.md`.
 
 One paragraph describing how the chapter's prose sounds - register, vocabulary, physical-sensory commitments, avoidances, deliberate patterns. **NEVER** summarize what happens. Describe how it reads.
 
-**MUST** also describe the chapter's formal devices: polysyndeton patterns (where "and...and...and" chains appear and what they enact), tense system (where past continuous and past perfect carry temporal information), named-noun repetition (where nouns repeat for rhetorical weight), specificity patterns (where detail does character work). This information is needed for preservation-rule evaluation.
+**MUST** also describe the chapter's formal devices: polysyndeton patterns (where "and...and...and" chains appear and what they enact), tense system (where past continuous and past perfect carry temporal information), named-noun repetition (where nouns repeat for rhetorical weight), specificity patterns (where detail does character work). This information is needed for preservation-rule evaluation in all subsequent passes.
 
 **RULE: WHEN WRITING THE VOICE MEMO** - **ALWAYS** classify the chapter's dominant mode as exactly one of:
 - **somatic** - body-in-space, physical action, sensation
@@ -122,6 +153,34 @@ One paragraph describing how the chapter's prose sounds - register, vocabulary, 
 After the formal-devices paragraph, before the closing sentence. One line: `Dominant mode: <mode>.` **NEVER** omit dominant mode.
 
 The voice memo is the main context's sole source of register and formal-device understanding. It **MUST** be rich enough to evaluate proposals without reading the chapter.
+
+- **RULE: WHEN PASS 0 COMPLETES** read the memo file. Feed it as input to Pass A. **NEVER** spawn Pass A before the memo file exists.
+
+### Pass A: Surface
+
+Scans for **Mechanical** (4 patterns), **Structural** (3 patterns), and **Dialogue** (2 patterns) only. Receives voice memo + chapter prose + all available inputs. Output: `workshop-surface-{stem}.tmp.md`.
+
+- **RULE: WHEN PASS A COMPLETES** feed the memo to Pass B. **NEVER** spawn Pass B before the surface file exists.
+
+### Pass B: Trust + Architecture
+
+Scans for **Trust** (7 patterns) and **Architecture** (4 patterns) only. Receives voice memo + chapter prose + all available inputs. Applies the evaluation filter to its Trust flags. Output: `workshop-trust-{stem}.tmp.md`.
+
+- **RULE: WHEN PASS B COMPLETES** feed the memo to Pass C. **NEVER** spawn Pass C before the trust file exists.
+
+### Pass C: Resonance
+
+Scans for **Resonance** (11 patterns) only. Receives voice memo + chapter prose + all available inputs. Applies the evaluation filter to its Resonance flags. Output: `workshop-resonance-{stem}.tmp.md`.
+
+- **RULE: WHEN PASS C COMPLETES** feed the memo to Pass D. **NEVER** spawn Pass D before the resonance file exists.
+
+### Pass D: Vitality
+
+Scans for **Vitality** (7 patterns) only. Receives voice memo + chapter prose + all available inputs. Computes the budget. Output: `workshop-vitality-{stem}.tmp.md`.
+
+> **RULE: WHEN A VITALITY POINT IS WITHIN THREE LINES OF A FLAG IN ANY PRIOR PASS FILE** - tag the vitality point with `[adjacent: #N]` where N is the flag number from that pass file. During Step 3, if the adjacent flag was RESOLVED with a CUT or REWRITE, the session **MUST** warn: "Flag #N changed nearby text. Context may have shifted." The author decides.
+
+- **RULE: WHEN PASS D COMPLETES** the main context reads all five files and runs the merge. **NEVER** delegate the merge to a sub-agent.
 
 ### Preservation Rules
 
@@ -247,13 +306,42 @@ All three **MUST** pass to suppress. Any single failure emits the flag.
 
 ### Deduplication
 
-**ONE flag per passage.** When two patterns fire on the same passage, the narrower scope wins.
+**ONE flag per passage.** When two patterns fire on the same passage, the narrower scope wins. Deduplication applies both within a single pass and across passes at merge time.
 
 - **RULE: WHEN EXPLAINED IMAGE AND SHOW-THEN-TELL OVERLAP** - EXPLAINED IMAGE fires on clause-level restatement adjacent to an image. SHOW-THEN-TELL fires on sentence-level restatement following a multi-sentence scene. Clause-level wins.
 - **RULE: WHEN AUTHORIAL COMMENTARY AND EDITORIAL INTRUSION OVERLAP** - AUTHORIAL COMMENTARY flags local mood-naming. EDITORIAL INTRUSION flags general essay-grade claims. General wins: use EDITORIAL INTRUSION.
 - **RULE: WHEN EXHAUSTIVE INVENTORY AND ATMOSPHERIC INVENTORY OVERLAP** - EXHAUSTIVE INVENTORY flags a sentence. ATMOSPHERIC INVENTORY flags a paragraph. Paragraph wins: use ATMOSPHERIC INVENTORY.
 - **RULE: WHEN UNPACKED COMPRESSION AND RECURSIVE RESTATEMENT OVERLAP** - UNPACKED COMPRESSION flags a compressed phrase being expanded. RECURSIVE RESTATEMENT flags two same-level statements making the same claim. Check: is the first version compressed and the second expanded? Use UNPACKED COMPRESSION. Are both at the same level? Use RECURSIVE RESTATEMENT.
 - **RULE: WHEN REDUNDANT INTERIORITY AND EXPLAINED IMAGE OVERLAP** - is the restatement internal narration (character's feelings/thoughts)? Use REDUNDANT INTERIORITY. Is it a narrator clause that doesn't enter the character's head? Use EXPLAINED IMAGE.
+
+### Cleared Format
+
+Every pass (A-D) documents passages it examined and cleared, not just what it flagged. This section follows the flags in each pass file.
+
+```
+### Cleared
+- Line N: [pattern] - protected by [preservation rule]. [one sentence reason].
+- Line M: [pattern] - not a violation. [one sentence reason].
+```
+
+**RULE: WHEN A PASS CHECKS A PASSAGE AND DOES NOT FLAG IT** write a cleared entry with the pattern tested, the preservation rule that protected it or the reason it is not a violation. **NEVER** omit the cleared section. A pass with zero cleared entries means the pass did not examine enough passages.
+
+### Merge
+
+**RULE: WHEN ALL PASSES COMPLETE** the main context merges the results. **NEVER** delegate the merge to a sub-agent. No chapter prose is involved.
+
+1. Read the voice memo from `workshop-memo-{stem}.tmp.md`
+2. Read all flags from `workshop-surface-{stem}.tmp.md`, `workshop-trust-{stem}.tmp.md`, `workshop-resonance-{stem}.tmp.md`
+3. Read all vitality flags from `workshop-vitality-{stem}.tmp.md`
+4. Sort regular flags by line number
+5. Apply deduplication rules across passes (two passes may flag the same passage under different patterns)
+6. Renumber regular flags sequentially (1, 2, 3...)
+7. Renumber vitality flags sequentially (V1, V2, V3...)
+8. Compute budget from voice memo's dominant mode and chapter word count
+9. Write `workshop-flags-{stem}.tmp.md` with: voice memo, budget line, regular flags, vitality flags, suppression notes
+10. Delete `workshop-memo-{stem}.tmp.md`, `workshop-surface-{stem}.tmp.md`, `workshop-trust-{stem}.tmp.md`, `workshop-resonance-{stem}.tmp.md`, `workshop-vitality-{stem}.tmp.md`
+
+**NEVER** preserve pass files after merge. Only `workshop-flags-{stem}.tmp.md` persists.
 
 ### Flag Output Format
 
@@ -481,10 +569,10 @@ After the change log, ask: **Apply changes?**
 
 ## Step 5: Lookahead
 
-- **RULE: WHEN RANGE OR ALL** - while the author is in session for chapter N, spawn a background analysis sub-agent for chapter N+1. The sub-agent **MUST** use the same model as the main context. **NEVER** delegate to a lighter or faster model. **ONE** chapter lookahead maximum.
-- **RULE: WHEN CHAPTER N FINISHES** - apply changes to chapter N. If chapter N+1 analysis is complete: begin session immediately. Spawn lookahead for N+2. If not complete: tell the author, wait.
+- **RULE: WHEN RANGE OR ALL** - while the author is in session for chapter N, spawn the full multi-pass pipeline for chapter N+1 in the background. The pipeline runs serially within the background sub-agent (Pass 0, then A, then B, then C, then D, then merge). Each pass sub-agent **MUST** use the same model as the main context. **NEVER** delegate to a lighter or faster model. **NEVER** run passes concurrently even in lookahead. **ONE** chapter lookahead maximum.
+- **RULE: WHEN CHAPTER N FINISHES** - apply changes to chapter N. If chapter N+1's `workshop-flags-{stem}.tmp.md` exists: begin session immediately. Spawn lookahead for N+2. If not complete: tell the author, wait.
 - **RULE: WHEN SINGLE CHAPTER INVOCATION** - no lookahead. Step 5 does not apply.
-- **NEVER** run more than one lookahead sub-agent at a time.
+- **NEVER** run more than one lookahead pipeline at a time.
 
 ---
 
