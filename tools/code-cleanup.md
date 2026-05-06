@@ -51,7 +51,7 @@ When scope contains multiple files, subagents run in parallel (no shared state).
 
 ## Step 2 — Report
 
-Main context receives findings from all subagents. Deduplicate. Merge findings sharing the same root cause across files into one finding naming all locations. Drop low-severity if total exceeds 30. Emit the final numbered list.
+Main context receives findings from all subagents. Deduplicate. Merge findings sharing the same root cause across files into one finding naming all locations. Emit the final numbered list.
 
 Each finding is two sentences:
 
