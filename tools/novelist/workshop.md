@@ -408,7 +408,7 @@ Immediately present flag #1. **NEVER** pause. **NEVER** ask for confirmation.
 
 - **RULE: TRACK CURRENT BEST.** Each flag starts with the original as the current best. Every proposal is evaluated against the current best, not against the original.
 
-- **RULE: WHEN AUTHOR PROPOSES ALTERNATIVE** - state **BETTER**, **WORSE**, or **CLOSE** as the first word, followed by a magnitude qualifier in parentheses: **(S)** small, **(M)** medium, **(L)** large. Then two to three sentences explaining why. **ALWAYS** explain why. **NEVER** a bare verdict. Maximum three sentences.
+- **RULE: WHEN AUTHOR PROPOSES ALTERNATIVE** - state **BETTER**, **WORSE**, or **CLOSE** as the first word, followed by a magnitude qualifier in parentheses: **(S)** small, **(M)** medium, **(L)** large. The verdict (BETTER/WORSE/CLOSE) is evaluated against the current best. The magnitude (S/M/L) is ALWAYS evaluated against the ORIGINAL sentence. Then two to three sentences explaining why. **ALWAYS** explain why. **NEVER** a bare verdict. Maximum three sentences.
 
 - **RULE: WHEN BETTER** - update current best to the new proposal. Say what it gained. Format: "BETTER (M). [explanation]. This is the new current best." **WHEN BETTER (L)** - auto-resolve the flag. Lock the proposal as the accepted sentence, mark RESOLVED, and move on. The author does not need to confirm a large improvement. The (L) auto-resolve applies to author proposals AND to tool-generated shapes produced during iterative feedback from the author (the author's input drove the improvement). It does NOT apply to initial shapes presented as part of a flag — those are starting points and always need author confirmation.
 
@@ -502,7 +502,7 @@ Opening block, displayed exactly once:
 
 **RULE: WHEN AUTHOR SAYS PASS** - mark the vitality point as PASSED. Does NOT count toward budget. Move to next point.
 
-**RULE: WHEN AUTHOR SAYS DONE** - check budget. If filled >= budget: go to Step 4. If filled < budget: "Budget requires M, you have N. Say `budget override` to end, or continue."
+**RULE: WHEN AUTHOR SAYS DONE** - check budget. If filled >= budget: go to Step 4. If filled < budget AND unfilled vitality points remain: "Budget requires M, you have N. Say `budget override` to end, or continue." If filled < budget AND no unfilled vitality points remain: emit warning "Budget requires M, only N positions identified. Proceeding." and go to Step 4.
 
 **RULE: WHEN AUTHOR SAYS BUDGET OVERRIDE** - go to Step 4 regardless of budget count.
 
