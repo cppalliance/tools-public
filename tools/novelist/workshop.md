@@ -370,6 +370,7 @@ Then: numbered flags, ordered by line number. Each flag carries exactly these fi
 - **Adjacent** - `[adjacent: #N]` if within three lines of a regular flag. Omit if none.
 - **Context** - three sentences before and three sentences after the insertion point, quoted verbatim. **ALWAYS** mandatory.
 - **Position** - one sentence: why this structural position is high-leverage for a human insertion
+- **Need** - one sentence: what the insertion must add that the surrounding prose does not already provide. Frame as "The sentence needs..." followed by the gap between what the observations compose and what remains invisible without the insertion.
 
 **NEVER** include diagnosis, action, gap, or shape. Vitality flags are positions, not problems.
 
@@ -480,7 +481,7 @@ Opening block, displayed exactly once:
 > - **budget override** - end even if budget is not met
 > - **stop** - end the whole run
 
-**RULE: WHEN PRESENTING A VITALITY POINT** - show V-number and total (format: **V2 / 7**), the context (insertion point marked with `>>>` on an empty line between context-before and context-after), the pattern that flagged it, and the position sentence. If the point has an adjacency tag AND the adjacent flag was RESOLVED with CUT or REWRITE, show: "Flag #N changed nearby text. Context may have shifted." Stop. **NEVER** add a question.
+**RULE: WHEN PRESENTING A VITALITY POINT** - show V-number and total (format: **V2 / 7**), the context (insertion point marked with `>>>` on an empty line between context-before and context-after), the pattern that flagged it, the position sentence, and the need sentence. If the point has an adjacency tag AND the adjacent flag was RESOLVED with CUT or REWRITE, show: "Flag #N changed nearby text. Context may have shifted." Stop. **NEVER** add a question.
 
 **RULE: WHEN ZERO VITALITY FLAGS** - skip Step 3 entirely. Proceed to Step 4.
 

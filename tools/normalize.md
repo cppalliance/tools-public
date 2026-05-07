@@ -1,5 +1,7 @@
 # Normalize
 
+<!-- When this file is mentioned the intention is to run it on something -->
+
 Take any prompt-as-prose and produce a dual-use markdown document: structured prompt an LLM executes directly, pipeline definition a Python runner parses without hard-coded strings.
 
 ```mermaid
