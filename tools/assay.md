@@ -1,6 +1,6 @@
 # Assay
 
-Technical analysis tool for WG21 proposals. Two-pass architecture: Pass 1 extracts mechanically without a thesis. Derive compresses claims into the thesis. Pass 2 re-scans chunks with the thesis and cross-chunk breadcrumbs injected, simulating whole-document analysis. Six lenses: Performance, Design, Specification, Usability, Ecosystem, Rationale. The pipeline: survey, extract, collect, derive, research, verify, analyze, challenge, couple, synthesize, report.
+Technical analysis tool for WG21 proposals. Two-pass architecture: Pass 1 extracts mechanically without a thesis. Derive compresses claims into the thesis. Pass 2 re-scans chunks with the thesis and cross-chunk breadcrumbs injected, simulating whole-document analysis. Six lenses: Performance, Design, Specification, Usability, Ecosystem, Rationale. The pipeline: survey, extract, collect, derive, research, probe, analyze, challenge, couple, synthesize, report.
 
 ---
 
@@ -77,7 +77,7 @@ flowchart TD
     end
     subgraph pass2 [Pass 2 - Thesis-Informed]
         S4 --> S5["5 Research"]
-        S5 --> S6["6 Verify"]
+        S5 --> S6["6 Probe"]
         S6 --> S7["7 Analyze"]
         S7 --> S8["8 Challenge"]
         S8 --> S9["9 Couple"]
@@ -181,7 +181,22 @@ asks:
     line: int
     target: string
     type: adopt | direction | review | poll | feedback | inform
+references:
+  - ref_label: string | null (reference number/label, e.g., "[12]", or null for unlabeled hyperlinks)
+    text: string (display text of the link or citation)
+    url: string | null (resolved URL, or null for non-electronic sources)
+    line: int
+    context: string (one sentence: what the paper says about this reference at this location)
+    relationship: companion | predecessor | dependency | citation | background | tool
 ```
+
+### Reference extraction rules
+
+- Emit one entry for every hyperlink, footnote marker, or `[N]` citation found in the chunk.
+- `relationship` is a first-pass classification based on surrounding text: "companion paper" -> companion, "see [X] for..." -> dependency, `[N]` in a references section -> citation, GitHub/Godbolt links -> tool.
+- A reference with no URL gets `url: null` (book, talk, private communication).
+- Same reference appearing in multiple chunks produces one entry per chunk. Dedup happens in Step 3.
+- Most chunks emit 0-3 references. The References section chunk typically emits one per listed reference.
 
 ### Ask rules
 
@@ -271,6 +286,15 @@ A lens is active if it received at least one breadcrumb. Only active lenses info
 
 **Exception: Rationale is always active.** The SD-4 mechanical checklist runs regardless of breadcrumbs.
 
+### E. Build reference registry
+
+Merge all per-chunk `references` into a deduped registry keyed by `ref_label`:
+
+- Dedup on `ref_label`. Merge `contexts` and `chunk_appearances` across chunks.
+- Relationship conflict: if the same reference appears as `companion` in one chunk and `citation` in another, the highest tier wins. Tier order: companion > predecessor > dependency > citation > background > tool.
+- `same_author`: true if any author in `survey.front_matter.authors` appears in the reference text.
+- `mention_count`: total number of per-chunk entries before dedup.
+
 **Output: `collect`**
 
 ```yaml
@@ -292,6 +316,16 @@ collect:
   asks: {quote, line, target, type}[]
   active_lenses: string[]
   inactive_lenses: string[]
+  reference_registry:
+    - ref_id: string (sequential: R1, R2, ...)
+      ref_label: string
+      url: string | null
+      source_type: paper | repository | tool | talk | book | website | non_electronic
+      contexts: string[]
+      chunk_appearances: int[]
+      relationship: companion | predecessor | dependency | citation | background | tool
+      same_author: bool
+      mention_count: int
 ```
 
 ---
@@ -394,15 +428,88 @@ research:
 
 ---
 
-## Step 6. Verify
+## Step 6. Probe
+
+*Sub-agents (phased), serial. Mechanical + Analytical. Context: varies by phase.*
+
+**Input:** `collect.reference_registry`, `collect.items.evidence` (where subtype = citation), `derive.central_claim`
+
+Four phases. Each phase builds on the prior.
+
+### Phase A: Link Verification
+
+*1 sub-agent. Mechanical. Context: (S).*
+
+For WG21 papers, the sub-agent fetches `wg21.link/index.json` once to resolve all paper URLs in bulk (provides direct `long_link` URLs, bypassing the triple-hop redirect chain). Non-WG21 URLs are checked individually via WebFetch or Shell `curl -I -L`. Non-electronic sources are marked without checking.
+
+```yaml
+link_status:
+  - ref_id: string
+    url: string
+    status: live | dead | redirect | auth_required | non_electronic
+    resolved_url: string | null
+```
+
+### Phase B: Relevance Ranking
+
+*Main context. No sub-agent.*
+
+Rank all references by tier, then by `mention_count` descending within tier. The ranking determines which references get deep reads in Phase C.
+
+Tiers (collapses CiTO's ~40 properties and NISO STS's ~10 types into 6 for standards papers):
+
+- **companion** - explicitly declared companion paper ("companion paper", "design rationale paper")
+- **predecessor** - prior revision or predecessor proposal by overlapping authors
+- **dependency** - paper this proposal builds on or requires (maps to ISO/IEC normative reference)
+- **citation** - cited for a specific technical claim, benchmark, or design decision
+- **background** - contextual reference (talks, blog posts, documentation, standards text; maps to ISO/IEC informative reference)
+- **tool** - implementation reference (GitHub repos, Compiler Explorer links)
+
+### Phase C: Companion Ingestion
+
+*K sub-agents (max 3), serial. Analytical. Context: (L).*
+
+For the top companion-tier references only (max 3, predecessors excluded), spawn a sub-agent. Depth 1 only - if a companion defers to its own companion, do not follow.
+
+Each sub-agent:
+
+1. Reads the companion via fallback chain: workspace file (ReadFile) > HTML URL (WebFetch) > `wg21.link/index.json` resolved URL > WebSearch for content > mark not_accessible.
+2. Extracts structured summary using per-section extraction (not full-document stuffing - mid-context content is lost). Scan headings, extract per-section, merge.
+3. For each "see [companion] for X" in the main paper's `contexts` (from `collect.reference_registry`), records X as a deferred topic and checks whether the companion delivers it.
+4. Raw companion text never enters the main context.
+
+Each sub-agent returns exactly:
+
+```yaml
+companion_summary:
+  ref_id: string
+  title: string
+  thesis: string
+  key_claims: string[]
+  evidence_items:
+    - quote: string
+      quality_tier: field_experience | implementation | prototype | example | assertion | citation_only
+      relevance: string (one sentence connecting to main paper's thesis)
+  deferred_topics:
+    - topic: string
+      delivered: true | partial | false
+      detail: string | null (one sentence: what the companion provides, or what is missing)
+  scope: string
+```
+
+Deferred topic delivery meanings:
+
+- **true** - the companion dedicates a section or substantial paragraph to the topic with evidence
+- **partial** - the companion addresses the topic but without sufficient evidence or in passing only
+- **false** - the companion does not address the topic despite the main paper's deferral
+
+### Phase D: Citation Claim Verification
 
 *V sub-agents (batched), serial. Mechanical. Context: (L).*
 
-**Input:** citation items from `collect.items.evidence` where subtype = citation
+Migrated from the former Verify step. Citations already covered by Phase C companion ingestion are skipped. Remaining citation items from `collect.items.evidence` where subtype = citation are grouped into batches of up to 4 per sub-agent. Skip citations with source_hint = "non-electronic" (mark as "not_verifiable").
 
-Collect all citation items. Group into batches of up to 4 citations per sub-agent. Skip citations with source_hint = "non-electronic" (mark as "not_verifiable" in results).
-
-Each sub-agent receives a batch of citations. For each citation:
+Each sub-agent receives a batch. For each citation:
 
 1. Resolve the source: ReadFile for workspace paths, WebFetch for URLs/wg21.link
 2. Find the relevant section of the source
@@ -431,18 +538,33 @@ Resolution meanings:
 
 Citation mismatches are passed to Step 7 chunk sub-agents as high-signal input.
 
-**Output: `verify`**
+### Combined Output: `probe`
 
 ```yaml
-verify:
-  citations: (all sub-agent results merged)
+probe:
+  link_status: (Phase A results)
+  relevance_ranking: (Phase B tier-sorted reference list)
+  companion_summaries: (Phase C returns, merged)
+  citation_verification: (Phase D returns, merged)
+  deferred_topics:
+    - topic: string
+      deferred_to: string (ref_label of the companion)
+      delivered: true | partial | false
+      detail: string | null
   counts:
-    total: int
+    total_refs: int
+    live: int
+    dead: int
+    companions_read: int
     verified: int
     mismatch: int
     not_found: int
     not_accessible: int
     not_verifiable: int
+    deferred_total: int
+    deferred_delivered: int
+    deferred_partial: int
+    deferred_false: int
 ```
 
 ---
@@ -460,14 +582,22 @@ verify:
 - `derive.ask_calibration` (severity calibration by ask type - see Definitions)
 - Breadcrumbs from ALL OTHER chunks (all entries in `collect.breadcrumbs_by_lens` except those with this chunk's `chunk_index`, with severity upgrades applied after Step 4)
 - `research` (all 6 lens returns from Step 5)
-- `verify.citations` filtered to citations whose `ref_label` appears in this chunk
+- `probe.citation_verification` filtered to citations whose `ref_label` appears in this chunk
+- `probe.companion_summaries` (all - companions inform every chunk)
+- `probe.deferred_topics` (all - deferred topics inform gap analysis)
 - The 25 test patterns (see below)
 
-One sub-agent per chunk, run serially. Each sub-agent reads its chunk text again via ReadFile. Now it has what Pass 1 lacked: the thesis, cross-chunk breadcrumbs, research context, and citation verification results.
+One sub-agent per chunk, run serially. Each sub-agent reads its chunk text again via ReadFile. Now it has what Pass 1 lacked: the thesis, cross-chunk breadcrumbs, research context, citation verification results, companion summaries, and deferred-topic delivery status.
 
 **The sub-agent's task:** Read the chunk. For each item in the chunk, check against the thesis and cross-chunk breadcrumbs. Apply the 25 test patterns. Produce findings and strengths.
 
 A breadcrumb from another chunk might be RESOLVED by evidence in this chunk (the cross-chunk gap is filled) or REINFORCED (this chunk has the same problem). Either outcome is valuable.
+
+**Deferred-topic severity rules** (consistent with GRADE indirectness framework): When a finding targets a topic the paper explicitly defers to a companion, and that companion was read in Phase C:
+
+- `delivered: true` - downgrade finding severity by one tier (critical -> significant, significant -> minor, minor -> suppressed). The argument chain is intact across the pair.
+- `delivered: partial` - no change. The companion addresses the topic but incompletely; the finding stands at its original severity.
+- `delivered: false` - upgrade finding severity by one tier. The paper deferred a promise the companion does not keep.
 
 Each sub-agent returns exactly:
 
@@ -712,7 +842,7 @@ compounds:
 
 2. Each coupling-map compound becomes a candidate subsection in the structural assessment. (mechanical)
 
-3. **Caput causae derivation:**
+3. **Central thesis derivation:**
    - Selection: rank compounds by *reach* (count of constituent findings). Highest reach = dominant dynamic. Tie-break: the compound with the higher maximum finding severity wins. (mechanical)
    - Compression: compress the dominant dynamic into one sentence. If no compounds, compress the highest-severity surviving finding. If no findings: "No structural weaknesses found." Tag the compression: **High** if the sentence names a specific mechanism. **Medium** if it names a category. **Low** if it is generic. **(confidence-tagged)**
 
@@ -734,8 +864,8 @@ compounds:
 synthesis:
   verdict: Sound | Weakened | Undermined | Insufficient
   verdict_confidence: High | Medium | Low
-  caput_causae: string (one sentence)
-  caput_causae_confidence: High | Medium | Low
+  central_thesis: string (one sentence)
+  central_thesis_confidence: High | Medium | Low
   dominant_dynamic: string | null
   thesis_survives: bool
   thesis_confidence: High | Medium | Low
@@ -755,7 +885,7 @@ synthesis:
 
 *Main context. No sub-agent.*
 
-**Input:** all previous outputs (`survey`, `collect`, `derive`, `research`, `verify`, `analyze`, `challenge`, `couple`, `synthesis`)
+**Input:** all previous outputs (`survey`, `collect`, `derive`, `research`, `probe`, `analyze`, `challenge`, `couple`, `synthesis`)
 
 Render the report from the synthesis. The report is editorial, not analytical - the analysis happened in Steps 7-10.
 
@@ -781,14 +911,14 @@ assay_rubric:
 
 ## Report Format
 
-The format is fixed. Sections appear in this order and are never reordered or renamed. A section is omitted if it would have no content (e.g., no Major Findings, no compounds, no citations to verify). Sections that are always present: Verdict, Asks, Rationale Checklist, Inventory, Methodology.
+The format is fixed. Sections appear in this order and are never reordered or renamed. A section is omitted if it would have no content (e.g., no Major Findings, no compounds, no references to probe). Sections that are always present: Verdict, Asks, Rationale Checklist, Inventory, Methodology.
 
 ```
 # [Paper ID] Assay
 
 [Title]
 
-[One sentence. The caput causae: mechanically derived from
+[One sentence. The central thesis: mechanically derived from
 Step 10. The single most important structural weakness, or
 "No structural weaknesses found" if the paper is sound.
 This sentence governs the entire report.]
@@ -821,6 +951,34 @@ found."]
 
 ---
 
+## Structural Assessment
+
+[The editorial core. One to three paragraphs integrating
+the compound dynamics into a coherent diagnosis. This is
+where the dominant dynamic leads. A reader who stops here
+has the full picture; everything below is evidence.
+
+Subsection headers generated from the coupling map when
+the compound picture is rich enough. Each subsection names
+a specific dynamic, not a generic category.]
+
+---
+
+## Compound Dynamics
+
+### [Compound name]
+
+**Constituents:** Findings [N], [M], [P]
+**Mechanism:** [One sentence per link.]
+
+[One paragraph. How these findings combine to produce a
+dynamic worse than any individual finding. If cross-lens,
+name both lenses.]
+
+[Continue for all compounds.]
+
+---
+
 ## Major Findings
 
 [N] findings promoted to Major (touch thesis or compound
@@ -847,7 +1005,8 @@ the finding, cite it.]
 **Damage:** [structural consequence, 1-2 sentences]
 
 [Continue for all Major findings, ordered by severity
-descending, then by lens order within the same tier.]
+descending, then by lens order within the same tier.
+Separate each finding with a horizontal rule (---).]
 
 ---
 
@@ -867,39 +1026,12 @@ descending, then by lens order within the same tier.]
 
 [Why this is a problem. Two to four sentences.]
 
-[Continue for all regular findings. Same ordering rule.]
+[Continue for all regular findings. Same ordering rule.
+Separate each finding with a horizontal rule (---).]
 
 ---
 
-## Compound Dynamics
-
-### [Compound name]
-
-**Constituents:** Findings [N], [M], [P]
-**Mechanism:** [One sentence per link.]
-
-[One paragraph. How these findings combine to produce a
-dynamic worse than any individual finding. If cross-lens,
-name both lenses.]
-
-[Continue for all compounds.]
-
----
-
-## Structural Assessment
-
-[The editorial core. One to three paragraphs integrating
-the compound dynamics into a coherent diagnosis. This is
-where the dominant dynamic leads. The reader who already
-read the findings gets the "so what" here.
-
-Subsection headers generated from the coupling map when
-the compound picture is rich enough. Each subsection names
-a specific dynamic, not a generic category.]
-
----
-
-## Approbatio
+## Strengths
 
 [Load-bearing claims that survived examination. These are
 the paper's structural pillars - claims well-supported by
@@ -940,46 +1072,116 @@ with confidence tag explains what is missing.]
 
 ---
 
-## Tabula Fontium
+## Reference Table
 
-[Citation verification table.]
+[Every reference in the registry gets a row. Rows ordered
+by tier (companion first, tool last), then by ref_label
+within tier. URLs rendered as clickable markdown links.]
 
-| Ref | Source | Resolution | Claimed | Actual | Notes |
-|-----|--------|------------|---------|--------|-------|
-| [1] | [source] | verified | [claim] | [actual] | |
-| [2] | [source] | mismatch | [claim] | [actual] | [discrepancy] |
+| Ref | Tier | Source | Link | Status | Resolution | Claimed | Notes |
+|-----|------|--------|------|--------|------------|---------|-------|
+| [1] | companion | [source] | [domain/path](full_url) | live | verified | [claim] | Delivers: X, Y. Missing: Z. |
+| [2] | tool | [source] | [domain/path](full_url) | live | verified | [claim] | |
+| [N] | citation | [source] | - | non_electronic | not_verifiable | [claim] | |
 
-**Tally:** [N] verified, [M] mismatches, [P] not found,
-[Q] not accessible, [R] not verifiable.
+[Rules:
+- Link column: [domain/path](full_url) for clickable
+  links. Non-electronic sources get "-".
+- Status column: from Probe Phase A link verification.
+- Resolution column: from Probe Phase D claim
+  verification. References not claim-checked get "-".
+- Companion rows: Notes summarizes what the companion
+  delivers and what it does not, from
+  probe.companion_summaries.]
+
+**Reference tally:**
+- Total: [N] references ([M] with URLs, [P] non-electronic)
+- Link status: [N] live, [M] dead, [P] redirect, [Q] auth_required
+- Verification: [N] verified, [M] mismatch, [P] not_found, [Q] not_accessible, [R] not_verifiable
+- Companions read: [N] of [M] companion-tier references
+- Deferred topics: [N] total, [M] delivered, [P] partial, [Q] not delivered
+
+**Tier distribution:**
+- companion: [N]
+- predecessor: [N]
+- dependency: [N]
+- citation: [N]
+- background: [N]
+- tool: [N]
 
 ---
 
 ## Inventory
 
+[Every count traced to a named pipeline artifact.]
+
+**Items** (from `collect.items`):
 - Claims: [N] ([M] factual, [P] normative)
-- Evidence: [N] items ([M] citations, tiers: [counts per tier])
+- Evidence: [N] (tiers: [N] field_experience, [N] implementation, [N] prototype, [N] example, [N] assertion, [N] citation_only)
 - Concessions: [N]
-- Questions raised: [N]
+- Questions: [N]
 - Dependencies: [N]
-- Scope items: [N] ([M] covered, [P] gaps)
-- Breadcrumbs emitted: [N] ([M] critical, [P] significant, [Q] minor)
+- Scope: [N] ([M] covered, [P] gap)
+
+**References** (from `collect.reference_registry`):
+- Total: [N] unique references
+- By tier: [N] companion, [N] predecessor, [N] dependency, [N] citation, [N] background, [N] tool
+- Same-author: [N]
+- With URL: [N]
+- Non-electronic: [N]
+
+**Breadcrumbs** (from `collect.breadcrumbs_by_lens`, post-upgrade):
+- Total: [N] ([M] critical, [P] significant, [Q] minor)
+- By lens: Performance [N], Design [N], Specification [N], Usability [N], Ecosystem [N], Rationale [N]
+
+**Findings** (from `challenge`):
+- Total generated: [N]
+- Survived: [N] ([M] critical, [P] significant, [Q] minor)
+- Killed: [N] ([M] conceded, [P] boundary, [Q] falsified)
+- Major: [N]
+- Regular: [N]
+
+**Compounds** (from `couple`):
+- Total: [N]
+- Cross-lens: [N]
+
+**Strengths** (from `analyze`):
+- Total: [N]
 
 ---
 
 ## Methodology
 
-- Paper: [Paper ID], [title]
+[Structured by pipeline phase. Every count maps to a
+named step.]
+
+- Paper: [document], "[title]"
 - Model: [model ID]
-- Date: [date]
+- Date: [ISO date]
 - Chunks: [N] sections, [M] tokens estimated
-- Pass 1 Extract: [N] chunk sub-agents, [M] items, [P] breadcrumbs, [Q] asks
-- Derive: thesis from [N] claims, [M] load-bearing
-- Research: 6 lens sub-agents, [N] external sources found
-- Verify: [N] citation sub-agents, [M] citations checked
-- Pass 2 Analyze: [N] chunk sub-agents + 1 Rationale, [M] findings, [P] strengths
-- Challenge: [N] killed, [M] survived
+
+**Pass 1 (Steps 1-4):**
+- Survey: 1 sub-agent
+- Extract: [N] chunk sub-agents, [M] items, [P] breadcrumbs, [Q] asks, [R] references
+- Collect: [N] unique claims, [M] unique evidence, [P] unique references
+- Derive: thesis from [N] claims, [M] load-bearing, ask calibration: [type]
+
+**Probe (Step 6):**
+- Link verification: [N] URLs checked, [M] live, [P] dead
+- Relevance ranking: [N] references ranked
+- Companion ingestion: [N] companions read (of [M] companion-tier)
+- Deferred topics: [N] identified, [M] delivered, [P] partial, [Q] not delivered
+- Claim verification: [N] sub-agents, [M] citations checked, [P] mismatches
+
+**Research (Step 5):**
+- [N] lens sub-agents, [M] external sources found
+
+**Pass 2 (Steps 7-10):**
+- Analyze: [N] chunk sub-agents + 1 Rationale, [M] findings, [P] strengths
+- Challenge: [N] total, [M] survived, [P] killed
 - Compounds: [N] identified
 - Rationale checklist: [N]/5
+- Verdict: [verdict] ([confidence])
 
 ---
 ```
@@ -990,7 +1192,7 @@ with confidence tag explains what is missing.]
 - Numbering is sequential across both sections: if Major has findings 1-4, regular starts at 5.
 - If a finding has no quote (scope gap), replace the blockquote with: "No corresponding text. The paper does not address [scope item]."
 - If confidence is below high, append "(medium confidence)" or "(low confidence)" after the explanation.
-- Citation mismatch findings from Step 6 use test name "Citation Mismatch" and reference the Tabula Fontium entry.
+- Citation mismatch findings from Step 6 use test name "Citation Mismatch" and reference the Reference Table entry.
 - Findings with external evidence from Step 5 cite the source in the explanation.
 
 ---
@@ -1006,18 +1208,22 @@ flowchart LR
         ExtractP1["2 Extract x C"]
         Derive["4 Derive"]
         Research["5 Research x 6"]
-        Verify["6 Verify x V"]
+        ProbeA["6A Link Verify"]
+        ProbeC["6C Companion x K"]
+        ProbeD["6D Cite Verify x V"]
         AnalyzeP2["7 Analyze x C+1"]
         Couple["9 Couple"]
     end
     subgraph mainCtx [Main Context]
-        M["Steps 0,3,8,10,11"]
+        M["Steps 0,3,6B,8,10,11"]
     end
     Survey -->|"structured return"| M
     ExtractP1 -->|"structured return"| M
     Derive -->|"structured return"| M
     Research -->|"structured return"| M
-    Verify -->|"structured return"| M
+    ProbeA -->|"link_status"| M
+    ProbeC -->|"companion_summaries"| M
+    ProbeD -->|"citation_verification"| M
     AnalyzeP2 -->|"structured return"| M
     Couple -->|"structured return"| M
 ```
@@ -1026,21 +1232,23 @@ flowchart LR
 
 - Paper path (from user)
 - Front matter and chunk map (from Survey, structured)
-- Extracted items, breadcrumbs, and asks (from Extract, structured)
+- Extracted items, breadcrumbs, asks, and references (from Extract, structured)
+- Reference registry (from Collect, structured)
 - Derived thesis, load-bearing claims, scope (from Derive, structured)
 - Research results (from Research, structured)
-- Citation verification results (from Verify, structured)
+- Link status, companion summaries, deferred topics, citation verification (from Probe, structured)
 - Findings, strengths, and checklist (from Analyze, structured)
 - Compounds (from Couple, structured)
 
 **What never enters the main context:**
 
 - Raw paper text
+- Raw companion paper text
 - Raw web search results
 - Full cited source documents
 - Unstructured sub-agent working notes
 
-Sub-agents: 1 (survey) + C (Pass 1 chunks) + 1 (derive) + 6 (research) + V (citation batches) + C (Pass 2 chunks) + 1 (Rationale) + 1 (couple) = 2C + V + 10. For a 20-chunk paper with 12 citations in 3 batches: 53 sub-agents.
+Sub-agents: 1 (survey) + C (Pass 1 chunks) + 1 (derive) + 6 (research) + 1 (link verify) + K (companion ingestion, 0-3) + V (citation batches) + C (Pass 2 chunks) + 1 (Rationale) + 1 (couple) = 2C + V + K + 11. For a 20-chunk paper with 1 companion and 12 citations in 3 batches: 55 sub-agents.
 
 ---
 
