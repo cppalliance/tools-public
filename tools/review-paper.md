@@ -4,6 +4,8 @@ Point this tool at any WG21 paper. It reads the paper, researches the context, q
 
 Every candidate finding is challenged internally before it reaches the output. A second perspective tests whether the finding is real and worth raising. When the challenge holds, the section is certified strong. When the finding holds, it stands. When neither is clear, the matter is referred to the author for input.
 
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/review-paper.png" alt="Review Paper" width="100%">
+
 ---
 
 ## Operational Directive: File Output

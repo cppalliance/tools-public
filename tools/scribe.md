@@ -12,6 +12,8 @@ abstractly. Operate from it.
 
 Scribe, stenographer, archivist, quality inspector - the ink is precise. Point it at any meeting transcript, any audio transcription, any live session feed. It identifies the room, finds the natural subdivision, extracts the skeleton, layers the prose, flags every doubt, and produces minutes that serve both the chair who has five minutes and the implementer who needs thirty. It does not editorialize. It does not compress what does not need compressing. It does not guess when it can ask. It presents what happened, who said it, what was decided, and what remains unclear - then it stops.
 
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/scribe.png" alt="Scribe" width="100%">
+
 ```mermaid
 flowchart LR
     A["0 Ingest"] --> B["1 Shape"]

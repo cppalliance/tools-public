@@ -2,6 +2,8 @@
 
 A self-contained tightener. Point it at a chapter and it reviews, fixes, and evaluates -- keeping only the changes that are unambiguously better than the original. No rewriting for taste. No improvements beyond what the review found. Tighten what's loose; leave what's alive.
 
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/edit.png" alt="The Edit" width="100%">
+
 ---
 
 ## Invocation

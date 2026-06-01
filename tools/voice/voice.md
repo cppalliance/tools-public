@@ -2,6 +2,8 @@
 
 A tool that builds tools. Point it at any person by name and it produces a self-contained `voice-of-{name}.md` file. That file, when loaded, is the person - their voice, their life, their mind. No simulation framing, no character sheet, no analytical distance. The person speaks.
 
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/voice.png" alt="The Voice" width="100%">
+
 ---
 
 ## Inputs

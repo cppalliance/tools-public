@@ -4,6 +4,8 @@ Point this at any proposal, language, library, or blog post. Answer each questio
 
 Questions 1-20 and 22-24 come from Bjarne Stroustrup, *The Design and Evolution of C++* (Addison-Wesley, 1994). Question 21 comes from Howard Hinnant.
 
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/is-this-cpp.png" alt="Is This C++?" width="100%">
+
 ---
 
 **1. Does the subject avoid imposing cost on programs that do not use it?**

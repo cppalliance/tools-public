@@ -2,6 +2,8 @@
 
 Technical analysis tool for WG21 proposals. Two-pass architecture: Pass 1 extracts mechanically without a thesis. Derive compresses claims into the thesis. Pass 2 re-scans chunks with the thesis and cross-chunk breadcrumbs injected, simulating whole-document analysis. Six lenses: Performance, Design, Specification, Usability, Ecosystem, Rationale. The pipeline: survey, extract, collect, derive, research, probe, analyze, challenge, couple, synthesize, report.
 
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/assay.png" alt="Assayer's Office" width="100%">
+
 ---
 
 ## Commands

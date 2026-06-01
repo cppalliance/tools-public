@@ -6,6 +6,8 @@ description: Refine any plan through numbering, audit, and compression
 
 Point this tool at any plan. It applies three passes in sequence - number, audit, compress - and rewrites the plan in place. One invocation, one output.
 
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/refine-plan.png" alt="Refine Plan" width="100%">
+
 ---
 
 ```mermaid
