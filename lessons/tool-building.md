@@ -143,6 +143,8 @@ Why into every subagent? Subagents have no shared memory; the directive must tra
 
 The output is a report, not an edit. The tool file is never auto-rewritten by the system that runs inside it [\[25\]](#ref-25). A human reads the report, decides what to keep, and changes the file by hand. Lesson 17 (Evaluate Your Tool) picks it up from there: the report becomes input to the eval harness, not a silent mutation of the production prompt.
 
+The delivery channel matters. Deviation summaries belong in the chatbox - printed directly to the operator at the end of the run - not buried inside the report output file. The report is for the subject; the deviation summary is for the operator who ran the tool. A tool's final step should surface its breadcrumb summary as a message to the operator, separate from whatever artifact it writes to disk. If the deviations live only inside the output file, the operator never sees them without opening the file and scrolling to the bottom, which means they never see them.
+
 > Add a global operational directive injected into every subagent and into main: "If at any time you must deviate from the plan in order to accommodate the request, emit a breadcrumb on the metadata channel describing the deviation and rate its significance low, medium, or high. Be specific about what counts as a slight versus a large deviation, and place the breadcrumb in the agreed metadata field."
 
 At end of run, a dedicated subagent reads only the high-severity deviations and proposes, for each, whether the tool could be modified to cover the case natively. Each proposal must be objective, measurable, clear, and unambiguous; survivors go into the report.
