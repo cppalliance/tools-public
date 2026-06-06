@@ -299,7 +299,7 @@ Cross-file findings intentionally skip the adversarial challenge. The synthesis 
 
 Main context renders user-visible markdown. Apply confidence tiebreaker to Step 5 cross-file findings (same rules as Step 4 tiebreaker).
 
-**Output path:** User-specified, or `reports/code-review-{scope-slug}.md` relative to the repository root, where `{scope-slug}` is derived from the review roots (directory name or primary file stem). If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
+**Output path:** User-specified, or `code-review-{scope-slug}.md` where `{scope-slug}` is derived from the review roots (directory name or primary file stem). Output location is determined by the workspace's ambient filing rules. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
 
 ### Report structure
 

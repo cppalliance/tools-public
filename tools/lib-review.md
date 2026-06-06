@@ -721,7 +721,7 @@ Formatting rules:
 
 Execution protocol: save output after each complete semantic unit (never mid-paragraph). Save output before marking plan items done. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content. Write new output to `cache/_lib-review-{slug}.tmp.md`. Rename to final path only after the Review is complete. On resumption, check for `.tmp.md` and continue from its tail.
 
-Output location: `reports/lib-review-{subject-slug}.md` relative to the repository root. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc. Import prior versions for comparison.
+Output filename: `lib-review-{subject-slug}.md`. Output location is determined by the workspace's ambient filing rules. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc. Import prior versions for comparison.
 
 Diagnostic detail goes to cache, not the output. Full per-test findings, evidence, challenge outcomes, and clean results are written to the cache file (`cache/_lib-review-{subject-slug}.cache.md`) under the Diagnostic Detail section.
 

@@ -40,7 +40,7 @@ Write findings to file unless user explicitly requests inline.
 
 Default filename: `{document_number_lower}-feedback.md` where document_number is from front matter, lowercased with revision suffix (e.g., `d4003r1-feedback.md` for D4003R1). If document number unavailable or ambiguous, ask.
 
-Output location: `reports/` relative to repository root unless user specifies otherwise.
+Output location is determined by the workspace's ambient filing rules.
 
 ### Execution Protocol
 

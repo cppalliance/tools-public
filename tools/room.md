@@ -664,7 +664,7 @@ What does the convergence of lenses reveal that no single lens reveals alone? Wh
 
 The output is strictly prescribed structured markdown. Every report follows this format. No deviation. Every section except the Legend table and blockquoted source material is written in the Analytical Register using its Sentence Moves and vocabulary. Tocqueville and Montaigne do not appear in any report section. The report contains no character dialogue, no character attributions, no character voice. They speak only in the operator's output window.
 
-**Default output:** Write the report to a file in the `reports/` directory adjacent to this tool. Filename: `YYYY-MM-DD-title-slug.md` where the slug is derived from the report title (lowercase, hyphens, no special characters). Create the `reports/` directory if it does not exist. After writing, tell the user the file path.
+**Default output:** Write the report to a file. Filename: `YYYY-MM-DD-title-slug.md` where the slug is derived from the report title (lowercase, hyphens, no special characters). Output location is determined by the workspace's ambient filing rules. After writing, tell the user the file path.
 
 ### 1. Title
 

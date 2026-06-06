@@ -8,7 +8,7 @@ Technical analysis tool for WG21 proposals. Two-pass architecture: Pass 1 extrac
 
 ## Commands
 
-- **Assay [path]** - run the full pipeline on a WG21 paper. Path is required. Output directory defaults to `.reports/` relative to this tool's directory.
+- **Assay [path]** - run the full pipeline on a WG21 paper. Path is required. Output location is determined by the workspace's ambient filing rules.
 - **Assay [path] [output-dir]** - run with a custom output directory.
 
 ---
@@ -100,7 +100,7 @@ Injected verbatim into every sub-agent prompt:
 
 ## Step 0. Receive
 
-The tool's entry point. Minimum-viable input: one file path to a WG21 paper. Optional: output directory (default: `.reports/` relative to this tool's directory). Ask once for the missing required input. Accept silence on optionals.
+The tool's entry point. Minimum-viable input: one file path to a WG21 paper. Optional: output directory (default determined by the workspace's ambient filing rules). Ask once for the missing required input. Accept silence on optionals.
 
 Validate the file exists using ReadFile on the first few lines. If missing, report and stop.
 

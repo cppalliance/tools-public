@@ -48,7 +48,7 @@ The Animadversiones are always written to a file unless the user explicitly requ
 
 **Default filename:** `advocatus-{paper}.md`, where `{paper}` is the document number in lowercase with the revision suffix, derived from the paper's front matter (e.g., `advocatus-d4003r1.md` for document D4003R1). If the document number is unavailable or ambiguous, ask the postulator before proceeding to Phase V.
 
-**Output location:** `reports/` relative to the repository root. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
+**Output location** is determined by the workspace's ambient filing rules. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
 
 **Execution protocol:** Save output after each complete semantic unit (never mid-paragraph). Always save output BEFORE marking plan items done - never the reverse. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content.
 

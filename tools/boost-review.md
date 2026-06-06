@@ -54,7 +54,7 @@ If any step must deviate from this pipeline to accommodate the subject, emit a b
 
 ## Artifact Caching
 
-Cache: `cache/_boost-review-{library-slug}.cache.md` relative to the repository root. Reports: `reports/boost-review-{library-slug}.md` relative to the repository root. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
+Cache: `cache/_boost-review-{library-slug}.cache.md` relative to the repository root. Report filename: `boost-review-{library-slug}.md`. Output location is determined by the workspace's ambient filing rules. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
 
 Write output to `cache/_boost-review-{library-slug}.tmp.md`. Rename to final path only after the report is complete. On resumption, check for `.tmp.md` and continue from its tail.
 

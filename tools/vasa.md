@@ -317,7 +317,7 @@ Three tests applied to each compound dynamic from Step 5. The stress test challe
 **What the subagent does:**
 - Renumbers all findings sequentially as T-1, T-2, ... in presentation order (severity descending). Does NOT carry forward S-N labels from the Challenge phase anywhere in the report. Translates all S-N references to T-N labels throughout: Executive Summary, Compound Dynamics, Findings headings, Artifact Inventory assessments - every section the reader sees.
 - Assembles the report following the Report Template below
-- Writes to `reports/vasa-{slug}.md` (or operator-specified path)
+- Writes to `vasa-{slug}.md` (output location determined by ambient filing rules)
 - Returns only: `"Report written to {path}."`
 
 ---
@@ -853,8 +853,8 @@ Apply: Look for: features that only work with their own types, APIs that cannot 
 ## STRESS TEST RESULTS (Step 6 - surviving + tombstoned + trimmed compounds)
 ```
 
-**Report file (output):** `reports/vasa-{slug}.md`
-- Default location: `reports/` in the repository root, unless the operator specifies otherwise
+**Report file (output):** `vasa-{slug}.md`
+- Output location is determined by the workspace's ambient filing rules
 - Written by Step 7
 - The deliverable
 

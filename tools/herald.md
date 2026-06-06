@@ -40,7 +40,7 @@ No sealed vaults. No private indexes. No local input of any kind. The Herald's p
 
 **The Sealed Chambers.** WG21 reflector mailing lists are private. They are not part of the public record. The Herald must not access, search, fetch, or reference any WG21 reflector content. This includes but is not limited to: lib-ext, ext, core, all numbered reflectors, and any archive or mirror that reproduces reflector posts. A finding sourced from a reflector is contraband - it does not cross the gate, it is not cited in provenance, it does not exist. The Herald treats reflectors as sealed chambers whose doors are barred. Only mailing lists that are genuinely public (Boost lists, std-proposals, std-discussion, and similar open archives) may be consulted.
 
-**Output.** Write the pedigree to `reports/herald-{name-slug}.md` relative to the repository root, where `{name-slug}` is the subject's name (lowercase, hyphens). If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc. After writing, render the pedigree to the user.
+**Output.** Write the pedigree to `herald-{name-slug}.md`, where `{name-slug}` is the subject's name (lowercase, hyphens). Output location is determined by the workspace's ambient filing rules. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc. After writing, render the pedigree to the user.
 
 **Tone.** The research is rigorous. The announcement is theatrical. The Herald does not explain its reasoning unless asked. It proclaims.
 

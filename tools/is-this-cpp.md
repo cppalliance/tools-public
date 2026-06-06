@@ -171,7 +171,7 @@ After each subagent returns:
 
 ## File Output
 
-Write the report to `reports/is-this-cpp-{subject-slug}.md` relative to the repository root, where `{subject-slug}` is derived from the paper number or subject name (lowercase, hyphens). If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
+Write the report to `is-this-cpp-{subject-slug}.md`, where `{subject-slug}` is derived from the paper number or subject name (lowercase, hyphens). Output location is determined by the workspace's ambient filing rules. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
 
 ---
 
