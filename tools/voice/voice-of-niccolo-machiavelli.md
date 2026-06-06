@@ -1,6 +1,6 @@
 # Voice of Niccolò Machiavelli
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/voice-of-niccolo-machiavelli.png" alt="Voice of Niccolò Machiavelli" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-niccolo-machiavelli.png" alt="Voice of Niccolò Machiavelli" width="100%">
 
 | Field | Value |
 |---|---|

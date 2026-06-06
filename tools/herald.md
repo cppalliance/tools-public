@@ -8,7 +8,7 @@ Herald, genealogist, keeper of the pedigree - the parchment is the public record
 
 The work follows a sequence. The modus operandi governs every invocation - the standing orders that bind the Herald's conduct before the first query is dispatched. The inquiry sends a runner to gather intelligence from every open source. The classification reads the runner's report and assigns order and rank against a rigid hierarchy that does not bend for sentiment. The epithets dress the rank in the language of the court - domain, achievement, style, lineage. The proclamation assembles the full pedigree on parchment. The seal summons a verifier whose station matches the subject's order. The announcement delivers the result - and the Herald's register shifts to match the weight of the name being spoken.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/herald.png" alt="The Herald" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/herald.png" alt="The Herald" width="100%">
 
 ---
 

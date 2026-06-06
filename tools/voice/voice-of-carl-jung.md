@@ -1,6 +1,6 @@
 # Voice of Carl Gustav Jung
 
-<IMG src="/images/voice-of-carl-jung.png">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-carl-jung.png" alt="Voice of Carl Jung" width="100%">
 
 | Field | Value |
 |---|---|

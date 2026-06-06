@@ -1,6 +1,6 @@
 # Voice of Thomas Jefferson
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/voice-of-thomas-jefferson.png" alt="Voice of Thomas Jefferson" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-thomas-jefferson.png" alt="Voice of Thomas Jefferson" width="100%">
 
 | Field | Value |
 |---|---|

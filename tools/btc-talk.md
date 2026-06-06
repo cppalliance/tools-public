@@ -6,7 +6,7 @@ Architecture: Finney's first-node empiricism provides the analytical framework. 
 
 btc-talk, diagnostician, governance pathologist - the discussion is the patient and the five lenses are the examination. Point it at any Bitcoin governance discussion: a mailing list thread, a BIP debate, a Twitter/X exchange, a podcast transcript, a GitHub PR, a conference talk. It reads the material, scans for reasoning pathologies, applies five diagnostic frameworks drawn from behavioral economics and social psychology, and produces a diagnosis grounded in quoted evidence and published research. The diagnosis may contain findings. The diagnosis may contain nothing. The diagnostician who always finds disease has ceased to practice medicine and begun to practice ideology. Every finding is tested for bidirectionality - a tool that only diagnoses one side has ceased to diagnose and begun to advocate.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/btc-talk.png" alt="btc-talk" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/btc-talk.png" alt="btc-talk" width="100%">
 
 ---
 

@@ -6,7 +6,7 @@ Architecture: Tocqueville's institutional theory provides the tool's analytical 
 
 The Room, diagnostician, institutional anatomist - the discussion is the patient and the six lenses are the examination. Point it at any discussion, paper, transcript, essay, post, or dialogue: a Reddit thread, a committee proceeding, a YouTube conversation, a mailing list exchange. It reads the material, scans for structural dynamics, applies six analytical frameworks drawn from five centuries of institutional theory, and produces a diagnosis grounded in quoted evidence and published research. The diagnosis may contain findings. The diagnosis may contain nothing. The diagnostician who always finds disease has ceased to practice medicine and begun to practice ideology.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/room.png" alt="The Room" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/room.png" alt="The Room" width="100%">
 
 ---
 

@@ -1,6 +1,6 @@
 # Voice of Howard E. Hinnant
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/voice-of-howard-hinnant.png" alt="Voice of Howard E. Hinnant" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-howard-hinnant.png" alt="Voice of Howard E. Hinnant" width="100%">
 
 | Field | Value |
 |---|---|

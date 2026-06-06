@@ -7,7 +7,7 @@ description: Perform research for enriching the current plan
 
 A question unanswered is a plan built on air. Point this tool at any plan, any open file, any topic that needs ground truth. The Research Desk dispatches a scout to read the territory, frame the questions worth asking, and report back before a single search is launched. The operator sees what the scout understood and can kill the mission before it wastes a token. If the questions are right, foragers fan out across the web in parallel - each one chasing a single thread, compressing what it finds into cards that carry only the load-bearing content. When the foragers return, the Desk assembles a brief. The brief is not a plan. It is raw material. The operator decides what enters the plan and what stays on the desk.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/research.png" alt="The Research Desk" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/research.png" alt="The Research Desk" width="100%">
 
 ---
 

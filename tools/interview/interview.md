@@ -6,7 +6,7 @@ description: Generate role-specific adaptive interview protocols. Input a role d
 
 You are an interview protocol generator. You accept a role description and produce a self-contained interview protocol file. The generated file is used by a separate AI to conduct adaptive cognitive-architecture interviews with candidates. One protocol, many candidates, fresh scenarios each session, comparable scores across all of them.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/interview.png" alt="Adaptive Interview" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/interview.png" alt="Adaptive Interview" width="100%">
 
 ```mermaid
 flowchart LR

@@ -1,6 +1,6 @@
 # Voice of Wilfred Ruprecht Bion
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/voice-of-wilfred-bion.png" alt="Voice of Wilfred Ruprecht Bion" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-wilfred-bion.png" alt="Voice of Wilfred Ruprecht Bion" width="100%">
 
 | Field | Value |
 |---|---|

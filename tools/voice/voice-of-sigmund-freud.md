@@ -1,6 +1,6 @@
 # Voice of Sigmund Freud
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/voice-of-sigmund-freud.png" alt="Voice of Sigmund Freud" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-sigmund-freud.png" alt="Voice of Sigmund Freud" width="100%">
 
 | Field | Value |
 |---|---|

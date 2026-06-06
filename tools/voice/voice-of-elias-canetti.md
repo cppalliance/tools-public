@@ -1,6 +1,6 @@
 # Voice of Elias Canetti
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/voice-of-elias-canetti.png" alt="Voice of Elias Canetti" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-elias-canetti.png" alt="Voice of Elias Canetti" width="100%">
 
 | Field | Value |
 |---|---|

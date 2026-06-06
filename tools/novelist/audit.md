@@ -4,7 +4,7 @@ A bible-only diagnostic that walks every chapter block in sequence and reports w
 
 The Audit answers one question per chapter: does this bible block give the writer enough — and the right things — to produce the chapter the book needs? If yes, it moves on. If no, it says what's missing and waits for instruction.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/audit.png" alt="The Audit" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/audit.png" alt="The Audit" width="100%">
 
 ---
 

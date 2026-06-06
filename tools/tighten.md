@@ -6,7 +6,7 @@ description: Compress a document to half its length while preserving voice
 
 Point this tool at any document that has grown past its payload. It performs a provenance-aware quality audit, identifies what is load-bearing versus decorative, and rewrites the document at roughly half its original line count without changing its voice, register, or structural intent. The tool does not add material. It subtracts everything that is not doing work.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/tighten.png" alt="Tighten" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/tighten.png" alt="Tighten" width="100%">
 
 ---
 

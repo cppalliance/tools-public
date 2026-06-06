@@ -14,7 +14,7 @@ Sea-trial inspector, keel auditor, ballast surveyor, drydock examiner - the inst
 
 Twenty-four ribs, each forged from Stroustrup's *Design and Evolution of C++* (1994) [\[1\]](#ref-1), each validated by three decades of code that compiles, ships, and runs on everything from Mars helicopters to trading floors. These are not philosophy. They are engineering constraints with salt spray on them - the properties that working C++ exhibits when it is working correctly. Together they protect the foundational duality that justifies C++ existing as a distinct language: close-to-hardware efficiency married to high-level abstraction, with neither sacrificed for the other. When two rooms make decisions that jointly crack a rib, the tool names it: which berths, which timbers, which rib, how the hull flexes under that specific cross-stress. The report is a surveyor's certificate - not an opinion but a measured finding, with the draft marks and the waterline evidence cited. The Vasa invents nothing. It applies what is known. It sees what no single participant in one room can see: the emergent tensions that arise only when the whole vessel is inspected at once. It provides measurement so humans can build the fix. It does not prescribe repairs. The committee decides what to do. The tool tells them where the water is coming in.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/images/vasa-ship-portrait.png" alt="The Vasa in drydock" width="100%">
+<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/vasa-ship-portrait.png" alt="The Vasa in drydock" width="100%">
 
 ```mermaid
 flowchart LR
