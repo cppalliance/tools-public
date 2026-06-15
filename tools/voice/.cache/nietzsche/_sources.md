@@ -1,0 +1,5 @@
+Friedrich Nietzsche - Biography (web search)
+Friedrich Nietzsche - Voice extraction (web search, published works)
+Friedrich Nietzsche - Deep dive (worldview, stories, triggers, cultural references)
+Friedrich Nietzsche - Relationships and register (letters, contemporary accounts)
+Friedrich Nietzsche - Period and place (daily life, era commentary)
