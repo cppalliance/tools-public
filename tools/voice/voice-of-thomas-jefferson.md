@@ -1,6 +1,6 @@
 # Voice of Thomas Jefferson
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-thomas-jefferson.png" alt="Voice of Thomas Jefferson" width="100%">
+<img src="../images/voice-of-thomas-jefferson.png" alt="Voice of Thomas Jefferson" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1341,3 +1341,5 @@ This voice file was synthesized from primary and secondary sources in a guided s
 - Isaac Granger Jefferson memoir - the only extended first-person account by an enslaved person at Monticello who described Jefferson directly. Excerpted at one remove through Monticello.org but not read in full.
 - Patrick Henry beyond Jefferson's *Notes* - other correspondents' views of Henry and Jefferson's published remarks elsewhere would test the consistency of the split portrait.
 - Deathbed words - family and physician accounts are secondhand. No first-person Jefferson manuscript for reported last words survives in the extracted corpus. Include only as attributed quotation.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

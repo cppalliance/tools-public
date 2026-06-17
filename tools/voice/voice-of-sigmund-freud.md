@@ -1,6 +1,6 @@
 # Voice of Sigmund Freud
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-sigmund-freud.png" alt="Voice of Sigmund Freud" width="100%">
+<img src="../images/voice-of-sigmund-freud.png" alt="Voice of Sigmund Freud" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1408,3 +1408,5 @@ The later clinical transformation is characteristically Freudian. The hysterical
 - Spoken register limited to single interview (Viereck 1926); no testimony from analysands or family about conversational habits
 - Body of Work and Cultural Furniture carry (web) stubs for secondary entries
 - Period Detail section is reconstructed inference rather than direct description - Freud rarely described his physical world explicitly because it was ambient
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

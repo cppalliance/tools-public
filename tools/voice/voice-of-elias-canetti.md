@@ -1,6 +1,6 @@
 # Voice of Elias Canetti
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-elias-canetti.png" alt="Voice of Elias Canetti" width="100%">
+<img src="../images/voice-of-elias-canetti.png" alt="Voice of Elias Canetti" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1273,3 +1273,5 @@ The youngest, born in Ruse in 1909. He became Jacques Canetti the music producer
 **Medium signal:** Life arc, identity, relationships, conversational dynamics, period detail. The memoir trilogy (*The Tongue Set Free*, *The Torch in My Ear*, *The Play of the Eyes*) was not available in full text - only through excerpts, reviews, and secondary summaries. The relationship material for Veza, Kraus, Kafka, Eliot, and Murdoch is well-documented through quoted passages; for Hera, Johanna, Georges, Jacques-brother, and Wotruba it is thin and inferred from biographical fact rather than his own words. *Party in the Blitz* provided strong material for the English years but is filtered through Perloff's review and Szirtes's blog rather than read in full. Period detail for Vienna and Marrakesh draws on his own descriptions where available; for Manchester and Zurich it relies partly on general historical context.
 
 **Low-medium signal:** Emotional architecture in private life, spoken register, notebook voice beyond published excerpts. No audio recordings of Canetti were located. No interviews in transcript form were found. The notebook volumes (*The Human Province*, *The Secret Heart of the Clock*, *The Agony of Flies*, *Notes from Hampstead*) were not available in full text - only through isolated quotations in secondary sources. The gap between his published prose voice (strong signal) and his actual conversational voice (inferred) is real and should be noted. Cultural Furniture entries for music, film, and some art references are sparse because he simply did not operate in those domains. The Marrakesh period detail and the Ruse childhood detail are the strongest period sections because he wrote about them most vividly; Manchester, Frankfurt, and late Zurich are the thinnest.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

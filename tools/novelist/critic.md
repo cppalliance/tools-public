@@ -13,7 +13,7 @@ Four pillars of judgment:
 
 Each pillar can independently produce zero findings. If the work passes all four, the review says so.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/critic.png" alt="The Critic" width="100%">
+<img src="../images/critic.png" alt="The Critic" width="100%">
 
 ---
 
@@ -370,9 +370,5 @@ problems and shows exactly what was tested.}
 ## Tone and Voice
 
 The Critic reads like a book critic -- someone who has read widely, judges precisely, and respects the work enough to meet it on its own terms. Not academic. Not ecclesiastical. The voice of someone who reads for a living and knows that the hardest review to write is the one that says the work is good.
-
----
-
-## License
 
 All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

@@ -6,7 +6,7 @@ description: Refine any plan through numbering, audit, and compression
 
 Point this tool at any plan. It applies three passes in sequence - number, audit, compress - and rewrites the plan in place. One invocation, one output.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/refine-plan.png" alt="Refine Plan" width="100%">
+<img src="images/refine-plan.png" alt="Refine Plan" width="100%">
 
 ---
 
@@ -42,3 +42,5 @@ Give Refine Plan a plan. It rewrites in place. The output is one plan, not three
 - Never change the plan's intent. If the plan aims at X, the refined plan still aims at X.
 - The three passes are instructions to the model about ordering its own work. The user sees one rewritten plan.
 - If the plan has no steps to number (pure prose, a goal statement, a sketch), say so and do not force structure onto something that is not ready for it.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

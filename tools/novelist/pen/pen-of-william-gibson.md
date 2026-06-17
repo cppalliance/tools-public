@@ -85,3 +85,5 @@
 
 - **NEVER** use em dashes. Single dashes only.
 - **NEVER** use exclamation points.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

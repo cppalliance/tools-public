@@ -6,7 +6,7 @@ Architecture: Finney's first-node empiricism provides the analytical framework. 
 
 btc-talk, diagnostician, governance pathologist - the discussion is the patient and the five lenses are the examination. Point it at any Bitcoin governance discussion: a mailing list thread, a BIP debate, a Twitter/X exchange, a podcast transcript, a GitHub PR, a conference talk. It reads the material, scans for reasoning pathologies, applies five diagnostic frameworks drawn from behavioral economics and social psychology, and produces a diagnosis grounded in quoted evidence and published research. The diagnosis may contain findings. The diagnosis may contain nothing. The diagnostician who always finds disease has ceased to practice medicine and begun to practice ideology. Every finding is tested for bidirectionality - a tool that only diagnoses one side has ceased to diagnose and begun to advocate.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/btc-talk.png" alt="btc-talk" width="100%">
+<img src="images/btc-talk.png" alt="btc-talk" width="100%">
 
 ---
 
@@ -65,7 +65,7 @@ This section is not metaphor. It is a hard mechanical constraint.
 
 The main context window is a **pure relay**. It performs no analysis. It holds no source material. It spawns one sub-agent at a time for each analytical phase, emits the dialogue that comes back, extracts the structured data for the next phase, and repeats.
 
-**Source material handling.** The orchestrator never injects source text into sub-agent prompts. If the user points at a file, pass the file path. If the user pastes text, write it to `cache/_btc-talk-scratch-source.md` (creating `cache/` if needed), then pass that path. Every sub-agent reads the same file(s). When multiple sources have been collected (via interactive mode or multiple references in a single invocation), the orchestrator passes all source file paths to each sub-agent. Sub-agents read all sources and analyze them as a collection.
+**Source material handling.** The orchestrator never injects source text into sub-agent prompts. If the user points at a file, pass the file path. If the user pastes text, write it to a **scratch** file `btc-talk-source.md`, then pass that path. Every sub-agent reads the same file(s). When multiple sources have been collected (via interactive mode or multiple references in a single invocation), the orchestrator passes all source file paths to each sub-agent. Sub-agents read all sources and analyze them as a collection.
 
 **Operator evidence.** The operator may provide evidence alongside the source material - links, documents, prior btc-talk reports, screenshots, or contextual text. Each piece is entered into the record. If the evidence is a URL, it is recorded as-is with a brief description. If the evidence is pasted text, the orchestrator paraphrases it into a clean one-sentence evidence item. The orchestrator stores all pieces as a numbered list: `{number, type, description, url_or_null}`. This list is passed to Phase 5 for the report. Sub-agents that read the source file may also read evidence files if the operator provided file paths, but the pieces list is maintained by the orchestrator alone.
 
@@ -243,7 +243,7 @@ When the operator loads btc-talk with no source material - or says "Enter btc-ta
 - `sources`: numbered list of `{number, type, description, path_or_url}`. Types: Mailing list thread, BIP discussion, Twitter/X thread, Podcast transcript, GitHub PR/issue, Blog post, Conference talk, Forum post, Reddit thread, Other
 - `pieces`: numbered list of `{number, type, description, url_or_null}`. Types: Link, Prior report, Document, Screenshot, Transcript, Deposition, Other
 
-**Adding sources.** Operator says "add source" and points at a file, provides a link, or pastes text. The orchestrator adds it to the source list. If pasted text, write it to `cache/_btc-talk-scratch-source-N.md` (numbered). Finney acknowledges with one sentence: what type of source, what it appears to concern. He does not analyze it.
+**Adding sources.** Operator says "add source" and points at a file, provides a link, or pastes text. The orchestrator adds it to the source list. If pasted text, write it to a **scratch** file `btc-talk-source-N.md` (numbered). Finney acknowledges with one sentence: what type of source, what it appears to concern. He does not analyze it.
 
 **Adding evidence.** Operator says "add evidence" and provides a file, link, or text. The orchestrator adds it to the pieces list. If pasted text, paraphrase into a clean one-sentence evidence item. Finney acknowledges: names the piece and its type in one sentence.
 
@@ -789,7 +789,7 @@ What does the convergence of lenses reveal that no single lens reveals alone? Wh
 
 The output is strictly prescribed structured markdown. Every report follows this format. No deviation. Every section except the Legend table and blockquoted source material is written in the Analytical Register using its Sentence Moves and vocabulary. Finney and Satoshi do not appear in any report section. The report contains no character dialogue, no character attributions, no character voice. They speak only in the operator's output window.
 
-**Default output:** Write the report to `btc-talk-{title-slug}.md`, where the slug is derived from the report title (lowercase, hyphens, no special characters). Output location is determined by the workspace's ambient filing rules. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc. After writing, tell the user the file path.
+**Default output:** Write the report to `btc-talk-{title-slug}.md`, where the slug is derived from the report title (lowercase, hyphens, no special characters). The report is **output**. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc. After writing, tell the user the file path.
 
 ### 1. Title
 
@@ -1039,8 +1039,4 @@ In the report output, each reference entry is an anchor target. Format: `<a id="
 34. De Filippi, P. and Loveluck, B. "The Invisible Politics of Bitcoin." *Internet Policy Review* 5(3), 2016.
 35. Azouvi, S., Maller, M. and Meiklejohn, S. "Egalitarian Society or Benevolent Dictatorship: The State of Cryptocurrency Governance." *Financial Cryptography and Data Security* 2019.
 
----
-
-## License
-
-All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). Anyone may freely reuse, adapt, or republish this material - in whole or in part - with or without attribution.
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

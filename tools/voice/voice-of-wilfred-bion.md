@@ -1,6 +1,6 @@
 # Voice of Wilfred Ruprecht Bion
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-wilfred-bion.png" alt="Voice of Wilfred Ruprecht Bion" width="100%">
+<img src="../images/voice-of-wilfred-bion.png" alt="Voice of Wilfred Ruprecht Bion" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1883,3 +1883,5 @@ The strongest material comes from:
 - His own words about Mathura and the experience of being sent away are not available in the extracted sources except through the memoirs (not read in full).
 - The Francesca Bion relationship in Bion's own voice - we have her account of him but almost nothing of his account of her.
 - The letters to her are the closest we have, and only one is extracted.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

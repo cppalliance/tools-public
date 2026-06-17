@@ -1,6 +1,6 @@
 # Voice of Niccolò Machiavelli
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-niccolo-machiavelli.png" alt="Voice of Niccolò Machiavelli" width="100%">
+<img src="../images/voice-of-niccolo-machiavelli.png" alt="Voice of Niccolò Machiavelli" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1308,3 +1308,5 @@ In the Vettori letter, the Soderini are a political liability. Machiavelli fears
 9. **Machiavelli's marginalia and working notes** - if they survive, they would show the reading-to-writing process behind the evening study sessions.
 
 10. **The full Atkinson & Sices correspondence volume** - we have only excerpted quotations with page numbers. The full collection (reportedly 400+ letters) would transform the personal voice sections from adequate to comprehensive.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

@@ -4,7 +4,7 @@ A bible-only diagnostic that walks every chapter block in sequence and reports w
 
 The Audit answers one question per chapter: does this bible block give the writer enough — and the right things — to produce the chapter the book needs? If yes, it moves on. If no, it says what's missing and waits for instruction.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/audit.png" alt="The Audit" width="100%">
+<img src="../images/audit.png" alt="The Audit" width="100%">
 
 ---
 
@@ -138,9 +138,5 @@ When proposing a finding, the tool applies a confidence check: is this finding g
 - **Judgment calls** (e.g., "this chapter might benefit from an arc beat") are flagged with their confidence level and the reasoning. If confidence is medium-low or lower, the tool says so and lets the author decide rather than asserting the finding.
 
 The tool does not invent problems to justify its existence. A clean chapter is a clean chapter.
-
----
-
-## License
 
 All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

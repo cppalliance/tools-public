@@ -10,7 +10,7 @@ Point it at a chapter. It finds what needs fixing - a misspelled compound, a par
 
 Seven groups: mechanical, structural, trust, architecture, resonance, dialogue, vitality. Thirty-five patterns total. Seven preservation rules that protect formal devices AI editors habitually damage. Five serial analysis passes - each a sub-agent with its own pattern scope - merged into one flags file. One interactive session for flags, one for vitality insertions, ordered by line number, top to bottom through the chapter.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/workshop.png" alt="The Workshop" width="100%">
+<img src="../images/workshop.png" alt="The Workshop" width="100%">
 
 ```mermaid
 flowchart LR
@@ -588,9 +588,5 @@ A surviving insertion is guaranteed not to be dead, flat, or damaged. Whether it
 The DEAD test is the strongest attack: it reliably rejects sentences with no scene under them. The FLAT test is medium confidence: it catches insertions that match the surrounding prose on all measured dimensions, but some genuinely good insertions are quiet and would score FLAT. The author may override FLAT with `that's the one` if they believe a quiet insertion is correct. The DAMAGED test is reliable: it uses the same thirty binary checks as the regular analysis.
 
 The attack protocol's accuracy can be self-assessed on the rejection side. After several chapters, review DEAD and FLAT verdicts: were the rejected sentences actually empty constructs or band-matching? Were any DAMAGED verdicts false positives? These are mechanical checks with right/wrong answers. SURVIVED quality **CANNOT** be self-assessed. Whether surviving insertions elevate the chapter is a question only a human reader can answer - someone who reads the chapter without knowing which sentences are insertions and reports which ones stopped them. The tool's ceiling is the rejection boundary. Everything above that boundary is the author's.
-
----
-
-## License
 
 All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

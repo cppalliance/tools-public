@@ -2,7 +2,7 @@
 
 The Novelist writes fiction. It analyzes existing manuscripts into structured story bibles, builds bibles from scratch through conversation, and authors chapters serially using the bible as the assignment and a pen file as the voice. Three modes: Analyze, Plan, Author.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/novelist.png" alt="The Novelist" width="100%">
+<img src="../images/novelist.png" alt="The Novelist" width="100%">
 
 ---
 
@@ -278,9 +278,5 @@ Invoked by `"Add witness to chapter N."` This is a bible-editing task, not a wri
 ## Assembly
 
 `"Assemble."` concatenates chapter files into `manuscript.md` with `## Chapter N: Title` headings and `---` scene breaks. Compatible with downstream tooling (e.g. `bookmaker.py`) for PDF generation.
-
----
-
-## License
 
 All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

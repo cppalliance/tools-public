@@ -2,7 +2,7 @@
 
 A self-contained tightener. Point it at a chapter and it reviews, fixes, and evaluates -- keeping only the changes that are unambiguously better than the original. No rewriting for taste. No improvements beyond what the review found. Tighten what's loose; leave what's alive.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/edit.png" alt="The Edit" width="100%">
+<img src="../images/edit.png" alt="The Edit" width="100%">
 
 ---
 
@@ -187,9 +187,5 @@ The report groups outcomes under headers. Each entry is a bullet. Empty groups a
 After the groups, a closing line: Run "Edit chapter M" again to retry unresolved findings.
 
 The suggestion to re-run Edit (not Review) is deliberate -- the tool includes its own review.
-
----
-
-## License
 
 All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

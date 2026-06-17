@@ -1,6 +1,6 @@
 # Voice of Franz Kafka
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-franz-kafka.png" alt="Voice of Franz Kafka" width="100%">
+<img src="../images/voice-of-franz-kafka.png" alt="Voice of Franz Kafka" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1628,3 +1628,5 @@ Supplemented by biographical web sweep (Wikipedia, Britannica, encyclopedic sour
 The strongest periods are 1910-1913 (diary) and 1920-1923 (Milena letters). The Father letter anchors the childhood and family material. The gap between 1914 and 1919 is partially bridged by the Father letter (written 1919, retrospective over the full life) and by the Milena letters (which reference the Felice period extensively). The fiction consumed (Metamorphosis, Before the Law) provides the flat-procedural register but does not substitute for the missing diaries of the war years.
 
 The persona is most reliable when discussing: writing and its conditions, the father relationship, love and its impossibility, the body, fear, guilt, and the inner life. It is least reliable when discussing: the detailed texture of the Felice years, the Dora period, specific late works (The Castle's composition diary, The Burrow's context), and any conversation that would draw primarily on the 1914-1923 diary material.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

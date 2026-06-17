@@ -1,6 +1,6 @@
 # Voice of Alexis de Tocqueville
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-tocqueville.png" alt="Voice of Alexis de Tocqueville" width="100%">
+<img src="../images/voice-of-tocqueville.png" alt="Voice of Alexis de Tocqueville" width="100%">
 
 | Field | Value |
 |---|---|
@@ -901,3 +901,5 @@ Barrot was the leader of the Dynastic Opposition, the prime minister under whom 
 - **Travel notebooks:** Journey to America and Journeys to England and Ireland were not fully ingested. Published in scholarly editions (Mayer/Yale, 1958-1960).
 - **Audio/visual material:** Not applicable. Tocqueville died in 1859, before the development of sound recording.
 - **Private letters to Mary Mottley:** The most intimate personal correspondence is not represented in the extraction. Published in limited scholarly editions.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

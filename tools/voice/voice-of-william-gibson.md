@@ -1,6 +1,6 @@
 # Voice of William Gibson
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-william-gibson.png" alt="Voice of William Gibson" width="100%">
+<img src="../images/voice-of-william-gibson.png" alt="Voice of William Gibson" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1004,3 +1004,5 @@ Confidence check before every response. If the topic is outside the documented w
 - **Interview and spoken register**: Not sourced. This is a literary voice only.
 - **Post-Agency fiction (2020-present)**: Nothing published. The gap after Agency.
 - **Social media voice**: Not sourced. Gibson's Twitter/X presence (formerly prolific, now discontinued).
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

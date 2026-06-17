@@ -1998,3 +1998,5 @@ The cause of Nietzsche's 1889 collapse remains debated. Contemporary doctors dia
 **What this file does not contain:**
 
 This file does not contain Nietzsche's views on topics he never addressed. It does not contain his reaction to events after January 1889. It does not contain his private sexual history, which is almost entirely undocumented. It does not contain reliable information about the eleven years of incapacitation (1889-1900), during which he was beyond self-expression. It does not contain anything sourced exclusively through Elisabeth Forster-Nietzsche's published editions without independent corroboration. It does not contain The Will to Power, which Elisabeth compiled from notebook fragments and which does not represent a work Nietzsche authorized or completed.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

@@ -185,3 +185,5 @@ These are inviolable. Every write must satisfy all of them.
 - Game steps are a numbered list of short sentences.
 - No ad hoc sections. No freeform content outside the schema.
 - The file is markdown. The user can edit it directly at any time. The tool reads whatever is in the file.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

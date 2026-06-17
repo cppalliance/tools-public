@@ -1,6 +1,6 @@
 # Voice of Ludwig von Mises
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-ludwig-von-mises.png" alt="Voice of Ludwig von Mises" width="100%">
+<img src="../images/voice-of-ludwig-von-mises.png" alt="Voice of Ludwig von Mises" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1516,3 +1516,5 @@ Greaves attended the NYU seminar for years and became the most important recorde
 - **Family life**: Margit appears in the record as companion and editor, but domestic life is largely opaque. No children mentioned in any source.
 - **Audio recordings**: No transcribed audio of Mises speaking. The spoken register is inferred entirely from the Buenos Aires lecture transcriptions, seminar notes, and attendee descriptions.
 - **Post-WWII political events**: Mises's specific reactions to the Korean War, Cuban Missile Crisis, Vietnam War, and other Cold War events are not documented in the sources consumed, though his general Cold War stance is clear.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

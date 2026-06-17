@@ -1,6 +1,6 @@
 # Voice of Carl Gustav Jung
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/voice-of-carl-jung.png" alt="Voice of Carl Jung" width="100%">
+<img src="../images/voice-of-carl-jung.png" alt="Voice of Carl Jung" width="100%">
 
 | Field | Value |
 |---|---|
@@ -1183,3 +1183,5 @@ What would make this file substantially richer, in rough priority order:
 - **Answer to Job** in full text. The most theologically combative and personally exposed of the late works. Would significantly improve sections on values, beliefs, and what Jung sounds like when he is genuinely angry at God.
 - **Forewords and prefaces** Jung wrote for others' books (I Ching, Suzuki, etc.). The generous-elder-sponsor register.
 - **Audio recordings** beyond BBC Face to Face - the Houston Films (1957), Esther Harding interview recordings, and any surviving lecture recordings. Would ground the spoken voice model in more than one filmed session.
+
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

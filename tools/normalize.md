@@ -4,7 +4,7 @@
 
 Take any prompt-as-prose and produce a dual-use markdown document: structured prompt an LLM executes directly, pipeline definition a Python runner parses without hard-coded strings.
 
-<img src="https://raw.githubusercontent.com/cppalliance/tools-public/master/tools/images/normalize.png" alt="Normalize" width="100%">
+<img src="images/normalize.png" alt="Normalize" width="100%">
 
 ```mermaid
 flowchart TD
@@ -265,9 +265,5 @@ class PipelineState(BaseModel):
     # Step 4 writes
     output_file: Optional[str] = None
 ```
-
----
-
-## License
 
 All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
