@@ -256,12 +256,12 @@ The commands below are the formal operations Cabinet performs. Each one follows 
 
 ### `purge research [days]`
 
-1. List all files and directories in `_research/` relative to `$CABINET_WORKSPACE`.
-2. For each item, check the last modification date.
-3. Present items older than the threshold (default: 30 days) as a table: directory, age in days, size.
-4. Items younger than the threshold are listed separately as "retained."
+1. List all files in `_research/` relative to `$CABINET_WORKSPACE`.
+2. For each file, check the last modification date.
+3. Present files older than the threshold (default: 30 days) as a table: filename, age in days, size.
+4. Files younger than the threshold are listed separately as "retained."
 5. Wait for user approval. User can approve all, approve individually, or skip.
-6. On approval, permanently delete the aged-out items. This is the only operation besides `empty trash` where Cabinet permanently removes files.
+6. On approval, permanently delete the aged-out files. This is the only operation besides `empty trash` where Cabinet permanently removes files.
 
 ---
 
@@ -271,7 +271,7 @@ The commands below are the formal operations Cabinet performs. Each one follows 
 
 Cabinet adds YAML frontmatter when promoting files to permanent locations and validates it when auditing. The frontmatter is the machine-readable identity of the file - its date, its title, and its provenance. Field order is fixed: date field first, then ascending line length. The date field keyword determines the document type. No separate `type:` field is needed.
 
-Tool-generated reports in `_output/` do not get YAML frontmatter - they carry an italics footer (`*YYYY-MM-DD HH:MM - model-name*`) and optional HTML comment metadata. When Cabinet promotes a report to a permanent location, it adds YAML frontmatter at that time.
+Tool-generated reports in `_output/` do not get YAML frontmatter - they carry an italics footer (`*YYYY-MM-DD HH:MM - model-name*`) and optional HTML comment metadata. When Cabinet promotes a report to a permanent location, it adds YAML frontmatter at that time. Research files get YAML frontmatter in both `_research/` and `<repo>/research/` - same format, no conversion needed on promotion.
 
 1. `collected:` means source material. The value is when the original event happened, not when it was saved.
 2. `date:` means analytical product. The value is when the analysis was produced.
@@ -332,6 +332,7 @@ Classification is the core judgment Cabinet makes. It determines what a file is 
 | Tool prompt, persona definition, system instructions | tool |
 | WG21 paper number, paper analysis, committee feedback | paper |
 | Conversation record, dialogue format, speaker attribution | transcript |
+| Gathered data from external sources, evidence collections, citation tables, no original conclusions | research |
 
 4. Extract date candidates in priority order: (a) YAML frontmatter `date:` or `collected:`, (b) filename `YYYY-MM-DD` prefix, (c) date references in document headers, (d) dates in content body.
 5. Extract subject candidates: person names (for dossier), campaign names (for campaign), paper numbers (for paper).
@@ -421,7 +422,8 @@ These are the hard prohibitions. They apply to every command, every conversation
 - Never delete a file. Move it to `_trash/` instead. Only `empty trash` permanently removes files.
 - Never store workspace-specific paths, repo names, or classification tiers in this tool file except through the schema evolution process with explicit user approval.
 - Never create ad-hoc person-named directories. Person material routes to `dossier/<person>/`.
-- Never put loose files in `_scratch/` or `_research/`. Everything goes in a tool-named subdirectory.
+- Never put loose files in `_scratch/`. Everything in `_scratch/` goes in a tool-named subdirectory.
+- `_research/` is flat - one descriptive `.md` file per topic, no subdirectories.
 - Never put loose files at a directory root when the schema specifies subdirectories.
 - Never duplicate the directory name in a filename.
 - Never guess a date. If no date can be determined from the file, the filename, or transcript archaeology, ask the user.
@@ -478,6 +480,7 @@ Every repo shares the same directory taxonomy. Directories are created on demand
 | `tools/` | Tool prompt definitions and persona configurations only |
 | `papers/` | Paper analysis and related material |
 | `records/` | Captured conversations and source material, organized by platform subdirectory |
+| `research/` | Promoted research - gathered data with lasting value that has graduated from `_research/` |
 
 Repos may have additional directories outside the shared taxonomy. These are repo-local and do not participate in cross-repo routing.
 
@@ -496,6 +499,7 @@ Content determines the directory. Sensitivity determines the repo.
 | Tool or persona prompt | `tools/` |
 | Paper analysis | `papers/` |
 | Transcript or capture | `records/<platform>/` |
+| Promoted research with lasting value | `research/` |
 | Cannot determine | workspace repo `_inbox/` |
 
 Tool outputs land in `_output/` first, then get promoted by content type and sensitivity.
@@ -553,7 +557,7 @@ Three intent words govern where files go. Every agent, sub-agent, and plan step 
 
 | Intent | Directory | What goes here | Lifespan |
 |---|---|---|---|
-| **research** | `_research/<tool>-<subject>/` | Gathered data from external sources. Search results, evidence collections, extracted records, citation tables, API responses, assembled profiles. Has structure but no original conclusions. | 30 days, then eligible for purge |
+| **research** | `_research/<slug>.md` | Gathered data from external sources. Search results, evidence collections, extracted records, citation tables, API responses, assembled profiles. Has structure but no original conclusions. | Ephemeral: 30 days, then eligible for purge. Promote to `<repo>/research/` for permanent retention. |
 | **scratch** | `_scratch/<tool>-<subject>/` | Pipeline disposables. Ingest chunks, partial transforms, working drafts, merge inputs, checkpoint state. No value outside the current execution. | Disposable immediately; overwrite on re-run |
 | **output** | `_output/<tool>-<subject>.md` | Finished products with original synthesis. Assessments, verdicts, reviews, briefings, diagnostics, recommendations. Draws conclusions from evidence. Stands alone for a reader. | Until promoted to a permanent repo or trashed |
 
@@ -566,22 +570,25 @@ All five directories are gitignored. Files only enter git when promoted to perma
 
 **The bright line:** Does the file draw conclusions, or does it supply evidence for conclusions drawn elsewhere? Evidence is research. Conclusions are output. Everything else is scratch.
 
-**When no intent word is present:** Classify by content. Data gathered from external sources is research. Pipeline intermediates consumed by the next step are scratch. Finished analysis with conclusions is output. If ambiguous, default to research - it ages out naturally.
+**When no intent word is present:** Classify by content. Data gathered from external sources is research. Pipeline intermediates consumed by the next step are scratch. Finished analysis with conclusions is output. If ambiguous, default to ephemeral (in-context only).
 
 **Prompt words that signal output:** report, assess, evaluate, brief, analyze, write
-**Prompt words that signal research:** research, find, gather, search, look up, collect
+
+**Research persists to `_research/` by default.** When a tool or subagent gathers data from external sources, write it to `_research/`. Research that is not worth keeping can be deleted at purge time.
+
+**Research promotion.** Research with lasting value graduates from `_research/` (ephemeral, workspace repo) to `<repo>/research/` (permanent, tiered by sensitivity). Every repo can have a `research/` directory at its security level. Sensitivity determines which repo, same as any other content type.
 
 Examples:
-- "research the history of P2300 in LEWG" -> `_research/p2300-lewg-history/`
+- "research the history of P2300 in LEWG" -> `_research/2026-06-17-conduct-research-p2300-lewg-history.md`
+- "promote that research" -> moves from `_research/` to `<repo>/research/` at the appropriate tier
 - "output how Subject would react to D4253" -> `_output/reaction-subject-d4253.md`
-- "find all reflector posts about contracts reconciliation" -> `_research/contracts-reconciliation-reflector/`
 - "brief me on the governance comparison" -> `_output/briefing-governance-comparison.md`
 
 ## Tool Authoring Convention
 
 When writing or modifying a tool spec, label every file write with one of the three intent words: **research**, **scratch**, or **output**. The word IS the routing instruction.
 
-- "Write the search results to **research**" - resolves to `_research/<tool>-<subject>/`
+- "Write the search results to **research**" - resolves to `_research/YYYY-MM-DD-<tool>-<subject>.md`
 - "Write the ingest summary to **scratch**" - resolves to `_scratch/<tool>-<subject>/`
 - "Write the finished assessment as **output**" - resolves to `_output/<tool>-<subject>.md`
 
@@ -591,7 +598,8 @@ If no filing system is present in the workspace, the tool uses a reasonable loca
 
 - Source material in `_inbox/`: name as `YYYY-MM-DD-<content-id>.md` where the date is the collection date and content-id is kebab-case. Loose files are fine in _inbox.
 - Output in `_output/`: name as `<tool>-<subject-words>.md` in kebab-case.
-- No loose files in `_research/` or `_scratch/`. Every file goes in a subdirectory named `<tool>-<subject-words>` in kebab-case.
+- Research in `_research/`: flat directory. Name as `YYYY-MM-DD-<tool>-<subject>.md` in kebab-case. No subdirectories. If a research effort has multiple outputs, use a shared prefix.
+- Scratch in `_scratch/`: subdirectory named `<tool>-<subject-words>` in kebab-case. No loose files.
 
 `<tool>` is either:
 - The tool filename without extension (e.g. `briefer` from `briefer.md`)
@@ -617,13 +625,20 @@ Normalize conversation dumps to: **Name** _timestamp_ message. Suit structure to
 
 General: preserve original wording, fix formatting noise, use `---` between date boundaries, H2 for date changes.
 
-Do not add metadata to `_research/` or `_scratch/` files.
+For research (`_research/` and `<repo>/research/`):
+- Add YAML frontmatter: `produced:` (date the research was generated), `title:` (keyword-rich for search)
+- Add `source:` if there is a single primary source
+- `title:` should be descriptive enough to find via keyword search without opening the file
+- On promotion, frontmatter carries over as-is
+
+Do not add metadata to `_scratch/` files.
 
 ## Conflict Resolution
 
 - `_output/`: before writing, check for existing files matching the prefix. If found (with or without a numeric suffix), use AskQuestion to offer overwrite or create a new version with the next numeric suffix.
 - `_scratch/`: overwrite silently. It's disposable.
-- `_research/`: overwrite or update in place. It's meant to be reused until it ages out.
+- `_research/`: overwrite or update in place. It's meant to be reused until it ages out or is promoted.
+- `<repo>/research/`: promoted research is permanent. Overwrite or update in place. No expiry.
 
 ## References
 
@@ -647,7 +662,7 @@ Create all five relative to `$CABINET_WORKSPACE`:
 | `_inbox/` | Collected data awaiting triage. README.md contains full formatting and metadata rules for all inbox writes. |
 | `_output/` | Tool outputs awaiting promotion to permanent directories. Files are named `<tool>-<subject-words>.md`. |
 | `_scratch/` | Disposable intermediate files. No loose files - only subdirectories named `<tool>-<subject-words>/`. |
-| `_research/` | Gathered data from external sources. No loose files - only subdirectories named `<tool>-<subject-words>/`. Ages out after 30 days. |
+| `_research/` | Gathered data from external sources. Flat directory - one `<descriptive-slug>.md` file per topic. Ages out after 30 days. |
 | `_trash/` | Files staged for deletion. Cabinet never deletes directly - it moves files here. Use `empty trash` to permanently remove. |
 
 ### .gitignore
