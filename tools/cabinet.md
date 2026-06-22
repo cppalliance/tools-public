@@ -586,11 +586,13 @@ Examples:
 
 ## Tool Authoring Convention
 
-When writing or modifying a tool spec, label every file write with one of the three intent words: **research**, **scratch**, or **output**. The word IS the routing instruction.
+Tools announce intent, not paths. A tool says "these files are **scratch**" or "the report is **output**" - it never names `_scratch/`, `_output/`, or `_research/` directly, never says "ambient routing," and never mentions filing rules. The intent word is the entire routing instruction. The filing system reads it and resolves the path.
 
-- "Write the search results to **research**" - resolves to `_research/YYYY-MM-DD-<tool>-<subject>.md`
-- "Write the ingest summary to **scratch**" - resolves to `_scratch/<tool>-<subject>/`
-- "Write the finished assessment as **output**" - resolves to `_output/<tool>-<subject>.md`
+- "Intermediate files are **scratch**" - the filing system routes to `_scratch/<tool>-<subject>/`
+- "Collected data is **research**" - routes to `_research/YYYY-MM-DD-<tool>-<subject>.md`
+- "The finished report is **output**" - routes to `_output/<tool>-<subject>.md`
+
+Tools use plain filenames without underscore prefixes or directory paths. Staging directories are cursorindexignored, so underscore prefixes on filenames within them are unnecessary.
 
 If no filing system is present in the workspace, the tool uses a reasonable local default (sibling directory, etc.). The intent labels still apply - they describe what the content IS, not where it goes.
 
@@ -632,6 +634,10 @@ For research (`_research/` and `<repo>/research/`):
 - On promotion, frontmatter carries over as-is
 
 Do not add metadata to `_scratch/` files.
+
+## Deletion
+
+NEVER use the Delete tool on any workspace file. Move to `_trash/` instead. No exceptions. Before moving, state: "Moving [filename] to _trash/. It can be recovered from there." If the user says "just delete it," still move to `_trash/`. The Delete tool is reserved for files the agent created in error during the current session.
 
 ## Conflict Resolution
 
