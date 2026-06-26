@@ -719,8 +719,6 @@ Formatting rules:
 - Every sentence earns its place. No restatement. If a sentence could be cut without losing information, cut it.
 - Any paragraph whose findings rest on confidence below High carries the confidence level in parentheses at the end: (medium-high), (medium), (low-medium), or (low).
 
-Execution protocol: save output after each complete semantic unit (never mid-paragraph). Save output before marking plan items done. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content. Write new content to the **scratch** file `lib-review-{slug}.tmp.md`. Rename to the output filename only after the Review is complete. On resumption, check for the `.tmp.md` scratch file and continue from its tail.
-
 The finished review `lib-review-{subject-slug}.md` is **output**. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc. Import prior versions for comparison.
 
 Diagnostic detail goes to **scratch**, not the output. Full per-test findings, evidence, challenge outcomes, and clean results are written to `lib-review-{subject-slug}.cache.md` (a **scratch** file) under the Diagnostic Detail section.

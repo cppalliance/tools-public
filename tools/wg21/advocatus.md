@@ -50,8 +50,6 @@ The Animadversiones are always written to a file unless the user explicitly requ
 
 The report is **output**. If a report with this name already exists, increment the version suffix: `-v2`, `-v3`, etc.
 
-**Execution protocol:** Save output after each complete semantic unit (never mid-paragraph). Always save output BEFORE marking plan items done - never the reverse. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content.
-
 ---
 
 ## 0. Iuramentum (The Oath)

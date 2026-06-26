@@ -649,8 +649,6 @@ The output is editorial, not analytical. The analysis happened in Phases 5-10. T
 - Every sentence must earn its place. No restatement of what the current paragraph already said. No re-explaining the framework. No restating data that already appeared anywhere in the Brief. If a sentence could be cut without losing information, cut it. The Analyst is watching the prose.
 - Any paragraph in the Brief whose findings rest on confidence below High carries the confidence level in parentheses at the end of the paragraph: (medium-high), (medium), (low-medium), or (low). High confidence is unmarked - it is the default expectation.
 
-**Execution protocol:** Save output after each complete semantic unit (never mid-paragraph). Always save output BEFORE marking plan items done - never the reverse. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content. Write new content to a **scratch** file `brief-{slug}.tmp.md`. Write the final version as **output** `brief-{subject-slug}.md` only after the Brief is complete. On resumption, check for the `.tmp.md` scratch file and continue from its tail.
-
 **Diagnostic detail** goes to the **scratch** cache, not the output. Full per-test findings, evidence, challenge outcomes, and clean results are written to the scratch cache under the Diagnostic Detail section. The reader gets the diagnosis. The analyst gets the scratch.
 
 ### Brief Template

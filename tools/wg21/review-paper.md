@@ -16,8 +16,6 @@ Findings are always written to a file unless the user explicitly requests inline
 
 The feedback report is **output**.
 
-**Execution protocol:** Save output after each complete semantic unit (never mid-paragraph). Always save output BEFORE marking plan items done - never the reverse. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content.
-
 ---
 
 ## 0. Orientation
