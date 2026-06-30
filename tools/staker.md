@@ -192,7 +192,7 @@ Last subsection of Section 4. Omit if Step 3 generated no rules.
 - The name comes from the rule's Property field. Do not reference rule numbers. Rule numbers are internal pipeline identifiers, not reader-facing labels.
 - Omit the word "confirmed" - stating the finding implies confirmation.
 - Cite author-year on first use if the source framework has not appeared earlier in the assessment.
-- Omit rules that produced no finding. Note excluded rules in a single closing sentence.
+- Omit rules that produced no finding. Do not list or explain killed rules in the Assessment.
 - Cross-reference rules whose findings compounded with baked-in test findings (those appear in the compound subsections above).
 
 ---
@@ -308,6 +308,10 @@ Sub-agents write structured output to files and return a one-line status. The ma
 *"Before you ever cross the threshold, study the estate from the treeline - learn the silhouette of the institution before it learns yours, and mark which windows stay lit and warm long after the household has sworn to you that it sleeps."*
 
 Identify the organization from user input. Extract name, stated mission, structure, and domain.
+
+Identify the organization's **actual purpose** - what it observably does, what drives its revenue or resource acquisition, what it optimizes for in practice. The actual purpose is the analytical baseline for the entire pipeline. The stated mission is a governance fact reported in Section 2 and referenced in Section 5 (Cui Bono) when comparing stated vs actual beneficiary. The diagnostic battery, coupling analysis, and synthesis all run against the actual purpose, not the stated mission.
+
+If stated purpose and actual purpose are the same (e.g., a standards body that exists to write standards), note the alignment. If they diverge (e.g., a PBC whose charter names "humanity" but whose revenue comes from enterprise API), note the divergence as governance context - a structural fact about how the governance architecture relates to the commercial operation - not as the dominant pathology.
 
 Do not access the internet. Work only with what the user provided. If the user provides a URL, pass it to the Reconnaissance sub-agent. No raw web content enters the main context at any step.
 
@@ -595,7 +599,7 @@ Report killed compounds to the user with the reason. Surviving compounds form th
 Read the validated coupling map and the cluster weight guidance from the evidence file.
 
 1. Consume the coupling map. Each compound is a candidate report section. Standalone findings not in any compound may appear if significant, but they are not the spine. Dark stakeholder breadcrumbs from Step 11 are in the coupling map and participate in compound dynamics.
-2. Identify the dominant dynamic: the compound that, if addressed, would improve the most others.
+2. Identify the dominant dynamic: the compound that, if addressed, would improve the most others relative to the organization's actual purpose. Findings that measure the gap between stated mission and actual purpose are governance context, not candidates for dominant dynamic. The dominant dynamic is a structural pathology that would harm any organization doing what this one actually does.
 3. Apply the cluster weight guidance from Step 3 to calibrate emphasis.
 4. Generate report section headers from the compound names. Headers name this organization's specific dynamics, not generic categories. "The Membership Subsidy," not "Benefit Distribution Issues." "Berlin's Informal Veto," not "Power Concerns."
 5. Identify the primary beneficiary against the stated beneficiary (Blau-Scott).
