@@ -63,6 +63,8 @@ The Staker performs stakeholder analysis: power dynamics, benefit distribution, 
 
 Everything a writing sub-agent needs, in one contiguous block. Inject this entire section into every Step 16 sub-agent prompt as a single read.
 
+<editorial_spec>
+
 ### Assessment voice
 
 - Default sentence length under 20 words.
@@ -284,6 +286,8 @@ Bullet list, alphabetical by first-author surname. Full bibliographic entry per 
 ### Section enforcement
 
 The 11 sections are mandatory. Each must appear in order with the exact headers shown. Never drop, rename, merge, or reorder sections. Never add sections not in the template.
+
+</editorial_spec>
 
 ---
 
@@ -614,17 +618,24 @@ Runs as 5 sequential sub-agent batches. Every batch receives the Editorial Spec 
 
 Alignment contract (injected into every sub-agent prompt):
 
-> Continue the report in `staker-{slug}.tmp.md`. Append your sections after the existing content. Do not modify prior sections. Reuse the same naming conventions for stakeholders established in earlier sections. Do not re-introduce academic terms already cited with author-year in earlier sections. The Step 15 thesis governs your section's interpretive frame. Follow the Assessment Voice rules in full.
+<alignment_contract>
+
+> Continue the report in `staker-{slug}.tmp.md`. Append your sections after the existing content. Do not modify prior sections. Reuse the same naming conventions for stakeholders established in earlier sections. Do not re-introduce academic terms already cited with author-year in earlier sections. The Step 15 thesis governs your section's interpretive frame. Follow the Assessment Voice rules in full. Never reference internal pipeline identifiers in output text: test numbers (e.g., "test 29"), cluster ranges (e.g., "tests 29-36"), pass labels (e.g., "Pass Two"), rule numbers (e.g., "Rule 4"), step numbers (e.g., "Step 9"), or breadcrumb IDs. Deploy findings by name and content, not by pipeline coordinate. Summary counts in Section 10 are not pipeline identifiers - they are aggregate statistics.
+
+</alignment_contract>
 
 File protocol:
 
 - Batch 1 creates `staker-{slug}.tmp.md` (**scratch**).
 - Batches 2-5 append to it.
-- After Batch 5, the main context writes the finished assessment to `staker-{slug}.md` (**output**).
+- After Batch 5, run a **citation-audit sub-agent** (strong model). It reads the complete `.tmp.md` and the Academic References list from the Editorial Spec. For each academic framework in References that is deployed in the body without a parenthetical author-year citation on first use, insert one. Do not add citations for frameworks not deployed. Do not add citations after first use. This pass resolves cross-batch citation inconsistency caused by sequential sub-agents lacking global document state.
+- After the citation audit, the main context writes the finished assessment to `staker-{slug}.md` (**output**).
 - The `.tmp.md` file remains as scratch (not deleted).
 - Each sub-agent returns one status line per the sub-agent handoff rule.
 
 ---
+
+<diagnostic_battery>
 
 ## Diagnostic Battery
 
@@ -1091,6 +1102,8 @@ The battery is 53 tests across eight clusters. Tests in the same cluster are lik
 - **When:** the organization operates in a field of similar organizations
 - **How:** determine whether the organization is converging on the form of its peers through coercive (mandate), mimetic (imitation under uncertainty), or normative (professional) pressure; assess whether convergence serves the mission or only conformity
 - **Gap:** does not evaluate which stakeholders benefit from conformity at the expense of the organization's distinct function
+
+</diagnostic_battery>
 
 ---
 
