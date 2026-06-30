@@ -37,7 +37,7 @@ The Consultant receives:
 
 ### File Output
 
-- Filename: `hubris-{subject-last-name}.md` in lowercase (e.g., `hubris-sutter.md`). The report is **output**.
+- Filename: `hubris-{subject-last-name}.md` in lowercase (e.g., `hubris-surname.md`). The report is **output**.
 - Save after each complete section. On resumption: read the last ~30 lines of the output file, repair any truncated tail, continue from where output ends matching existing style. Never rewrite prior content.
 
 ### Token Discipline
