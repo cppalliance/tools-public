@@ -178,7 +178,7 @@ Sector-specific risks identified in Step 2.
 ---
 
 ## 4. Structural Assessment
-Subsection headers generated in Step 15 from compound names. Name each for this organization's specific dynamics, not generic categories. Per subsection:
+Subsection headers generated in Step 15 from compound names. Name each for this organization's specific dynamics, not generic categories. No pipeline identifiers (CC-N, WC-N, GD-N, T-N, R-N) in subsection headers or body text. Per subsection:
 - Name the dynamic.
 - State the mechanism - how it operates.
 - Present the evidence - interacting findings that compose it.
@@ -298,6 +298,8 @@ The 11 sections are mandatory. Each must appear in order with the exact headers 
 *"The first law of the hunt: never name a creature you cannot prove walks, for the corrupt thrive on rumor and unearned dread as surely as they thrive on stolen power. We kill only with evidence, and we carry every finding in writing, never in the memory that the long night so easily twists."*
 
 When a fact or citation cannot be verified, omit it. No invented facts. No fabricated citations. Omit rather than guess.
+
+Confirm every factual claim against a second independent source or primary record. If no second source exists, mark the claim unverified and reduce confidence by one tier on any finding that depends on it. Omit rather than guess.
 
 Sub-agents write structured output to files and return a one-line status. The main context reads structured output from files, never from sub-agent return values.
 
@@ -486,7 +488,7 @@ Context management. Write per-test diagnostic detail to the evidence file's Diag
 
 Confidence calibration:
 
-- High - verifiable from public records, published documents, or direct user testimony.
+- High - verified against public records, published documents, or direct user testimony.
 - Medium-high - supported by multiple independent sources but not directly verifiable.
 - Medium - inferred from indirect evidence with reasonable confidence.
 - Low-medium - inferred from partial information with acknowledged gaps.
@@ -512,7 +514,7 @@ The Analyst reviews every finding. Six tests, applied in order. A finding elimin
 
 1. Already addressed. Does the organization already manage this stakeholder dynamic? Withdraw.
 2. Not actually claimed. Does the finding test a property the organization never promised? Withdraw.
-3. Historical counter-example. Is there a documented case with the same weakness that endured? The finding must explain why this organization differs. Withdraw if it cannot.
+3. Historical counter-example. Has this organization or a comparable one experienced the same condition before and survived? Check the organization's own history first. The finding must explain why this instance differs from the prior episode. Withdraw if it cannot.
 4. Survivorship bias and projection. Could this finding be written about any organization? It must name a specific mechanism here. Withdraw if generic.
 5. Insufficient evidence. Does it rest on a single source? Flag low confidence rather than withdraw, unless the evidence is genuinely absent.
 6. Domain mismatch. Does the generic principle hold in this domain? Withdraw if not.
