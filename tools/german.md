@@ -33,11 +33,11 @@ Report findings. For each fail or partial, state the rule number, what is wrong,
 
 **1. Pipeline Map.**\
 When: The tool has more than one step.\
-What: Place a mermaid flowchart at the top showing every step, branch, and parallel path.
+What: Place a mermaid flowchart at the top showing every step, branch, and parallel path. State `Requires: Step N.` at the top of every step that has a dependency.
 
 **2. Step Numbering.**\
 When: The tool has steps.\
-What: Number every step from 0 with execution-context annotations on each header (e.g., "Step 3: Research (sub-agent, strong model)"). No sub-numbering (5a, 5.1). No unnamed steps.
+What: Number every step from 0 with execution-context annotations on each header (e.g., "Step 3: Research (sub-agent, strong model)"). Use "Step", never "Phase". No sub-numbering (5a, 5.1). No unnamed steps.
 
 **3. Global Rules.**\
 When: The tool has rules that apply to every step.\
@@ -219,9 +219,9 @@ What: Specify whether data moves through a file or working memory at each bounda
 When: A step mixes sub-agents and main context.\
 What: Specify exactly which part runs where.
 
-**43. Tier Definitions.**\
+**43. Model Tiers.**\
 When: The tool references model tiers.\
-What: Define each tier (strong, capable, fast) in behavioral terms.
+What: Only two tiers are permissible: "fast" and "parent". Remove all others (strong, capable, etc.). The platform resolves tier to model.
 
 **44. Stop Conditions.**\
 When: The tool has iterative or looping steps.\
