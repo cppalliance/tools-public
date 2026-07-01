@@ -173,7 +173,7 @@ Bad:
 
 - Put numbers and ratios inline.
 - Use plain English for description, technical vocabulary for diagnosis.
-- When enumerating players, actors, threats, or any list of distinct items, use a numbered or bulleted list. One item per line.
+- When enumerating players, actors, threats, or any list of distinct items, use a numbered or bulleted list. One item per line. Bibliographies use hard line breaks instead of bullets.
 - Avoid tables except when comparing a small, fixed set of dimensions.
 - No em dashes. Use regular dashes. ASCII only.
 - Paragraphs below High confidence carry the level in parentheses at the end.
@@ -356,13 +356,17 @@ or compound constituents.
 ## 10. References
 
 ### Primary sources
-Flat bibliography. One source per line. Web sources use markdown
-links. No inline citation markers. No superscripts.
+One source per hard line break, unsorted. Web sources as markdown links. No inline citation markers, no superscripts. Example:
+
+[Title - site](https://example.com/page)\
+[Title - site](https://example.com/other)\
+Author, "Document Title," Year.
 
 ### Academic references
-Bullet list, alphabetical by first-author surname. Full bibliographic
-entry per bullet. Only works cited with author-year in the body
-appear. Pull full citations from the diagnostic test Cite: fields.
+One entry per hard line break, alphabetical by first-author surname. Include only works cited with author-year in the body. Pull full citations from the diagnostic test Cite: fields. Example:
+
+Akerlof, G.A. "The Market for 'Lemons'." *Quarterly Journal of Economics* 84(3):488-500, 1970.\
+Stigler, G.J. "The Theory of Economic Regulation." *Bell Journal of Economics* 2(1):3-21, 1971.
 
 ---
 
@@ -390,7 +394,7 @@ Section numbers are canonical. When a section is omitted, skip to the next. Do n
 
 ### Chunked writing
 
-If a batch fails, the main context retries that batch once before reporting failure. Partial output (batches 1 through the last successful batch) is preserved in `briefer-{subject}/draft.md` (**scratch**) for inspection.
+If a batch fails, the main context retries that batch once before reporting failure. Partial output (batches 1 through the last successful batch) is preserved in `{date}-briefer-{subject}/{date}-briefer-{subject}-draft.md` (**scratch**) for inspection.
 
 </editorial_spec>
 
@@ -410,6 +414,8 @@ If a batch fails, the main context retries that batch once before reporting fail
 
 **Slug rule.** `{subject}` is the kebab-case subject name, truncated to four words maximum (e.g., "ISO C++ Committee" becomes `iso-cpp-committee`). Derived once in Step 1 and used for all file names in the run.
 
+**Date rule.** `{date}` is the run date in `YYYY-MM-DD`, derived once in Step 1 alongside the slug. All scratch files for a run live in the `{date}-briefer-{subject}/` directory. Every run starts fresh: if the directory already exists, overwrite its contents. Never look for or import prior runs' files - if the user wants prior material reused, they will say so.
+
 **Model tiers.** Two tiers only.
 - **parent model** - the same model running the main context; default for sub-agents that perform structural reasoning
 - **fast model** - a cheaper, faster model; use for research gathering and annotation where judgment is not the bottleneck
@@ -420,9 +426,7 @@ If a batch fails, the main context retries that batch once before reporting fail
 
 *"Your map of Africa is really quite nice. But my map of Africa lies in Europe."* - conversation with Eugen Wolf, 5 Dec 1888
 
-Identify the subject - institution, market, industry, system, design document, anything. Extract: name, founder (if known), stated mission, organizational structure, age, scale, domain. Derive `{subject}` per the Slug rule. Begin with whatever the user provides and note gaps for Step 5 (User Questions). If the user provides a URL, pass it to the Reconnaissance sub-agent.
-
-Check for a prior `briefer-{subject}.md` (**output**). If found, import findings still in force and discard superseded material. A re-evaluation reflects changed conditions, not re-discovered findings. Prior evidence files are overwritten, not imported.
+Identify the subject - institution, market, industry, system, design document, anything. Extract: name, founder (if known), stated mission, organizational structure, age, scale, domain. Derive `{subject}` per the Slug rule and `{date}` per the Date rule. Begin with whatever the user provides and note gaps for Step 5 (User Questions). If the user provides a URL, pass it to the Reconnaissance sub-agent.
 
 ---
 
@@ -430,11 +434,11 @@ Check for a prior `briefer-{subject}.md` (**output**). If found, import findings
 
 *"He who has his thumb on the purse has the power."* - North German Reichstag, 21 May 1869
 
-The entire step runs inside one sub-agent. The sub-agent does all searching, reading, and analysis, writes results to the evidence file (**research**), and returns a status line.
+The entire step runs inside one sub-agent. The sub-agent does all searching, reading, and analysis, writes results to the evidence file (**scratch**), and returns a status line.
 
 Sub-agent receives: subject name, stated mission if known, domain if known, the user's verbatim query, and any URLs the user provided.
 
-The sub-agent writes to `briefer-{subject}-evidence.md` (**research**). Begin with a header recording `collected:` date, `model:`, and `domain:`. Then write:
+The sub-agent writes to `{date}-briefer-{subject}/{date}-briefer-{subject}-evidence.md` (**scratch**). Begin with a header recording `collected:` date, `model:`, and `domain:`. Then write:
 
 - Subject Profile - founding, leadership, structure, stated mission
 - Domain Primer - three to five structural facts a reader needs to understand this domain
@@ -450,7 +454,7 @@ The sub-agent writes to `briefer-{subject}-evidence.md` (**research**). Begin wi
 
 The entire step runs inside one sub-agent.
 
-Sub-agent receives: subject name, domain, Domain Primer, and market structure classification from the evidence file (**research**). Not the full evidence file.
+Sub-agent receives: subject name, domain, Domain Primer, and market structure classification from the evidence file (**scratch**). Not the full evidence file.
 
 The sub-agent:
 
@@ -464,14 +468,14 @@ The sub-agent:
 
 2. Searches academic literature relevant to this subject. Identifies 3-7 theoretical frameworks with full bibliographic entries (author, title, journal/publisher, year). For each framework, derives 1-3 testable predictions specific to this subject, each with: theoretical basis (one sentence), applied mechanism (one sentence), falsification criteria (one sentence).
 
-Write Per-Report Rules and Theoretical Foundation to `briefer-{subject}/frameworks.md` (**scratch**).
+Write Per-Report Rules and Theoretical Foundation to `{date}-briefer-{subject}/{date}-briefer-{subject}-frameworks.md` (**scratch**).
 
 ---
 
 ### Step 4. Research Consolidation (main context)
 
-- Read `briefer-{subject}/frameworks.md` (**scratch**).
-- Append its contents to the evidence file (**research**) under Per-Report Rules and Theoretical Foundation sections.
+- Read `{date}-briefer-{subject}/{date}-briefer-{subject}-frameworks.md` (**scratch**).
+- Append its contents to the evidence file (**scratch**) under Per-Report Rules and Theoretical Foundation sections.
 - The frameworks file persists in scratch for inspection and re-run.
 - The evidence file is now self-contained for all subsequent steps.
 
@@ -481,7 +485,7 @@ Write Per-Report Rules and Theoretical Foundation to `briefer-{subject}/framewor
 
 *"Faust complains of having two souls in his breast. I have a whole squabbling crowd. It goes on as in a republic."* - Keudell, August 1865
 
-Read Subject Profile, Domain Primer, Domain Landscape, and Theoretical Foundation from the evidence file (**research**). Do not read prior Diagnostic Detail.
+Read Subject Profile, Domain Primer, Domain Landscape, and Theoretical Foundation from the evidence file (**scratch**). Do not read prior Diagnostic Detail.
 
 Audit every assumption before running diagnostic tests. Every assumption that cannot be verified from the evidence is a question for the user.
 
@@ -507,7 +511,7 @@ Run all forty-five tests. Also run domain-specific rules from Step 3 and theory-
 
 Each test produces a candidate finding or a clean result. Every finding carries a confidence level.
 
-**Streaming rule (HARD).** Write per-test diagnostic detail to the evidence file's (**research**) Diagnostic Detail section as each test completes. Entry format: test number, verdict (clean or finding), confidence, 1-3 sentences of evidence, challenge outcome if applicable. Only breadcrumbs stay in working memory.
+**Streaming rule (HARD).** Write per-test diagnostic detail to the evidence file's (**scratch**) Diagnostic Detail section as each test completes. Entry format: test number, verdict (clean or finding), confidence, 1-3 sentences of evidence, challenge outcome if applicable. Only breadcrumbs stay in working memory.
 
 #### Breadcrumb Emission
 
@@ -553,7 +557,7 @@ Six tests, applied in order. A finding eliminated at any stage does not face sub
 
 **6. Domain mismatch.** Is the test applying a generic principle that does not hold in this subject's specific domain? Testing a religious order for competitive landscape dynamics when religious orders operate on legitimacy, not competition, is a domain mismatch. If the generic principle does not apply in this domain, the finding is withdrawn.
 
-When a finding is killed, the Analyst records which test killed it and why. Record each kill in the evidence file (**research**) under a Killed Findings section: test number, which challenge test killed it, one-sentence reason. Killed findings are also reported to the user in chat with the reason. They do not appear in the Brief. Killed theory-derived predictions are reported in chat with their citation - the citation does not appear in the output.
+When a finding is killed, the Analyst records which test killed it and why. Record each kill in the evidence file (**scratch**) under a Killed Findings section: test number, which challenge test killed it, one-sentence reason. Killed findings are also reported to the user in chat with the reason. They do not appear in the Brief. Killed theory-derived predictions are reported in chat with their citation - the citation does not appear in the output.
 
 ---
 
@@ -567,16 +571,16 @@ For each, form a demand sentence: "Who benefits from [dysfunction] persisting in
 
 Do not force.
 
-**Research phase (sub-agent, parent model).** A single sub-agent receives all demand sentences. For each, search for actors who occupy the niche created by the dysfunction - consultants who profit from broken processes, gatekeepers who profit from information asymmetry, intermediaries whose position depends on the pathology continuing. Write the full candidate list to `briefer-{subject}/dark.md` (**scratch**).
+**Research phase (sub-agent, parent model).** A single sub-agent receives all demand sentences. For each, search for actors who occupy the niche created by the dysfunction - consultants who profit from broken processes, gatekeepers who profit from information asymmetry, intermediaries whose position depends on the pathology continuing. Write the full candidate list to `{date}-briefer-{subject}/{date}-briefer-{subject}-dark.md` (**scratch**).
 
-**Challenge phase (main context).** The Analyst reads `briefer-{subject}/dark.md` (**scratch**) and challenges each candidate. Apply all six challenge tests from Step 7, plus:
+**Challenge phase (main context).** The Analyst reads `{date}-briefer-{subject}/{date}-briefer-{subject}-dark.md` (**scratch**) and challenges each candidate. Apply all six challenge tests from Step 7, plus:
 
 7. **Survivorship bias on the demand itself** - is this incentive actually unique to this subject, or would it appear in any subject in this domain?
 8. **Already identified** - is this actor already covered by the diagnostic findings under a different role?
 
 Surviving dark influence actors produce breadcrumbs: "The demand for [X] is satisfied by [Y], who benefits from the pathology persisting." Cluster assignment per breadcrumb.
 
-Write challenge outcomes to `briefer-{subject}/dark.md` (**scratch**). Write surviving beneficiaries to the evidence file (**research**).
+Write challenge outcomes to `{date}-briefer-{subject}/{date}-briefer-{subject}-dark.md` (**scratch**). Write surviving beneficiaries to the evidence file (**scratch**).
 
 ---
 
@@ -592,9 +596,9 @@ For each surviving finding, the sub-agent formulates research queries to determi
 
 Output format per finding with discoverable directional evidence: test identifier, direction (improving/stable/degrading), evidence (1-2 sentences), timeframe. Omit findings with no discoverable directional evidence.
 
-Write directional annotations to `briefer-{subject}/directional.md` (**scratch**).
+Write directional annotations to `{date}-briefer-{subject}/{date}-briefer-{subject}-directional.md` (**scratch**).
 
-**Finding and breadcrumb enrichment.** The main context reads `briefer-{subject}/directional.md` (**scratch**). Direction is a property of the finding, not just the breadcrumb. The main context annotates each surviving finding with its directional signal, matched by identifier. Breadcrumbs inherit the Direction field from their parent findings. Enriched breadcrumbs flow to Coupling Analysis. The directional file persists in scratch for inspection and re-run.
+**Finding and breadcrumb enrichment.** The main context reads `{date}-briefer-{subject}/{date}-briefer-{subject}-directional.md` (**scratch**). Direction is a property of the finding, not just the breadcrumb. The main context annotates each surviving finding with its directional signal, matched by identifier. Breadcrumbs inherit the Direction field from their parent findings. Enriched breadcrumbs flow to Coupling Analysis. The directional file persists in scratch for inspection and re-run.
 
 ---
 
@@ -630,7 +634,7 @@ Here are the surviving diagnostic breadcrumbs, organized by cluster:
 
 For each cluster with two or more breadcrumbs, identify compound dynamics - how one finding enables, amplifies, or prevents correction of another. Place unclustered findings against clusters where they interact. Identify cross-cluster compounds. Connect Gap annotations across tests to identify participant-level dynamics that no single test measured. For each compound, note whether constituent findings share a directional trend (both degrading, both improving, or diverging).
 
-Write a coupling map to `briefer-{subject}/coupling.md` (**scratch**): named compound dynamics, each listing constituent findings by test number, the interaction mechanism (one sentence per link), directional trajectory of the compound, and any gap-derived dynamics with contributing gaps identified. No raw analysis. No commentary outside the map.
+Write a coupling map to `{date}-briefer-{subject}/{date}-briefer-{subject}-coupling.md` (**scratch**): named compound dynamics, each listing constituent findings by test number, the interaction mechanism (one sentence per link), directional trajectory of the compound, and any gap-derived dynamics with contributing gaps identified. No raw analysis. No commentary outside the map.
 
 ---
 
@@ -638,13 +642,13 @@ Write a coupling map to `briefer-{subject}/coupling.md` (**scratch**): named com
 
 *"Preventive war is like committing suicide for fear of death."* - Reichstag, 9 Feb 1876
 
-The Analyst reads `briefer-{subject}/coupling.md` (**scratch**) and reviews the coupling map before it enters Synthesis. Each compound dynamic faces two tests:
+The Analyst reads `{date}-briefer-{subject}/{date}-briefer-{subject}-coupling.md` (**scratch**) and reviews the coupling map before it enters Synthesis. Each compound dynamic faces two tests:
 
 **1. Genuine interaction.** Does each constituent finding actually make the other worse, or are they merely co-present? Two findings that both exist in the same subject but do not amplify each other are co-occurrences, not compounds. If the compound would dissolve by removing any single constituent and the remaining constituents would still function identically, the removed constituent was not part of the compound. Kill it from that compound.
 
 **2. Gap-derived dynamics must be implied.** If the compound includes a participant-level dynamic assembled from Gap annotations, each contributing gap must be implied by its parent finding on this specific subject. A gap that is theoretically adjacent but not implied by the actual finding on this subject is tangential. Kill the gap-derived component.
 
-Annotate `briefer-{subject}/coupling.md` (**scratch**) with kill outcomes. Mark killed compounds with their reason. The annotated file is the final coupling map that Step 12 reads. Compounds that are killed are also reported to the user in chat with the reason, same as findings killed in Step 7.
+Annotate `{date}-briefer-{subject}/{date}-briefer-{subject}-coupling.md` (**scratch**) with kill outcomes. Mark killed compounds with their reason. The annotated file is the final coupling map that Step 12 reads. Compounds that are killed are also reported to the user in chat with the reason, same as findings killed in Step 7.
 
 ---
 
@@ -654,7 +658,7 @@ Annotate `briefer-{subject}/coupling.md` (**scratch**) with kill outcomes. Mark 
 
 Synthesize the surviving findings and the coupling map into a single coherent diagnosis.
 
-**1. Consume the coupling map.** Read `briefer-{subject}/coupling.md` (**scratch**). Each named compound dynamic is a candidate Section 4 subsection. A finding is standalone when it does not appear as a constituent of any surviving compound dynamic, regardless of how many other findings share its cluster. Standalone findings may appear in the Brief if significant, but they are not the structural spine. Dark influence breadcrumbs from Step 8 participate in compound dynamics.
+**1. Consume the coupling map.** Read `{date}-briefer-{subject}/{date}-briefer-{subject}-coupling.md` (**scratch**). Each named compound dynamic is a candidate Section 4 subsection. A finding is standalone when it does not appear as a constituent of any surviving compound dynamic, regardless of how many other findings share its cluster. Standalone findings may appear in the Brief if significant, but they are not the structural spine. Dark influence breadcrumbs from Step 8 participate in compound dynamics.
 
 **2. Identify the dominant dynamic.** Which compound dynamic from the coupling map is the one that, if addressed, would improve the most other findings? The largest or most interconnected compound is the candidate. This becomes the lead of the Executive Summary and the spine of the Brief.
 
@@ -686,25 +690,25 @@ For non-institutions (markets, industries, ecosystems), write a one-sentence str
 
 Runs as 5 sequential sub-agent batches. Every batch receives the Editorial Spec, the Step 12 thesis, and the alignment contract. A batch fails if the sub-agent returns without completing all assigned sections, produces output that contradicts the Editorial Spec on inspection, or errors out. Incomplete sections are the failure signal. If a batch fails, the main context retries that batch once before reporting failure. Section-specific inputs vary per batch:
 
-- **Batch 1 (Framing):** Header + Sections 1-3. Section inputs: evidence file (**research**) subject profile + domain landscape + Step 12 outputs (verdict sentence, dominant dynamic summary, thesis, section inclusion flags).
-- **Batch 2 (Core Analysis):** Section 4. Section inputs: report-so-far, compound dynamics from coupling map, Section 4 headers and historical parallel from Step 12, domain-specific rule findings, diagnostic detail from evidence file (**research**).
+- **Batch 1 (Framing):** Header + Sections 1-3. Section inputs: evidence file (**scratch**) subject profile + domain landscape + Step 12 outputs (verdict sentence, dominant dynamic summary, thesis, section inclusion flags).
+- **Batch 2 (Core Analysis):** Section 4. Section inputs: report-so-far, compound dynamics from coupling map, Section 4 headers and historical parallel from Step 12, domain-specific rule findings, diagnostic detail from evidence file (**scratch**).
 - **Batch 3 (Institutional + Economic):** Sections 5-6. Section inputs: report-so-far, standalone findings from Institutional Form (2, 3, 7, 8, 9, 10), Power and Governance (1, 4, 5, 11, 12, 13, 18), Information and Detection (14, 17, 22, 23, 27), Market Structure (16, 19, 20, 21, 24, 28, 29, 30, 31, 32, 42), Sustainability (6, 15, 26, 33, 34, 35, 41) clusters.
 - **Batch 4 (External + Predictions):** Sections 7-8. Section inputs: report-so-far, standalone findings from External Exposure (25, 36, 37, 38, 39, 40, 43, 44, 45) cluster, predictions from Step 12.
 - **Batch 5 (Close):** Sections 9-10 + footer. Section inputs: report-so-far, pipeline counts for audit trail.
 
 <alignment_contract>
 
-> Continue the report in `briefer-{subject}/draft.md` (**scratch**). Append your sections after the existing content. Do not modify prior sections. Do not re-introduce academic terms already cited with author-year in earlier sections. The Step 12 thesis governs your section's interpretive frame. Follow the Brief Voice rules in full. Never reference internal pipeline identifiers in output text: test numbers (e.g., "test 14"), cluster ranges (e.g., "tests 2-10"), rule numbers (e.g., "Rule 4"), step numbers (e.g., "Step 6"), or breadcrumb IDs. Deploy findings by name and content, not by pipeline coordinate. Summary counts in Section 9 are not pipeline identifiers - they are aggregate statistics.
+> Continue the report in `{date}-briefer-{subject}/{date}-briefer-{subject}-draft.md` (**scratch**). Append your sections after the existing content. Do not modify prior sections. Do not re-introduce academic terms already cited with author-year in earlier sections. The Step 12 thesis governs your section's interpretive frame. Follow the Brief Voice rules in full. Never reference internal pipeline identifiers in output text: test numbers (e.g., "test 14"), cluster ranges (e.g., "tests 2-10"), rule numbers (e.g., "Rule 4"), step numbers (e.g., "Step 6"), or breadcrumb IDs. Deploy findings by name and content, not by pipeline coordinate. Summary counts in Section 9 are not pipeline identifiers - they are aggregate statistics.
 
 </alignment_contract>
 
 File protocol:
 
-- Batch 1 creates `briefer-{subject}/draft.md` (**scratch**).
+- Batch 1 creates `{date}-briefer-{subject}/{date}-briefer-{subject}-draft.md` (**scratch**).
 - Batches 2-5 append to it.
-- After Batch 5, run a **citation-audit sub-agent** (parent model). It reads the complete `briefer-{subject}/draft.md` (**scratch**) and the full list of baked-in test `Cite:` fields from the diagnostic battery. For each academic framework deployed in the body without a parenthetical author-year citation on first use, insert one. Do not add citations for frameworks not deployed. Do not add citations after first use.
+- After Batch 5, run a **citation-audit sub-agent** (parent model). It reads the complete `{date}-briefer-{subject}/{date}-briefer-{subject}-draft.md` (**scratch**) and the full list of baked-in test `Cite:` fields from the diagnostic battery. For each academic framework deployed in the body without a parenthetical author-year citation on first use, insert one. Do not add citations for frameworks not deployed. Do not add citations after first use.
 - After the citation audit, the main context writes the finished Brief to `briefer-{subject}.md` (**output**).
-- The `briefer-{subject}/draft.md` file remains in **scratch** for inspection.
+- The `{date}-briefer-{subject}/{date}-briefer-{subject}-draft.md` file remains in **scratch** for inspection.
 
 ---
 

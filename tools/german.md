@@ -113,7 +113,7 @@ What: Inject a contract: append-only, reuse terms from earlier sections, no cont
 
 **19. Section Enforcement.**\
 When: The tool produces structured output.\
-What: Enumerate output sections with exact headers and fixed order. None may be renamed, merged, or reordered; omission follows Rule 24 only.
+What: Enumerate output sections with exact headers and fixed order. None may be renamed, merged, or reordered. A section may be omitted only if it is empty, and omission never renumbers the remaining sections.
 
 **20. Specific Headers.**\
 When: The tool produces analytical output.\
@@ -147,27 +147,35 @@ What: Avoid numbering schemes (footnotes, superscripts) requiring coordination b
 When: The tool has citations.\
 What: Move each citation to the rule, test, or instruction that activates it.
 
+**28. Hyperlink Citations.**\
+When: The tool cites primary sources inline.\
+What: Use a markdown hyperlink where a URL exists, never a numbered footnote or superscript. List the full source in the references section.
+
+**29. Bibliography Breaks.**\
+When: The tool produces a reference list.\
+What: End each entry with a hard line break, not a bullet. Show a worked example.
+
 ### Voice & Persona
 
 *"One may adopt any character one pleases, provided one has the discipline to remove the costume before entering the operating theatre."*
 
-**28. Persona Zones.**\
+**30. Persona Zones.**\
 When: The tool has a persona.\
 What: Separate into zones: tool internals (rich), progress reports (one clause of flavor; substance first), output (zero persona).
 
-**29. Concrete Voice.**\
+**31. Concrete Voice.**\
 When: The tool specifies a writing style.\
 What: Replace style-by-reference ("write like X") with concrete sentence construction rules.
 
-**30. Earned Terms.**\
+**32. Earned Terms.**\
 When: The tool deploys technical vocabulary.\
 What: Back every term with a finding. Terms as decoration weaken credibility.
 
-**31. Sourced Only.**\
+**33. Sourced Only.**\
 When: The tool uses quotes or citations.\
 What: Use only verified, sourced material. Omit rather than fabricate.
 
-**32. Progress Discipline.**\
+**34. Progress Discipline.**\
 When: The tool reports progress between steps.\
 What: One sentence per step. Most important result first.
 
@@ -175,23 +183,23 @@ What: One sentence per step. Most important result first.
 
 *"Every word in an instruction is either load-bearing or decorative. The decorative ones are, without exception, the ones that cause the trouble."*
 
-**33. Commands Only.**\
+**35. Commands Only.**\
 When: Always.\
 What: Write every instruction as a command. If the command implies the prohibition, cut the prohibition.
 
-**34. XML Boundaries.**\
+**36. XML Boundaries.**\
 When: The tool injects content into sub-agents.\
 What: Wrap reusable content in XML tags. Prose boundaries are ambiguous; XML boundaries are not.
 
-**35. Zero Fabrication.**\
+**37. Zero Fabrication.**\
 When: Always.\
 What: Omit unverifiable facts and citations. Elevate to a global rule at pipeline top.
 
-**36. No Aspiration.**\
+**38. No Aspiration.**\
 When: Always.\
 What: Replace aspirational or metaphorical instructions with behavioral rules the model executes mechanically.
 
-**37. Show Examples.**\
+**39. Show Examples.**\
 When: The tool has critical rules or voice rules.\
 What: Add concrete good and bad examples. Bad examples show the specific failure mode. For voice rules, at least ten.
 
@@ -199,55 +207,55 @@ What: Add concrete good and bad examples. Bad examples show the specific failure
 
 *"The inspector's task is not to admire the building but to find the brick that, when removed, brings down the wall."*
 
-**38. Dead Weight.**\
+**40. Dead Weight.**\
 When: Always.\
 What: Test every sentence: back-references that don't change behavior, pipeline filler, repeated instructions, meta-commentary, restated priors, rationale clauses, obvious implications. Cut all of them.
 
-**39. Peer Test.**\
+**41. Peer Test.**\
 When: Always.\
 What: Compare against a peer tool. If the peer doesn't need the instruction and cutting doesn't change behavior, remove it.
 
-**40. Orphan Wiring.**\
+**42. Orphan Wiring.**\
 When: The tool has steps that produce output.\
 What: Verify every output declared in one step is consumed downstream.
 
-**41. Handoff Clarity.**\
+**43. Handoff Clarity.**\
 When: The tool has step boundaries.\
 What: Specify whether data moves through a file or working memory at each boundary.
 
-**42. Challenge Locus.**\
+**44. Challenge Locus.**\
 When: A step mixes sub-agents and main context.\
 What: Specify exactly which part runs where.
 
-**43. Model Tiers.**\
+**45. Model Tiers.**\
 When: The tool references model tiers.\
 What: Only two tiers are permissible: "fast" and "parent". Remove all others (strong, capable, etc.). The platform resolves tier to model.
 
-**44. Stop Conditions.**\
+**46. Stop Conditions.**\
 When: The tool has iterative or looping steps.\
 What: Give every loop a concrete stop condition. No subjective thresholds.
 
-**45. Failure Defined.**\
+**47. Failure Defined.**\
 When: The tool has retry logic.\
 What: Define what constitutes failure.
 
-**46. One Source of Truth.**\
+**48. One Source of Truth.**\
 When: Data appears in multiple places.\
 What: Designate one as canonical. Others reference it.
 
-**47. Write Safety.**\
+**49. Write Safety.**\
 When: Multiple sub-agents could write to the same file.\
 What: Specify sequential vs parallel. Prevent file conflicts by design.
 
-**48. No Cache, No Commands.**\
+**50. No Cache, No Commands.**\
 When: Always.\
 What: Remove cache management and explicit "Commands" sections. Frontier models handle these without instruction.
 
-**49. No Deletion.**\
+**51. No Deletion.**\
 When: Always.\
 What: Tools must not delete files. Scratch files persist as audit artifacts.
 
-**50. No Inert Directives.**\
+**52. No Inert Directives.**\
 When: Always.\
 What: Remove deviation notices, save reminders, resumption protocols. The platform handles these.
 
@@ -255,55 +263,55 @@ What: Remove deviation notices, save reminders, resumption protocols. The platfo
 
 *"When one sets out to examine a thing thoroughly, one must be prepared to discover that the thing is not what one supposed, and to say so plainly."*
 
-**51. Test Clusters.**\
+**53. Test Clusters.**\
 When: The tool has diagnostic tests.\
 What: Group tests into named clusters by structural concern.
 
-**52. Adversarial Levels.**\
+**54. Adversarial Levels.**\
 When: The tool challenges its own findings.\
 What: Deploy a challenger at escalating levels: individual findings, candidate actors, compound dynamics.
 
-**53. Dark Actors.**\
+**55. Dark Actors.**\
 When: The tool produces findings about dysfunction.\
 What: Invert surviving findings into demand sentences ("Who benefits from this persisting?") and research who fulfills each demand.
 
-**54. Coupling Isolation.**\
+**56. Coupling Isolation.**\
 When: The tool detects compound dynamics.\
 What: Run compound detection in an isolated sub-agent receiving only structured summaries, not full research.
 
-**55. Sufficiency Gate.**\
+**57. Sufficiency Gate.**\
 When: The tool diagnoses from evidence.\
 What: Assess evidence sufficiency before diagnosis. If too thin, report the gap.
 
-**56. Framework Discovery.**\
+**58. Framework Discovery.**\
 When: The tool has static analytical rules.\
 What: Evaluate whether domain-specific frameworks would strengthen diagnosis. Extract rules, merge with static rules, rank, select.
 
-**57. Pathology Priming.**\
+**59. Pathology Priming.**\
 When: The tool has a coupling step.\
 What: Provide it with known compound failure patterns.
 
-**58. Gap Fields.**\
+**60. Gap Fields.**\
 When: The tool has diagnostic tests.\
 What: Pre-write the blind spot each test misses if clean. Feed gaps into coupling analysis.
 
-**59. Confidence Tiers.**\
+**61. Confidence Tiers.**\
 When: The tool assigns confidence to findings.\
 What: Define explicit levels with evidence thresholds. High = public records. Low = speculative and flagged.
 
-**60. Direction Step.**\
+**62. Direction Step.**\
 When: The tool produces findings over time.\
 What: Dedicate a step to researching whether each finding is improving, stable, or degrading.
 
-**61. Thesis Lens.**\
+**63. Thesis Lens.**\
 When: The tool synthesizes findings into output.\
 What: Synthesize an internal thesis naming the dominant dynamic and trajectory. Use it to govern every section's frame; never include it verbatim.
 
-**62. Finding Routing.**\
+**64. Finding Routing.**\
 When: The tool maps findings to output sections.\
 What: Map diagnostic clusters to output sections. Do not dump all findings into one section.
 
-**63. Audit Trail.**\
+**65. Audit Trail.**\
 When: The tool runs a diagnostic pipeline.\
 What: Report pipeline statistics as summary counts. Track kill records with reasons. No itemized tables.
 

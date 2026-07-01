@@ -39,7 +39,7 @@ flowchart TD
 
 ## Step 1: Intake (main context)
 
-Extract from the user's prompt: firm identifier (required), engagement type, budget range, client domain. Note missing fields for Step 7. Derive `{firm-slug}` as the firm name lowercased with each run of non-alphanumeric characters replaced by a single hyphen. If a prior report `diligence-{firm-slug}.md` exists, import findings still in force and discard superseded material.
+Extract from the user's prompt: firm identifier (required), engagement type, budget range, client domain. Note missing fields for Step 7. Derive `{firm-slug}` as the firm name lowercased with each run of non-alphanumeric characters replaced by a single hyphen, and `{date}` as the run date in `YYYY-MM-DD`. Scratch files for the run live in the `{date}-diligence-{firm-slug}/` directory; if it already exists, overwrite its contents. Never look for or import prior runs' files - if the user wants prior material reused, they will say so.
 
 ---
 
@@ -158,11 +158,11 @@ Requires: Step 12 and Step 6.
 
 Requires: Step 13.
 
-Write the report to scratch `diligence-{firm-slug}.tmp.md`. When it is complete through the References section, write the final output `diligence-{firm-slug}.md`.
+Write the report to `{date}-diligence-{firm-slug}/{date}-diligence-{firm-slug}-draft.md` (**scratch**). When it is complete through the References section, write the final output `diligence-{firm-slug}.md` (**output**).
 
 Every section serves the internal thesis. Cut any sentence that restates a prior point, re-explains the framework, or repeats data. Mark any paragraph resting on confidence below High with the level in parentheses at its end: (medium-high), (medium), (low-medium), (low). High is unmarked.
 
-Citations use two streams, never mixed in one marker: primary sources (filings, reviews, mailing lists, public records) as numbered superscripts `<sup>N</sup>` inline; academic theory (test Cite: fields and Step 6 frameworks) as parenthetical author-year inline, e.g., `(Maister 1993)`.
+Citations use two streams: primary sources (filings, reviews, mailing lists, public records) as inline hyperlinks where a URL exists, with the source listed in the References bibliography; academic theory (test Cite: fields and Step 6 frameworks) as parenthetical author-year inline, e.g., `(Maister 1993)`. No numbered superscripts.
 
 The footer model ID comes from the system prompt; if none is available, write `model unidentified`.
 
@@ -524,7 +524,7 @@ Six clusters group the thirty tests by structural concern.
 
 ## Output: The Diligence Report
 
-Write to scratch `diligence-{firm-slug}.tmp.md`, then to the final output `diligence-{firm-slug}.md`. Sections are fixed in order; omit an empty section but never renumber. Generate the subsections inside 5, 6, and 8 from the Step 13 compound names, not from generic labels.
+Write to `{date}-diligence-{firm-slug}/{date}-diligence-{firm-slug}-draft.md` (**scratch**), then to the final output `diligence-{firm-slug}.md` (**output**). Sections are fixed in order; omit an empty section but never renumber. Generate the subsections inside 5, 6, and 8 from the Step 13 compound names, not from generic labels.
 
 ```
 # [Declarative title naming the firm and engagement]
@@ -570,10 +570,22 @@ Write to scratch `diligence-{firm-slug}.tmp.md`, then to the final output `dilig
 This report reflects publicly available information as of [date] and may not capture recent developments. AI-assisted research carries known accuracy limitations; all material findings require independent human verification before reliance. This report does not constitute legal, financial, or professional advice. In regulated contexts (financial services, healthcare, government procurement, EU jurisdictions subject to the AI Act) additional human oversight and documentation obligations may apply before this report informs a procurement decision.
 
 ## 13. Audit Trail
-[Summary counts only: sources consulted, prior-report imports, Step 6 domain rules generated, findings killed in Step 9, compounds killed in Step 12 with reasons, and how the Step 6 cluster weights shaped synthesis. No itemized tables.]
+[Summary counts only: sources consulted, Step 6 domain rules generated, findings killed in Step 9, compounds killed in Step 12 with reasons, and how the Step 6 cluster weights shaped synthesis. No itemized tables.]
 
 ## 14. References
-[Primary sources: numbered markdown list matching the `<sup>N</sup>` markers, one source per item; web entries as a single link `[title - site](https://full-url)` with no bare-URL duplicate; plain text for entries with no URL. Academic references: bullet list alphabetical by first author surname, one full bibliographic entry per bullet, matching the inline author-year parentheticals.]
+
+### Primary sources
+[One source per hard line break, unsorted. Web sources as markdown links. No numbered markers. Example:
+
+[Glassdoor - Firm Name Reviews](https://example.com/reviews)\
+[SEC Filing - Form 10-K, 2024](https://example.com/filing)\
+Author, "Document Title," Year.
+
+### Academic references
+One entry per hard line break, alphabetical by first-author surname. Include only works cited with author-year in the body. Example:
+
+Maister, D.H. *Managing the Professional Service Firm.* Free Press, 1993.\
+Porter, M.E. *Competitive Strategy.* Free Press, 1980.]
 
 *[Month Year] - [full model ID]*
 ```
