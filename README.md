@@ -126,7 +126,7 @@ Given a C++ proposal, produces a scored verdict on whether it embodies the langu
 
 **The Papersmith**\
 _[tools/wg21/papersmith.md](tools/wg21/papersmith.md)_\
-Transforms raw evidence and a committee question into a fully forged WG21 paper with verified citations, campaign strategy, and controlled voice.
+Writes WG21 papers through a six-step pipeline (commission, research, skeleton, body, surface, review) and reviews any paper through a reusable Review Process: mechanical scans, citation integrity, fact check, adversarial evaluation, resolution.
 
 **Reform Reviewer**\
 _[tools/wg21/reform-reviewer.md](tools/wg21/reform-reviewer.md)_\
