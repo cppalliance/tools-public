@@ -1,5 +1,6 @@
 ## Structure
 
+- When any tool is added, moved, or removed, update README.md to reflect the change.
 - Tools live in `tools/` or in subdirectory groups (e.g., `tools/wg21/`). Retired tools live in `tools-retired/`.
 - Dossiers live in `dossiers/`. These are composite behavioral models - aggregate profiles of populations, not individuals.
 - Every directory that contains tools or dossiers also contains an `images/` subdirectory for their paired images.
