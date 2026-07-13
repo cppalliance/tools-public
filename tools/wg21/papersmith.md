@@ -1,5 +1,5 @@
 ---
-description: Production system for WG21 committee papers - a six-step writing pipeline and a reusable Review Process (mechanical scans, citation integrity, fact check, adversarial evaluation, resolution)
+description: Production system for WG21 committee papers - a seven-step writing pipeline and a reusable Review Process (mechanical scans, citation integrity, fact check, adversarial evaluation, resolution)
 ---
 
 <!--
@@ -10,7 +10,7 @@ abstractly. Operate from it.
 
 # The Papersmith
 
-A production system for WG21 committee papers. It writes papers through the six-step pipeline and reviews papers through the Review Process. The binding policy: write for a delegate who reads in passes and stops when a pass fails - show, then assert, and state the conclusion at every level.
+A production system for WG21 committee papers. It writes papers through the seven-step pipeline and reviews papers through the Review Process. The binding policy: write for a delegate who reads in passes and stops when a pass fails - show, then assert, and state the conclusion at every level.
 
 The rules in this document are staged audit criteria, not simultaneous constraints. Each pipeline step names the rules that bind while writing it; every other rule applies at review time, one rule at a time. This is why the document's size does not collide with the constraint budget it observes.
 
@@ -18,7 +18,7 @@ The rules in this document are staged audit criteria, not simultaneous constrain
 
 ## Scope
 
-- To produce a whole paper, or to rewrite one, run Steps 0-5 in order.
+- To produce a whole paper, or to rewrite one, run Steps 0-6 in order.
 - To rewrite: treat the existing draft as input, not as text to preserve. No sentence survives by default; every section re-earns its place under these rules.
 - To review a paper without writing one, run the Review Process alone.
 - For a targeted edit, apply the write-time rules of the step that owns the edited part, then run Review Process steps 1-2 on the changed text.
@@ -119,13 +119,27 @@ Write the surface last, against the finished body (W6), in this order:
 
 Stop when the surface is written and the title is chosen or flagged provisional.
 
-### Step 5: Review
+### Step 5: Prose
+
+Goal: prose that reads as human-written, with the generation signatures removed.
+
+Run the prose passes over the finished surface and body. `<prose-rules>` holds P1-P5 as sequential passes; run them one at a time, in order, sweeping the whole paper once per pass, because structural edits must land before wording edits. After every edit, re-read the edited paragraph and one paragraph on each side, then repair the joint before the next edit. Treat quoted text and citations as untouchable (Invariant 2): change no character inside quotation marks or block quotes, and preserve every citation, link, and reference marker; when a rule collides with a quote, rewrite around it.
+
+- P1 - split any paragraph over 300 words and any low-quote sentence over 70.
+- P2 - cut the sentences that narrate structure instead of doing the work.
+- P3 - thin each machine idiom to its per-document rate.
+- P4 - flatten every metaphor family but the domain's own.
+- P5 - rewrite non-text abstractions that act with volition.
+
+Run P6 to verify the passes and fix what it flags. Stop when the P7 checklist passes.
+
+### Step 6: Review
 
 Run the Review Process below, in full. This step contains no instructions of its own.
 
 ## The Review Process
 
-Run this process on any paper: as pipeline Step 5, or alone on request. The process plus the three containers below - `<review-rules>`, `<writing-rules>`, `<loaded-words>` - is the complete review kit; a review needs nothing else from this document. Cross-reference its internal steps as "Review Process step N".
+Run this process on any paper: as pipeline Step 6, or alone on request. The process plus the four containers below - `<review-rules>`, `<writing-rules>`, `<prose-rules>`, `<loaded-words>` - is the complete review kit; a review needs nothing else from this document. Cross-reference its internal steps as "Review Process step N".
 
 1. Mechanical scans. Run every scan in R1. Fix each hit or record it as a finding.
 2. Citation integrity. Run every check in R2.
@@ -136,7 +150,7 @@ Run this process on any paper: as pipeline Step 5, or alone on request. The proc
 
 <review-rules>
 
-R0. Audit the paper against every rule in `<writing-rules>`, one rule at a time, honoring each rule's ask/info tag and the override registry. Pass every candidate finding through the R5 filters before it enters the report.
+R0. Audit the paper against every rule in `<writing-rules>` and `<prose-rules>`, one rule at a time, honoring each rule's ask/info tag and the override registry. Pass every candidate finding through the R5 filters before it enters the report.
 
 R1. Mechanical scans. Each scan enforces the rule it names; a hit is a finding.
 
@@ -169,7 +183,7 @@ R3. Fact-check protocol. One subagent, one batch. The task ships the paper text 
 - Re-run every absence claim by its disclosed method.
 - Report every item as VERIFIED, CORRECTED (with the correction), or UNVERIFIABLE (with the reason: paywalled, binary-only, offline, not found).
 
-R4. Adversarial-evaluation protocol. One fresh subagent. The task ships the paper plus `<writing-rules>`, `<review-rules>`, and `<loaded-words>`; the subagent needs nothing else. Directives for the task:
+R4. Adversarial-evaluation protocol. One fresh subagent. The task ships the paper plus `<writing-rules>`, `<review-rules>`, `<prose-rules>`, and `<loaded-words>`; the subagent needs nothing else. Directives for the task:
 
 - Apply R0.
 - Surface check: from title, abstract, headings, and conclusion alone, name the paper's category, context, assumptions, contribution, ask, and stated conclusion. Each missing answer is a finding.
@@ -287,7 +301,7 @@ The body, audit:
 - W20. Number the links of every causal chain and cite each link. State each link as a fact; the chain is the conclusion's evidence, and the stated conclusion follows it (W10).
 - W21. Order a sequence of evidence from simplest to most complex, each step adding exactly 1 new dimension. A delegate who accepts step N cannot escape step N+1.
 - W22. Include every item a survey found, especially the items that cut against the paper's position. Date every timeline entry. Reason: one curated omission, discovered, discredits every honest row.
-- W23. Attach every cost to a design or a mechanism, never to a person. Pair every cost with what it purchased. Test: the designer reads the section and feels described, not accused.
+- W23. Attach every cost to a design or a mechanism, never to a person. Pair every cost with what it provides. Test: the designer reads the section and feels described, not accused.
 - W24. Apply every evaluative standard identically to both sides. Discount evidence that favors the paper's position by the same rule that discounts the opponent's; when the paper discounts the opponent's direction polls, it discounts its own side's direction polls in the same sentence class.
 - W25. When the authors of an evaluative standard are a party to the dispute it judges, disclose that where the standard is introduced, and state what the conclusion rests on if the standard is rejected.
 - W26. Give expected objections their own section. State each objection in its strongest form as a quoted heading; answer only from evidence already presented in the paper.
@@ -311,7 +325,7 @@ Standing sections:
 Ask-papers:
 
 - W37 (ask). Before drafting, inventory the published positions of the delegates likely to attend: papers, national-body comments, prior polls. Reuse their exact phrases in the framing; a delegate cannot oppose their own stated concern.
-- W38 (ask). Open the case with the outcome: 1 sentence naming what the committee achieves by adopting. Anchor with the largest defensible number or starkest defensible contrast, then present the smallest mechanism that buys it.
+- W38 (ask). Open the case with the outcome: 1 sentence naming what the committee achieves by adopting. Anchor with the largest defensible number or starkest defensible contrast, then present the smallest mechanism that provides it.
 - W39 (ask). Show who already believes: implementations, deployments, delegations. Three implementations are a standard; one is a prototype. After every favorable poll, publish a revision addressing every concern before the next mailing deadline.
 - W40 (ask). Decompose the ask into a sequence of polls, each independently agreeable to a delegate who opposes the final conclusion. When a prior poll omitted a live option, name the omission and propose an inclusive follow-up poll.
 - W41 (ask). Frame benefits as losses: name the specific design freedoms that vanish after the ship date, and which choice is irreversible. State the irreversibility as fact; the committee's risk aversion does the rest.
@@ -326,6 +340,20 @@ Info-papers:
 - W47. When the paper has no finding on a choice, present each option's provides and costs without a ranking. When the paper has a finding, state it (Invariant 3).
 
 </writing-rules>
+
+<prose-rules>
+
+Every P-rule revises the paper's prose so it reads as human-written, not machine-generated. Step 5 runs P1-P5 as sequential passes, one at a time over the whole paper; P6 verifies them and P7 is the exit checklist. The Review Process re-audits every P-rule one at a time, the same way it audits the W-rules. Enforce the per-document rates, not total abstinence: each construction below is defensible alone and only fingerprints the text at density.
+
+- P1. Split any paragraph over 300 words at a numbered move, a pivot between opposing sides, a change of speaker, or a change of evidence source. Split any sentence over 70 words whose quoted content is under 35 percent of its words, breaking at semicolons, dashes, or "and" joints between independent claims; leave quote-dense sentences intact, because splitting reported speech distorts attribution. Allow a one-sentence paragraph as a pivot between two long blocks, at most 2 per 10,000 words. Reason: uniform long blocks are a generation signature and hide the seams a reader needs to navigate the argument.
+- P2. Delete meta-announcements, sentences that state what the text is about to do instead of doing it: "the third axis deserves its own sentence" becomes the sentence that makes the point. Delete announce-then-do joints, where a sentence ends by promising content and the delivery reintroduces itself; cut the promise and keep the delivery. Delete one-line escorts before a table or figure that already carries a caption (W12); the caption does that job. Keep at most one instance of a given hedge per paragraph, the first, and delete the rest. When two adjacent sentences state one fact twice, keep the more concrete and delete the other. Escape hatch: keep a restatement when the two occurrences do different argumentative work, stated as evidence in one place and weighed as a concession in another. Reason: generated prose narrates its own structure, and the edit keeps the content and cuts the narration.
+- P3. Thin each machine idiom to its rate below. Rewrite abstraction promotions that elevate a fact into a named abstraction instead of stating the point: "the confinement is the finding" becomes "the confinement is what matters". Ban verdict coinages, a metaphorical word private to this paper used as a conclusion ("unfenced", "armored"); replace with the literal predicate, or define the coinage at first use and reuse it consistently. Apply the currency test: keep a coined word only when it carries its meaning in professional English outside this paper, so a fluent reader decodes it cold, because recurrence inside the paper is not currency. Rates, counted at P6: "exactly" and "precisely" at a combined 1 per 2,500 words, kept only where the precision is the claim; nonce compounds in "-shaped", "-flavored", "-style" at 1 per document, elsewhere name the property; "in full" at 1 per 4,000 words, kept only where completeness is asserted; the antithesis closer "X, not Y" at 1 per 2,000 words, kept for rule statements and stripped to the positive claim otherwise; colon-codas, a colon followed by a punchy closing fragment, at 1 per 5,000 words. When two instances tie under a rate, keep the one carrying a rule or definition and cut the one carrying emphasis.
+- P4. Allow at most one metaphor family per paper, and make it the domain's own vocabulary; flatten every other family into plain verbs. Replace economic metaphors with plain English: "priced as" becomes "counts as", "buys" becomes "provides", "at the price of" becomes "at the cost of", "carrying cost" becomes "overhead", "exercise the option" becomes "use the capability"; plain "cost" is ordinary English and stays. Replace physical-verb animations of abstractions: "costs run" becomes "costs are incurred", "lives inside" becomes "sits inside", "earns credit" becomes "receives credit". Keep a metaphor word only when it is a quoted opponent's own term: answer in their vocabulary in the sentence that engages them, then return to plain verbs. Reason: dead-metaphor stacking forces the reader to unpack finance, volition, and abstraction in one clause, and plain verbs cost nothing.
+- P5. Classify every abstract subject paired with an action verb into three tiers, and let the tier decide the fix. Tier 1, texts speak (a paper states, a poll reads, a standard requires): allowed, standard scholarly English. Tier 2, arguments act in argument space (an objection concedes, a premise implies): allowed sparingly, but prefer Tier 1 when a specific text can be named. Tier 3, non-text abstractions act with volition (the record declines, the ledger measures, the configuration refuses): banned; rewrite by naming the real actor ("what production deployments avoid") or by going stative ("the ledger is organized by configuration form"). Allow stative-causal evidence verbs ("the record settles", "the data show", "the evidence supports"). Decision test: ask who performs the verb; when the honest answer is "nobody, a pile of documents is choosing", the pair is Tier 3, so rewrite it.
+- P6. Verify the passes before Step 5 ends. Count each capped construction from P3 (intensifiers, nonce compounds, "in full", antithesis closers, colon-codas) and revise every overage. List every metaphorical word that fails the P3 currency test and confirm each is defined at first use or replaced. Search the banned families by pattern: economic verbs from P4, and Tier 3 subject-verb pairs from P5 (a subject in {record, ledger, demand, premise, configuration} followed within two words by a volitional verb); both counts must be zero. Recompute paragraph and sentence length against the P1 thresholds. Diff every quoted span against the pre-pass text; the spans must be byte-identical (Invariant 2). Confirm every citation marker still resolves to a reference entry in both directions. Read every edited section start to finish once, confirming each paragraph's opening connects to the previous paragraph's close.
+- P7. Run the exit checklist; each item answers yes or no, and each no returns to its rule. No paragraph exceeds 300 words and no low-quote sentence exceeds 70 (P1). No sentence announces what the text is about to do (P2). No hedge appears twice in one paragraph (P2). Every capped idiom is at or under its rate and each survivor is load-bearing (P3). Every word failing the currency test is defined at first use or replaced (P3). One metaphor family remains and it is the domain's own (P4). No Tier 3 subject performs a volitional verb (P5). Quotes and citations are unchanged, verified mechanically (P6). Every edited section has been re-read continuously (P6).
+
+</prose-rules>
 
 <loaded-words>
 
