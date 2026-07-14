@@ -1,5 +1,5 @@
 ---
-description: Production system for WG21 committee papers - a seven-step writing pipeline and a reusable Review Process (mechanical scans, citation integrity, fact check, adversarial evaluation, resolution)
+description: Production system for WG21 committee papers - a seven-step writing pipeline, a reusable Review Process (mechanical scans, citation integrity, fact check, adversarial evaluation, resolution), and a reusable Abstract Generator that derives an abstract from a finished paper and reviews it against that paper in a fresh subagent
 ---
 
 <!--
@@ -21,6 +21,7 @@ The rules in this document are staged audit criteria, not simultaneous constrain
 - To produce a whole paper, or to rewrite one, run Steps 0-6 in order.
 - To rewrite: treat the existing draft as input, not as text to preserve. No sentence survives by default; every section re-earns its place under these rules.
 - To review a paper without writing one, run the Review Process alone.
+- To generate only an abstract for a finished paper, run the Abstract Generator alone.
 - For a targeted edit, apply the write-time rules of the step that owns the edited part, then run Review Process steps 1-2 on the changed text.
 - Settle front-matter `intent` before writing anything: `ask` (the paper requests something of the committee) or `info` (the paper places findings in the record and requests nothing). The author picks. If the author is unavailable, default to `info` and flag the choice as provisional.
 - When the repository that holds the paper defines its own style rules, those rules win on formatting, front matter, and citation format.
@@ -112,12 +113,13 @@ Goal: a surface that carries the whole paper for the delegate who reads nothing 
 Write the surface last, against the finished body (W6), in this order:
 
 1. Conclusion (W5). Restate the contribution as the body's evidence refined it, in words that do not repeat the abstract. Ask-papers: state what C++ gains if the ask is granted and what it keeps paying if not, and restate the ask so a conclusion-only delegate can vote. Info papers: state the finding and what the record shows; there is no ask to restate. Both: name who builds on the work next, and widen with named consequences, never slogans.
-2. Abstract (W2). First the brutal summary: 1 sentence on its own line, no citations, no paper numbers, no hedging, stating the finding. Then a blank line. Then a 3-6 sentence funnel: context the audience already shares, the narrowed problem, the contribution, and the ask (ask-papers only). Each sentence narrows the one before it.
-3. Introduction (W3). Name the related work. Enumerate the contributions as a numbered list. State the paper's assumptions here, where the surface pass can see them.
-4. Headings (W4). Rewrite each heading to state its section's point. Read the heading sequence alone; it carries the argument or it gets rewritten again.
-5. Title (W1), last. List the finding-words. Generate 3-5 candidates across two families: rhythmic (cadence, parallel structure) and informative (8-12 words that tell an index-scanner what the paper contains). Require established searchable keywords in the title or subtitle. Test every candidate five ways: a colleague would repeat it at lunch; every word parses without decoding; it has cadence read aloud; it touches a concern the committee already holds; an index-scanner knows what the paper contains. Present the candidates; the author picks. If the author is unavailable, use the informative candidate and flag it provisional.
+2. Introduction (W3). Name the related work. Enumerate the contributions as a numbered list. State the paper's assumptions here, where the surface pass can see them.
+3. Headings (W4). Rewrite each heading to state its section's point. Read the heading sequence alone; it carries the argument or it gets rewritten again.
+4. Title (W1). List the finding-words. Generate 3-5 candidates across two families: rhythmic (cadence, parallel structure) and informative (8-12 words that tell an index-scanner what the paper contains). Require established searchable keywords in the title or subtitle. Test every candidate five ways: a colleague would repeat it at lunch; every word parses without decoding; it has cadence read aloud; it touches a concern the committee already holds; an index-scanner knows what the paper contains. Present the candidates; the author picks. If the author is unavailable, use the informative candidate and flag it provisional.
+5. Abstract, generate (W2). Generate it with the Abstract Generator; do not write it by hand. Launch one subagent and give it two paths: the paper's file path and the path to this tool file (papersmith.md). Instruct it to grep this tool file for the `<abstract-process>` tag, read the enclosed block, read the paper at its path, and follow the block. It returns only the generated abstract; hold it for item 6 and do not write it into the placeholder yet. Reason: the generator derives the abstract from the finished paper, so it runs after every other surface element exists.
+6. Abstract, review (W2), last. Launch a second, separate subagent and give it three things: the paper's file path, the path to this tool file (papersmith.md), and the generated abstract text from item 5. Instruct it to grep this tool file for the `<abstract-review>` tag, read the enclosed block, and follow it. Fresh context is the point: the generator never reviews its own output, because it shares the output's blind spots (R4). It returns only the edited abstract; write that into the abstract placeholder.
 
-Stop when the surface is written and the title is chosen or flagged provisional.
+Stop when the surface is written, the title is chosen or flagged provisional, and the abstract review subagent has returned.
 
 ### Step 5: Prose
 
@@ -275,7 +277,7 @@ Every W-rule is an audit criterion for the Review Process. A parenthetical step 
 The surface:
 
 - W1 (Step 4). Name the contribution in the title, not the topic area; a delegate classifies the paper from the title alone. Put established searchable keywords in the title or subtitle; a private coinage as the only name makes the paper unfindable.
-- W2 (Step 4). Open the abstract with the brutal summary: 1 sentence, its own line, no citations, no hedging, stating the finding. Follow with a blank line and a 3-6 sentence funnel - shared context, narrowed problem, contribution, ask (ask-papers) - each sentence narrowing the last. Reason: the first pass never reaches an ending stated anywhere else.
+- W2 (Step 4). The abstract opens with the finding line: 1 sentence, its own line, no citations, no hedging, stating the finding. A blank line follows, then one funnel paragraph, each sentence narrowing the last - shared context, narrowed problem, contribution, ask (ask-papers). The funnel keeps every load-bearing conclusion, so its length follows the claims, not a fixed sentence count. The Abstract Generator produces the abstract from the finished paper; audit its output against this format. Reason: the first pass never reaches an ending stated anywhere else.
 - W3 (Step 4). In the introduction: name the related work, enumerate the contributions as a numbered list, and state the paper's assumptions. An assumption the delegate cannot find reads the same as one that is invalid.
 - W4 (Step 4). Write headings that state each section's point and, read alone in sequence, carry the argument.
 - W5 (Step 4). In the conclusion: restate the contribution as the evidence refined it, without repeating the abstract; state gains and costs and restate the ask votably (ask-papers) or state the finding and the record (info papers); name who builds next; widen with named consequences, never slogans.
@@ -387,6 +389,56 @@ Every P-rule revises the paper's prose so it reads as human-written, not machine
 | obviously / clearly | delete | Patronize: if it were obvious the sentence would not exist |
 
 </loaded-words>
+
+## The Abstract Generator
+
+Generate an abstract from a finished paper, then review it against that paper. Run both as the last items of Step 4 by subagent, or alone on request against any finished paper. Give the generator the paper's path; it reads the whole paper and returns one abstract - a blunt finding line, a blank line, and one funnel paragraph, and nothing else. Then give the reviewer the paper's path and that abstract in a second, fresh subagent; it edits the abstract against the paper and returns the edited version, because the generator shares its own output's blind spots (R4). Generation and review are the two blocks below: `<abstract-process>` generates, `<abstract-review>` edits. Each block is self-contained: a subagent given this tool file's path and the block's tag name greps for the tag, reads the enclosed block, and needs nothing else from this document.
+
+<abstract-process>
+
+Read the whole paper, then run steps 1-4 in order. Return only the final abstract - not the conclusion list, not any halving or compression stage.
+
+1. Enumerate. List every conclusion in the paper except the Abstract: each finding, judgment, scope statement, or concession the paper asserts on its own authority, not the evidence or quotations under it, and not the analytical apparatus it applies - frameworks, counts, and method are machinery, not conclusions. A conclusion drawn by applying a framework is enumerated; the framework and its count are not. Sweep the whole text, not one conclusion per section, since they cluster where the argument turns - one section may hold a dozen, another one. Number the list.
+
+2. Halve.
+- Halve the list repeatedly to about a dozen conclusions, then to about eight; stop there rather than halving past it.
+- Merge related conclusions.
+- When a merged conclusion turns into a list of instances, keep the category and cut the instances - unless the items are themselves the finding. Test each list by deleting it: if the claim survives, the list was trivia and stays cut; if the sentence goes vague or false, it was load-bearing and stays in.
+- Drop only support that a surviving conclusion already carries.
+- Cut a qualifier - anything that bounds, scopes, or excepts a finding, or names an alternative it preserves - only with the finding it qualifies.
+
+Conserve the five C's in both the step 2 halving and the step 4 compression:
+- Category: keep the paper the same kind - proposal, analysis, position, or info.
+- Context: keep the shared background that locates the problem through every cut.
+- Correctness: keep every surviving claim true and not overclaimed; cut or keep each claim together with the scope, condition, or mechanism that makes it true.
+- Contributions: keep everything the paper provides.
+- Clarity: keep the result readable prose, not shorthand.
+
+3. Rewrite. Cast what remains in the present tense of an abstract. First compress the whole set into one sentence - a main clause carrying the paper's dominant thesis, supporting conclusions hung on as subordinate clauses. Lift that main clause out as the finding line, blunt, on its own line. After a blank line, unfold the subordinate clauses into one funnel paragraph, each sentence narrower than the last: open on the context the audience already shares, move through the narrowed problem, close on the finding. Because finding line and funnel are split from the same sentence, the funnel narrows toward the finding by construction. If the one-sentence compression has no single main clause - only two co-equal claims joined by "and" - the paper has two theses; lead with one and fold the other into the funnel.
+
+4. Compress. Leave the finding line untouched. Length is a target, not a constraint; the load-bearing claims are a floor - if honoring the floor leaves the abstract long, keep it long. Sweep the funnel left to right in non-overlapping pairs - (1,2), then (3,4), and so on - fusing each where genuine fusion is possible, and stop once the target length is reached. Fusing two sentences means rewriting them into one new sentence of ordinary length that drops the overlap and connective tissue the merge makes redundant, not stapling both bodies behind a semicolon or "and"; subordinate one clause to the other. If a fused sentence ends up longer than those around it, you stapled instead of rewrote - redo it, or move a beat into a neighbor so the paragraph's sentences stay near-even in length. Never cut inside a sentence to shed mechanism. Refuse any fusion combining two load-bearing claims into one sentence, and stop the sweep there even if the target is not met. The funnel's opening context and closing finding are scaffolding: fuse them when light, but never delete them outright. Conserve the five C's above. Keep the result one blunt finding line, a blank line, and one paragraph.
+
+Before returning, confirm every qualifier that survived step 2 appears in the funnel, then compress the finished abstract back to one sentence as a check - if its main clause does not match the finding line, the funnel is aimed wrong; re-aim it. Return only that abstract.
+
+</abstract-process>
+
+<abstract-review>
+
+Inputs: the source paper's full text and the generated abstract. The abstract under review has this shape - a finding line (one blunt sentence on its own line, no citations, no hedging), a blank line, then a funnel paragraph whose sentences narrow from shared context to the finding. Read both inputs, then run rules 1-5 in order, editing the abstract in place. This pass edits presentation; it does not regenerate: assume the generator's selection of conclusions is correct, and fix only how they are aimed, voiced, scoped, and ordered. Return only the edited abstract - not the rule-by-rule findings, not a list of changes.
+
+1. Aim check. Compress the abstract to one sentence. If its main clause does not match the finding line, the funnel is aimed at the wrong thesis; re-aim it. If the finding line itself is wrong - it does not match the paper's stated purpose, read from the title, the final section, and any proposed actions or polls - fix the finding line first, because every later rule tests against it.
+
+2. Voice match. Read the paper's own abstract if one exists, its introduction, and its final section. Match the generated abstract's register to the paper's register for its central claim: prescriptive ("should"), descriptive ("shows"), or requestive ("asks"). Replace verbs that escalate or soften: if the paper asks, the abstract asks, not demands and not merely notes.
+
+3. Omission scan. Read the paper's final section and list every concrete deliverable it names: polls, patches, scope statements, recommendations. If the abstract names none of them, add the most important one. If it names some, confirm none are fabricated. The abstract need not list them all, but it must not read vaguer than the paper about what the paper proposes. If the paper makes no concrete proposal - an info paper may record a finding rather than make an ask - skip this rule.
+
+4. Overclaim scan. For every factual assertion in the abstract, find its source sentence in the paper. When the paper qualifies the claim - scopes it, hedges it, names an exception - carry the qualifier or cut the claim. For every judgment word the abstract uses, confirm the paper uses the same word or an equivalent; when the abstract's word is stronger than the paper's, use the paper's word.
+
+5. Funnel audit. Run this last, on the sentences left after rules 3 and 4. Number the funnel's sentences. For each adjacent pair, confirm the second is narrower than the first, closer to the finding line's specific claim. Two sentences at the same level of generality are parallel supports, not a funnel; subordinate one to the other or merge them. When a mechanism or concept appears in two sentences, fuse those two sentences into one. This is the generator's most common structural defect.
+
+After the five rules, read the result once as a committee delegate would, and split any sentence that needs re-reading to parse. Keep the result one blunt finding line, a blank line, and one paragraph. Return only the edited abstract.
+
+</abstract-review>
 
 Write for a delegate who reads in passes and stops when a pass fails: show, then assert, and state the conclusion at every level.
 
