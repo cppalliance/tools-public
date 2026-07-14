@@ -166,7 +166,7 @@ R1. Mechanical scans. Each scan enforces the rule it names; a hit is a finding.
 - In body sections (outside disclosure, abstract, conclusion), scan for "the paper", "this paper", "the argument" as grammatical subjects; each hit is a candidate finding (P2).
 - No freestanding bolded epigrams (W17).
 - No phrase of 4 or more words repeated verbatim without added meaning (W18).
-- Confirm the paper carries each required section: abstract, revision history, disclosure (W35), introduction (W3), and conclusion (W5). Require acknowledgments (W36) when the paper names contributors, and references when the paper carries citations. Each missing required section is a finding.
+- Confirm the paper carries each required section under its canonical heading: Abstract, Revision History, Disclosure (W35), Introduction (W3), and Conclusion (W5). A section that does the work under a different name ("Background", "Context", "Background and Scope") is misnamed; flag it. Require Acknowledgments (W36) when the paper names contributors, and References when the paper carries citations. Each missing or misnamed required section is a finding.
 
 R2. Citation integrity.
 
