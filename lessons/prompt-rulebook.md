@@ -90,6 +90,7 @@ Apply this section when the target defines tools, spawns subagents, or runs unat
 - Close open sets with enums, and make invalid parameter combinations unrepresentable.
 - Give each tool a stop condition and an uncertainty threshold scaled to risk: a destructive action asks at the first doubt, a read-only action retries without asking.
 - Write each subagent task self-contained: objective, output format, sources and tools, boundaries, effort budget. The subagent sees no conversation history and no sibling tasks; what the task omits, the subagent invents.
+- Ship subagent task text verbatim from the tool's own template or specification. Do not paraphrase, summarize, augment, or rewrite the task before dispatch. The subagent receives the instructions exactly as the tool defines them; any transformation between the tool's text and the dispatched prompt is a bug, because the tool author wrote the task for the subagent's context, not for the dispatcher's. Reason: paraphrasing degrades structured task descriptions into the dispatcher's approximation, losing quantified constraints, XML containers, and formatting that the subagent needs to comply.
 - Write standing rule files concrete enough to verify: "run `npm test` before committing", not "test your changes". One representative code snippet outperforms paragraphs of style description.
 - Run the removal test on every standing instruction: delete the line if its absence would change nothing. Standing text is paid on every request, and bloat teaches the model to skim.
 

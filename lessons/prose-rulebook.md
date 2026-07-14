@@ -31,6 +31,7 @@ Reason for this pass: generated prose narrates its own structure; human editors 
 - Keep at most one instance of a given hedge per paragraph ("to the authors' knowledge"); delete duplicates within the paragraph, keep the first.
 - When two adjacent sentences state one fact twice, keep the more concrete sentence and delete the other.
 - Escape hatch: keep a restatement when the two occurrences do different argumentative work (stated as evidence in one place, weighed as a concession in another); otherwise it is a duplicate.
+- Outside standing sections that are about the document (disclosure, abstract, conclusion), do not make the paper a character in its own argument. When the paper concedes, credits, examines, or takes a position, rewrite so the evidence, the finding, or the subject matter is the grammatical subject. Section-orientation openers ("This section reports...") are permitted; persuasion narration ("it is the paper's first piece of evidence," "the paper reads the same hazard") is not. Reason: a paper that narrates its own persuasion puts a layer of self-commentary between the reader and the content.
 
 ## 4. Machine idioms
 
@@ -80,6 +81,7 @@ Run these checks on the finished target. Each answers yes or no; each no returns
 
 - No paragraph exceeds 300 words; no low-quote sentence exceeds 70. (2)
 - No sentence announces what the text is about to do. (3)
+- The paper is not a character in its own argument outside standing sections. (3)
 - No hedge appears twice in one paragraph. (3)
 - Every capped idiom is at or under its rate, and each survivor is load-bearing. (4)
 - Every word failing the currency test is defined at first use or replaced. (4)
