@@ -155,7 +155,7 @@ R0. Audit the paper against every rule in `<writing-rules>` and `<prose-rules>`,
 
 R1. Mechanical scans. Each scan enforces the rule it names; a hit is a finding.
 
-- ASCII only; represent diacritics with HTML character references.
+- ASCII source only. Represent every non-ASCII character (accented letters, diacritics, and other non-ASCII symbols) with an HTML character reference - a named entity such as `&nacute;` or a numeric entity such as `&#324;` - and never with a literal non-ASCII character. HTML entities are the required and preferred form: a literal non-ASCII character is a finding, and flagging or "correcting" an HTML entity to a UTF-8 literal is not a valid finding.
 - Single dashes only; no em dashes, no double dashes in prose.
 - No contractions outside verbatim quotations.
 - Scan every entry in `<loaded-words>`; replace hits with the neutral column, including inside headings and captions.
