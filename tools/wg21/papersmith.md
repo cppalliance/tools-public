@@ -22,10 +22,11 @@ The rules in this document are staged audit criteria, not simultaneous constrain
 - To rewrite: treat the existing draft as input, not as text to preserve. No sentence survives by default; every section re-earns its place under these rules.
 - To review a paper without writing one, run the Review Process alone.
 - To generate only an abstract for a finished paper, run the Abstract Generator alone.
-- For a targeted edit, apply the write-time rules of the step that owns the edited part, then run Review Process steps 1-2 on the changed text.
+- For a targeted edit, apply the write-time rules of the step that owns the edited part, then run Review Process step 1 (R1 and R2) on the changed text and fix what it flags.
 - Settle front-matter `intent` before writing anything: `ask` (the paper requests something of the committee) or `info` (the paper places findings in the record and requests nothing). The author picks. If the author is unavailable, default to `info` and flag the choice as provisional.
-- When the repository that holds the paper defines its own style rules, those rules win on formatting, front matter, and citation format.
+- Follow the repository's style rules on formatting, front matter, and citation format; they override this document.
 - Route working files by intent word: collected source material is research, pipeline intermediates are scratch, findings reports are output.
+- Never increment the paper's revision number without asking the author. Default to no. When the front-matter date is more than 2 months old, ask the author whether to increment.
 
 ## Invariants
 
@@ -112,8 +113,8 @@ Goal: a surface that carries the whole paper for the delegate who reads nothing 
 
 Write the surface last, against the finished body (W6), in this order:
 
-1. Conclusion (W5). Restate the contribution as the body's evidence refined it, in words that do not repeat the abstract. Ask-papers: state what C++ gains if the ask is granted and what it keeps paying if not, and restate the ask so a conclusion-only delegate can vote. Info papers: state the finding and what the record shows; there is no ask to restate. Both: name who builds on the work next, and widen with named consequences, never slogans.
-2. Introduction (W3). Name the related work. Enumerate the contributions as a numbered list. State the paper's assumptions here, where the surface pass can see them.
+1. Write the Conclusion (W5). Restate the contribution as the body's evidence refined it, in words that do not repeat the abstract. Ask-papers: state what C++ gains if the ask is granted and what it keeps paying if not, and restate the ask so a conclusion-only delegate can vote. Info papers: state the finding and what the record shows; there is no ask to restate. Both: name who builds on the work next, and widen with named consequences, never slogans.
+2. Write the Introduction (W3). Name the related work. Enumerate the contributions as a numbered list. State the paper's assumptions here, where the surface pass can see them.
 3. Headings (W4). Rewrite each heading to state its section's point. Read the heading sequence alone; it carries the argument or it gets rewritten again.
 4. Title (W1). List the finding-words. Generate 3-5 candidates across two families: rhythmic (cadence, parallel structure) and informative (8-12 words that tell an index-scanner what the paper contains). Require established searchable keywords in the title or subtitle. Test every candidate five ways: a colleague would repeat it at lunch; every word parses without decoding; it has cadence read aloud; it touches a concern the committee already holds; an index-scanner knows what the paper contains. Present the candidates; the author picks. If the author is unavailable, use the informative candidate and flag it provisional.
 5. Abstract, generate (W2). Generate it with the Abstract Generator; do not write it by hand. Launch one subagent and give it two paths: the paper's file path and the path to this tool file (papersmith.md). Instruct it to grep this tool file for the `<abstract-process>` tag, read the enclosed block, read the paper at its path, and follow the block. It returns only the generated abstract; hold it for item 6 and do not write it into the placeholder yet. Reason: the generator derives the abstract from the finished paper, so it runs after every other surface element exists.
@@ -137,18 +138,16 @@ Run P6 to verify the passes and fix what it flags. Stop when the P7 checklist pa
 
 ### Step 6: Review
 
-Run the Review Process below, in full. This step contains no instructions of its own.
+Run the Review Process below. The main agent drives every step; no subagent launches another subagent.
 
 ## The Review Process
 
-Run this process on any paper: as pipeline Step 6, or alone on request. The process plus the four containers below - `<review-rules>`, `<writing-rules>`, `<prose-rules>`, `<loaded-words>` - is the complete review kit; a review needs nothing else from this document. Cross-reference its internal steps as "Review Process step N".
+Run this process on any paper: as pipeline Step 6, or alone on request. The process plus the four containers below - `<review-rules>`, `<writing-rules>`, `<prose-rules>`, `<loaded-words>` - is the complete review kit; a review needs nothing else from this document. The main agent launches each subagent at depth 1 and reads its findings; no subagent launches another subagent. Cross-reference its internal steps as "Review Process step N".
 
-1. Mechanical scans. Run every scan in R1. Fix each hit or record it as a finding.
-2. Citation integrity. Run every check in R2.
-3. Fact check. Launch one subagent with the R3 protocol. Run it in parallel with step 4.
-4. Adversarial evaluation. Launch a second, separate subagent with the R4 protocol. Fresh context is the point: the writer never reviews its own draft, because the writer shares the draft's blind spots.
-5. Findings report. Consolidate steps 1-4 into one report in the R7 format, verdict first, written as output.
-6. Resolution. Give every finding exactly one R8 disposition. After the final edit batch, re-run Review Process steps 1-2 once, then stop.
+1. Launch one subagent for R1 and R2. Give it the paper and the four review containers. It runs every mechanical scan in R1 and every citation check in R2, records each hit as a finding, and returns the findings. Wait for it.
+2. Launch one subagent for R3 and R4. Give it the paper, the citation list, and the four review containers. It runs the R3 fact-check protocol and the R4 adversarial-evaluation protocol, and returns the findings. Fresh context is the point: the writer never reviews its own draft, because the writer shares the draft's blind spots. Wait for it.
+3. Consolidate. Read the findings from both subagents. Assemble one report in the R7 format, verdict first.
+4. Resolution. Give each finding an R8 disposition. After the final edit batch, re-run step 1 once, then stop.
 
 <review-rules>
 
@@ -167,14 +166,15 @@ R1. Mechanical scans. Each scan enforces the rule it names; a hit is a finding.
 - In body sections (outside disclosure, abstract, conclusion), scan for "the paper", "this paper", "the argument" as grammatical subjects; each hit is a candidate finding (P2).
 - No freestanding bolded epigrams (W17).
 - No phrase of 4 or more words repeated verbatim without added meaning (W18).
+- Confirm the paper carries each required section: abstract, revision history, disclosure (W35), introduction (W3), and conclusion (W5). Require acknowledgments (W36) when the paper names contributors, and references when the paper carries citations. Each missing required section is a finding.
 
 R2. Citation integrity.
 
-- Every paper reference in the body carries a superscript citation; every superscript has a reference entry; every entry is cited at least once.
-- Paper numbers carry revision suffixes, except when naming a series generically.
-- URLs are canonical: open-std.org for WG21 papers, the vendor's own documentation for vendor claims.
-- Every reference entry follows the repository's format; absent one, use: [N] linked ID - "Title" (Full Author Names, Year).
-- Every link resolves.
+- Attach a superscript citation to every paper reference in the body. Confirm every superscript has a reference entry and every entry is cited at least once.
+- Add revision suffixes to paper numbers, except when naming a series generically.
+- Use canonical URLs: open-std.org for WG21 papers, the vendor's own documentation for vendor claims.
+- Format every reference entry to the repository's format; absent one, use: [N] linked ID - "Title" (Full Author Names, Year).
+- Verify every link resolves.
 - When the repository provides citation tooling, run it, then verify every auto-correction by hand; the known failure mode is adding a revision suffix to a generic series mention. When no tooling exists, perform the same checks manually.
 
 R3. Fact-check protocol. One subagent, one batch. The task ships the paper text and the citation list; the subagent needs nothing else. Directives for the task:
@@ -199,9 +199,9 @@ R5. Challenge filters. Apply to every candidate finding, in order:
 - C2, audience mismatch: the finding assumes an audience the front matter does not name. Kill the finding.
 - C3, too trivial: the fix would not change the paper's effect on its audience. Relegate the finding to the report's notes.
 
-R6. Severity. high: misleads the delegate or breaks an argument. medium: weakens an argument or costs credibility. low: costs polish.
+R6. Severity. Assign each finding a severity: high when it misleads the delegate or breaks an argument; medium when it weakens an argument or costs credibility; low when it costs only polish.
 
-R7. Report format. Verdict first. Write the report as output. Schema:
+R7. Report format. Verdict first. Return the findings in this schema; write nothing to a file. Schema:
 
 ```
 # Review - [document ID]
@@ -260,13 +260,14 @@ CORRECTED: Section 3 tally 41-2 -> 41-3 (source: N5001, p. 4).
 R0-R8 applied; 11 candidate findings; 6 killed by C1, 3 relegated by C3, 2 reported.
 ```
 
-R8. Resolution dispositions. Give every finding exactly one:
+R8. Resolution dispositions, applied by the main agent after reading findings from both subagents. Give every finding exactly one:
 
-- Structural fix: the finding exposes an analytical flaw. Rebuild the section from the evidence. Never wordsmith over a broken argument; prose cannot repair a wrong ledger.
-- Mechanical fix: wording, citation, or format repair.
+- Mechanical fix: wording, citation, or format repair. Apply it immediately.
+- Structural fix, unambiguous: the finding exposes an analytical flaw with one clear edit. Apply it immediately. Never wordsmith over a broken argument; prose cannot repair a wrong ledger.
+- Structural fix, section rebuild: the fix rebuilds a section from the evidence, or the correct edit is not obvious. Surface it to the author with the quote, severity, and options; do not guess.
 - Recorded override: the author overrides the rule. Record the rule, the reason, and the author in the override registry.
 
-After the final edit batch, re-run Review Process steps 1-2 once, then stop. The report plus the dispositions is the review record.
+Surface every finding whose fix is not clearly mechanical or unambiguous rather than guess at it. After the final edit batch, re-run Review Process step 1 once, then stop. The consolidated findings plus the dispositions are the review record.
 
 </review-rules>
 
@@ -277,10 +278,10 @@ Every W-rule is an audit criterion for the Review Process. A parenthetical step 
 The surface:
 
 - W1 (Step 4). Name the contribution in the title, not the topic area; a delegate classifies the paper from the title alone. Put established searchable keywords in the title or subtitle; a private coinage as the only name makes the paper unfindable.
-- W2 (Step 4). The abstract opens with the finding line: 1 sentence, its own line, no citations, no hedging, stating the finding. A blank line follows, then one funnel paragraph, each sentence narrowing the last - shared context, narrowed problem, contribution, ask (ask-papers). The funnel keeps every load-bearing conclusion, so its length follows the claims, not a fixed sentence count. The Abstract Generator produces the abstract from the finished paper; audit its output against this format. Reason: the first pass never reaches an ending stated anywhere else.
-- W3 (Step 4). In the introduction: name the related work, enumerate the contributions as a numbered list, and state the paper's assumptions. An assumption the delegate cannot find reads the same as one that is invalid.
+- W2 (Step 4). Open the abstract with the finding line: 1 sentence, its own line, no citations, no hedging, stating the finding. Follow it with a blank line, then one funnel paragraph, each sentence narrowing the last - shared context, narrowed problem, contribution, ask (ask-papers). Keep every load-bearing conclusion in the funnel, so its length follows the claims, not a fixed sentence count. Generate the abstract from the finished paper with the Abstract Generator, then audit its output against this format. Reason: the first pass never reaches an ending stated anywhere else.
+- W3 (Step 4). Write the Introduction. Name the related work, enumerate the contributions as a numbered list, and state the paper's assumptions. An assumption the delegate cannot find reads the same as one that is invalid.
 - W4 (Step 4). Write headings that state each section's point and, read alone in sequence, carry the argument.
-- W5 (Step 4). In the conclusion: restate the contribution as the evidence refined it, without repeating the abstract; state gains and costs and restate the ask votably (ask-papers) or state the finding and the record (info papers); name who builds next; widen with named consequences, never slogans.
+- W5 (Step 4). Write the Conclusion. Restate the contribution as the evidence refined it, without repeating the abstract; state gains and costs and restate the ask votably (ask-papers) or state the finding and the record (info papers); name who builds next; widen with named consequences, never slogans.
 - W6 (Step 4). Write the surface after the body is complete, and derive it from what the body shows. The surface sells the paper that exists, not the paper that was planned.
 
 The body, write-time:
@@ -298,7 +299,7 @@ The body, audit:
 - W14. Give every domain term 1 sentence of context before it carries weight. Give every leaned-on reference a 1-sentence inline takeaway. Add a glossary at 5 or more new terms. Call each concept by exactly one name; when two similar terms differ, state the distinction where the second first appears.
 - W15. Follow every claim of minimality, completeness, necessity, or exclusivity with what breaks when the thing is removed or why no alternative achieves the property. Delete the claim when the justification does not exist.
 - W16. Replace every vague quantifier with the actual items or the actual count. Delete the claim when the items cannot be named.
-- W17. Write every sentence as an assertion of fact, evidence, or argument. Convert rhetorical questions into the statements they imply. Replace slogans with the enumeration they compress. No freestanding bolded epigrams; a section's closing conclusion is a plain sentence in the closing paragraph. Reason: slogan register hands a hostile delegate proof the paper is a campaign document.
+- W17. Write every sentence as an assertion of fact, evidence, or argument. Convert rhetorical questions into the statements they imply. Replace slogans with the enumeration they compress. No freestanding bolded epigrams; write each section's closing conclusion as a plain sentence in the closing paragraph. Reason: slogan register hands a hostile delegate proof the paper is a campaign document.
 - W18. Connect consecutive ideas with transitions. Give no paragraph a sentence fragment as its opener. Expand any passage a first-time delegate would re-read. Repeat a phrase of 4 or more words only when the repetition adds meaning.
 - W19. When `audience` names EWG, LEWG, or WG21, write the problem statement, contribution, and conclusion for a competent C++ programmer with no domain expertise. When the audience is a single study group, assume its domain expertise; W14 still applies.
 - W20. Number the links of every causal chain and cite each link. State each link as a fact; the chain is the conclusion's evidence, and the stated conclusion follows it (W10).
@@ -351,7 +352,7 @@ Every P-rule revises the paper's prose so it reads as human-written, not machine
 - P1. Split any paragraph over 300 words at a numbered move, a pivot between opposing sides, a change of speaker, or a change of evidence source. Split any sentence over 70 words whose quoted content is under 35 percent of its words, breaking at semicolons, dashes, or "and" joints between independent claims; leave quote-dense sentences intact, because splitting reported speech distorts attribution. Allow a one-sentence paragraph as a pivot between two long blocks, at most 2 per 10,000 words. Reason: uniform long blocks are a generation signature and hide the seams a reader needs to navigate the argument.
 - P2. Delete meta-announcements, sentences that state what the text is about to do instead of doing it: "the third axis deserves its own sentence" becomes the sentence that makes the point. Delete announce-then-do joints, where a sentence ends by promising content and the delivery reintroduces itself; cut the promise and keep the delivery. Delete one-line escorts before a table or figure that already carries a caption (W12); the caption does that job. Keep at most one instance of a given hedge per paragraph, the first, and delete the rest. When two adjacent sentences state one fact twice, keep the more concrete and delete the other. Escape hatch: keep a restatement when the two occurrences do different argumentative work, stated as evidence in one place and weighed as a concession in another. Outside the disclosure, abstract, and conclusion, do not make the paper a character in its own argument; when the paper concedes, credits, examines, or takes a position, rewrite so the evidence, the finding, or the subject matter is the grammatical subject. Section-orientation openers ("This section reports...") are permitted; persuasion narration ("it is the paper's first piece of evidence," "the paper reads the same hazard") is not. Reason: generated prose narrates its own structure, and the edit keeps the content and cuts the narration.
 - P3. Thin each machine idiom to its rate below. Rewrite abstraction promotions that elevate a fact into a named abstraction instead of stating the point: "the confinement is the finding" becomes "the confinement is what matters". Ban verdict coinages, a metaphorical word private to this paper used as a conclusion ("unfenced", "armored"); replace with the literal predicate, or define the coinage at first use and reuse it consistently. Apply the currency test: keep a coined word only when it carries its meaning in professional English outside this paper, so a fluent reader decodes it cold, because recurrence inside the paper is not currency. Rates, counted at P6: "exactly" and "precisely" at a combined 1 per 2,500 words, kept only where the precision is the claim; nonce compounds in "-shaped", "-flavored", "-style" at 1 per document, elsewhere name the property; "in full" at 1 per 4,000 words, kept only where completeness is asserted; the antithesis closer "X, not Y" at 1 per 2,000 words, kept for rule statements and stripped to the positive claim otherwise; colon-codas, a colon followed by a punchy closing fragment, at 1 per 5,000 words. When two instances tie under a rate, keep the one carrying a rule or definition and cut the one carrying emphasis.
-- P4. Allow at most one metaphor family per paper, and make it the domain's own vocabulary; flatten every other family into plain verbs. Replace economic metaphors with plain English: "priced as" becomes "counts as", "buys" becomes "provides", "at the price of" becomes "at the cost of", "carrying cost" becomes "overhead", "exercise the option" becomes "use the capability"; plain "cost" is ordinary English and stays. Replace physical-verb animations of abstractions: "costs run" becomes "costs are incurred", "lives inside" becomes "sits inside", "earns credit" becomes "receives credit". Keep a metaphor word only when it is a quoted opponent's own term: answer in their vocabulary in the sentence that engages them, then return to plain verbs. Reason: dead-metaphor stacking forces the reader to unpack finance, volition, and abstraction in one clause, and plain verbs cost nothing.
+- P4. Limit the paper to one metaphor family, the domain's own vocabulary; flatten every other family into plain verbs. Replace economic metaphors with plain English: "priced as" becomes "counts as", "buys" becomes "provides", "at the price of" becomes "at the cost of", "carrying cost" becomes "overhead", "exercise the option" becomes "use the capability"; plain "cost" is ordinary English and stays. Replace physical-verb animations of abstractions: "costs run" becomes "costs are incurred", "lives inside" becomes "sits inside", "earns credit" becomes "receives credit". Keep a metaphor word only when it is a quoted opponent's own term: answer in their vocabulary in the sentence that engages them, then return to plain verbs. Reason: dead-metaphor stacking forces the reader to unpack finance, volition, and abstraction in one clause, and plain verbs cost nothing.
 - P5. Classify every abstract subject paired with an action verb into three tiers, and let the tier decide the fix. Tier 1, texts speak (a paper states, a poll reads, a standard requires): allowed, standard scholarly English. Tier 2, arguments act in argument space (an objection concedes, a premise implies): allowed sparingly, but prefer Tier 1 when a specific text can be named. Tier 3, non-text abstractions act with volition (the record declines, the ledger measures, the configuration refuses): banned; rewrite by naming the real actor ("what production deployments avoid") or by going stative ("the ledger is organized by configuration form"). Allow stative-causal evidence verbs ("the record settles", "the data show", "the evidence supports"). Decision test: ask who performs the verb; when the honest answer is "nobody, a pile of documents is choosing", the pair is Tier 3, so rewrite it.
 - P6. Verify the passes before Step 5 ends. Count each capped construction from P3 (intensifiers, nonce compounds, "in full", antithesis closers, colon-codas) and revise every overage. List every metaphorical word that fails the P3 currency test and confirm each is defined at first use or replaced. Search the banned families by pattern: economic verbs from P4, and Tier 3 subject-verb pairs from P5 (a subject in {record, ledger, demand, premise, configuration} followed within two words by a volitional verb); both counts must be zero. Recompute paragraph and sentence length against the P1 thresholds. Diff every quoted span against the pre-pass text; the spans must be byte-identical (Invariant 2). Confirm every citation marker still resolves to a reference entry in both directions. Read every edited section start to finish once, confirming each paragraph's opening connects to the previous paragraph's close.
 - P7. Run the exit checklist; each item answers yes or no, and each no returns to its rule. No paragraph exceeds 300 words and no low-quote sentence exceeds 70 (P1). No sentence announces what the text is about to do (P2). The paper is not a character in its own argument outside the disclosure, abstract, and conclusion (P2). No hedge appears twice in one paragraph (P2). Every capped idiom is at or under its rate and each survivor is load-bearing (P3). Every word failing the currency test is defined at first use or replaced (P3). One metaphor family remains and it is the domain's own (P4). No Tier 3 subject performs a volitional verb (P5). Quotes and citations are unchanged, verified mechanically (P6). Every edited section has been re-read continuously (P6).

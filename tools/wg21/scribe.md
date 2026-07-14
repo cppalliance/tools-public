@@ -78,7 +78,7 @@ The tool has no speed constraint. A human scribe compresses because they cannot 
 1. The two layers are physically separated in the document. All executive summaries come first under a **Summary** section. All discussions come second under a **Discussion** section. Both sections use the same subdivision headings so the reader can cross-reference.
 2. The Summary section opens with a two-sentence brutal summary of the entire meeting. First sentence: what the meeting is. Second sentence: the outcome. Then each subdivision follows.
 3. For each subdivision, write one sentence that compresses the entire discussion into its essence. Below that sentence, write bullets covering the substantive points: findings presented, concerns raised, positions taken, decisions reached, action items assigned. Only include categories that have content - never emit an empty field or "none."
-4. In the Discussion section, for each subdivision, write each speaker's contribution as a separate attributed line, in the order it occurred, paraphrased in the speaker's voice but not verbatim. Tighten, remove filler words ("um", "uh", "like", "you know"), preserve register, preserve position.
+4. In the Discussion section, for each subdivision, write each speaker's contribution as attributed lines, in the order it occurred, paraphrased in the speaker's voice but not verbatim. Tighten, remove filler words ("um", "uh", "like", "you know"), preserve register, preserve position. **One thought per line.** Each attributed line should contain one to two sentences - one point, one question, or one response. When a speaker covers multiple points in a single turn, break into multiple attributed lines using the same initials prefix. Do not cram a five-sentence argument into one line; break at natural thought boundaries. The discussion layer should read like a dialogue transcript, not a wall of prose. End each speaker line with a backslash (`\`) so that markdown renderers produce a hard line break instead of collapsing consecutive lines into one paragraph.
 5. Do not summarize away the discussion into the executive summary. Both layers exist. The reader who has five minutes reads the Summary section and stops. The reader who has thirty continues into the Discussion section.
 6. In the discussion layer, preserve: position statements, procedural framing by the chair, questions that went unanswered, concessions, reversals, and emotional register markers. "I trust vendors to apply proper judgement" is a position statement, not filler. "We are days from shipping" is a procedural framing, not small talk.
 
@@ -111,14 +111,14 @@ Output (Discussion section - all items together, with names):
 > ## Discussion
 >
 > ### P9999R2 - Frobnicator Support
-> Alice Brown (AB): The motivation is clear but I'm concerned about the ABI implications. Have you measured the vtable impact?
-> Chris Davis (CD): We shipped this in our implementation six months ago. The ABI cost is one pointer per object.
-> AB: That's not nothing for embedded.
+> Alice Brown (AB): The motivation is clear but I'm concerned about the ABI implications. Have you measured the vtable impact?\
+> Chris Davis (CD): We shipped this in our implementation six months ago. The ABI cost is one pointer per object.\
+> AB: That's not nothing for embedded.\
 > CD: Fair, but the alternative is a type-erased wrapper which costs more.
 >
 > ### IP Geolocation Workshop Report
-> Jason Livingood (JL): We held a virtual workshop in December across three days...
-> Eric Rescorla (ER): I'm disappointed to hear consent described as a gray area...
+> Jason Livingood (JL): We held a virtual workshop in December across three days...\
+> Eric Rescorla (ER): I'm disappointed to hear consent described as a gray area...\
 > Mallory Knodel (MK): Engage the RIRs...
 
 ---
@@ -216,9 +216,9 @@ Transcript fragment:
 > Alice Brown: The proposed wording doesn't handle the aggregate case. Chris Davis: I agree, but we can fix that editorially. Alice Brown: No, this needs a design decision, not just wording. Evan Fischer: Based on everything said, I think we should forward with a note to CWG to handle the aggregate case.
 
 Discussion layer:
-> Alice Brown (AB): The proposed wording doesn't handle the aggregate case.
-> Chris Davis (CD): I agree, but we can fix that editorially.
-> AB: No, this needs a design decision, not just wording.
+> Alice Brown (AB): The proposed wording doesn't handle the aggregate case.\
+> Chris Davis (CD): I agree, but we can fix that editorially.\
+> AB: No, this needs a design decision, not just wording.\
 > Evan Fischer (EF): Based on everything said, I think we should forward with a note to CWG to handle the aggregate case.
 
 ---
@@ -304,9 +304,9 @@ First pass (structured elements):
 > - Timeframe references: C++11, C++29
 
 Second pass (discussion prose):
-> AB: This is not a new problem. It's been like this since C++11.
-> Chair: So you're suggesting we reject the NB comment and handle it in C++29?
-> AB: Yes, or whenever someone writes a paper.
+> AB: This is not a new problem. It's been like this since C++11.\
+> Chair: So you're suggesting we reject the NB comment and handle it in C++29?\
+> AB: Yes, or whenever someone writes a paper.\
 > CD: I'd like to keep our fast-path implementation conforming.
 
 ---
@@ -429,9 +429,9 @@ The template adapts to the transcript. The two layers are separated physically: 
 ## Discussion
 
 ### [Subdivision 1]
-Alice Brown (AB): [faithful speech in speaker's voice]
-Chris Davis (CD): [faithful speech in speaker's voice]
-AB: [subsequent contributions use initials only]
+Alice Brown (AB): [faithful speech in speaker's voice]\
+Chris Davis (CD): [faithful speech in speaker's voice]\
+AB: [subsequent contributions use initials only]\
 ...
 
 #### Polls

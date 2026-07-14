@@ -1,3 +1,9 @@
+---
+description: Audit and fix a prompt, plan, tool, or rule file for clarity, precision, and imperative voice
+---
+
+<!-- When given a target file, run the Protocol (section 1) against it. -->
+
 # Prompt Rulebook
 
 Rules for writing instructions that language models follow reliably. Read this document to learn the craft; give it to a model to apply the craft. It governs any document whose reader is a model: a prompt, a plan, a tool file, a rule file, a subagent task. The document under improvement is called the target. These rules are audit criteria, applied one at a time; they are not simultaneous generation constraints, so the rulebook's size does not collide with the constraint budget it prescribes.
@@ -90,6 +96,7 @@ Apply this section when the target defines tools, spawns subagents, or runs unat
 - Close open sets with enums, and make invalid parameter combinations unrepresentable.
 - Give each tool a stop condition and an uncertainty threshold scaled to risk: a destructive action asks at the first doubt, a read-only action retries without asking.
 - Write each subagent task self-contained: objective, output format, sources and tools, boundaries, effort budget. The subagent sees no conversation history and no sibling tasks; what the task omits, the subagent invents.
+- Trace every artifact the target's pipeline must produce through every step that names it. Flag any artifact named as an input or an expected output but never commanded into existence by an imperative in some step. Reason: a step that references a section, file, or record no earlier step was told to create reads as satisfied while the artifact never appears, the failure mode that drops a named-but-uncreated section.
 - Ship subagent task text verbatim from the tool's own template or specification. Do not paraphrase, summarize, augment, or rewrite the task before dispatch. The subagent receives the instructions exactly as the tool defines them; any transformation between the tool's text and the dispatched prompt is a bug, because the tool author wrote the task for the subagent's context, not for the dispatcher's. Reason: paraphrasing degrades structured task descriptions into the dispatcher's approximation, losing quantified constraints, XML containers, and formatting that the subagent needs to comply.
 - Inject a fixed block of the tool file into subagents by reference, not by copy: wrap the block in a uniquely named tag in the tool file, and give each subagent task the tool's path and the tag name with the instruction to grep for the tag and read the enclosed block. Copying the block into every task re-emits it once per subagent, so a large block multiplies the dispatcher's output cost by the fan-out, while a tag reference costs one line and delivers the exact source text the ship-verbatim rule above requires. When the injected content is built at runtime rather than stored in the tool file, write it to one file and pass that path. If a subagent cannot read files, inline the block.
 - Estimate the size of any work the target assembles from multiple files or subagent outputs, and route the assembly through the shell when the combined result would be large. When the sources already exist as files, direct the model to concatenate them with the shell instead of re-emitting their contents through a write call: a large payload sent as one tool-call argument arrives truncated or malformed, fails to parse, and forces a retry. Name the mechanism, not the command - "concatenate the sources with the shell", not a specific invocation - so the instruction survives across environments.
@@ -112,5 +119,6 @@ Run these checks on the finished target. Each answers yes or no; each no returns
 - Simultaneous hard constraints number six or fewer. (6)
 - No two rules conflict without a stated priority. (6)
 - Every rule's violation would be observable. (6)
+- Every pipeline artifact is commanded into existence by an imperative, not just referenced. (8)
 
 *2026-07-08 - Claude Fable 5 (Cursor agent). Distilled from "How to write clear, concise, unambiguous instructions for LLMs" (research, 2026-07-08), which holds the evidence and sources.*
