@@ -63,7 +63,7 @@ Write the plan as scratch, with these 10 blocks:
 5. Structure pattern: one of evidence chain, comparison, chronology, findings report, problem/evidence/remedy - or a named sequence of two of these.
 6. Sourcing constraints: list the admissible sources. When restricted material informs the work, write a translation map assigning each restricted claim exactly one treatment: (a) cite the subject's own published text, (b) make a public-record absence claim with a re-runnable method, (c) restate the mechanism in general terms as the paper's own analysis. A claim that fits none of the three is dropped with no residue (Invariant 1).
 7. Conclusion targets: the conclusion paragraph drafted verbatim, plus 1 conclusion sentence per planned section. Step 4 refines these against the finished body; they exist now so every section is written toward a stated destination.
-8. Spine: the per-section outline, each section with the sources it draws on. Default first section: the disclosure (W35). Default last sections: acknowledgments (W36) and references.
+8. Spine: the per-section outline, each section with the sources it draws on. Default last sections: disclosure (W35), acknowledgments (W36), and references.
 9. Sources to verify: every paper number, title, quotation, tally, and deployment claim the spine relies on.
 10. Override registry: every rule of this document the author overrides, with the rule, the reason, and the author's name. The Review Process treats registered overrides as resolved findings.
 
@@ -166,7 +166,8 @@ R1. Mechanical scans. Each scan enforces the rule it names; a hit is a finding.
 - In body sections (outside disclosure, abstract, conclusion), scan for "the paper", "this paper", "the argument" as grammatical subjects; each hit is a candidate finding (P2).
 - No freestanding bolded epigrams (W17).
 - No phrase of 4 or more words repeated verbatim without added meaning (W18).
-- Confirm the paper carries each required section under its canonical heading: Abstract, Revision History, Disclosure (W35), Introduction (W3), and Conclusion (W5). A section that does the work under a different name ("Background", "Context", "Background and Scope") is misnamed; flag it. Require Acknowledgments (W36) when the paper names contributors, and References when the paper carries citations. Each missing or misnamed required section is a finding.
+- Confirm the paper carries each required section under its canonical heading: Abstract, Revision History, Introduction (W3), Conclusion (W5), and Disclosure (W35). A section that does the work under a different name ("Background", "Context", "Background and Scope") is misnamed; flag it. Require Acknowledgments (W36) when the paper names contributors, and References when the paper carries citations. Each missing or misnamed required section is a finding.
+- Confirm the required sections appear in canonical order: Abstract, Revision History, Introduction, body sections, Conclusion, Disclosure (W35), Acknowledgments (W36), References. A required section out of its canonical position is a finding; the R8 mechanical-fix disposition moves it to that position.
 
 R2. Citation integrity.
 
@@ -323,7 +324,7 @@ Voice, audit:
 
 Standing sections:
 
-- W35. Open the paper with a disclosure section, before any technical content, in this slot order (omit absent slots, keep wording identical across papers): posture line "The author provides information and serves at the pleasure of the committee"; affiliation and maintained work; the paper's intent; competing work and stakes; 1 genuine limitation of the author's approach or method; series membership and companions; methodology; machine-assistance statement when true; and, info papers only, the closing line "This paper asks for nothing" on its own line.
+- W35. Place the disclosure section after the conclusion section and before acknowledgments (W36) and references, in this slot order (omit absent slots, keep wording identical across papers): posture line "The author provides information and serves at the pleasure of the committee"; affiliation and maintained work; the paper's intent; competing work and stakes; 1 genuine limitation of the author's approach or method; series membership and companions; methodology; machine-assistance statement when true; and, info papers only, the closing line "This paper asks for nothing" on its own line.
 - W36. Name every contributor in the acknowledgments with their specific contribution. "X identified the frame allocator gap" is provenance; "X provided helpful feedback" is a form letter.
 
 Ask-papers:
