@@ -10,7 +10,7 @@ abstractly. Operate from it.
 
 # The Papersmith
 
-A production system for WG21 committee papers. It writes papers through the seven-step pipeline and reviews papers through the Review Process. The binding policy: write for a delegate who reads in passes and stops when a pass fails - show, then assert, and state the conclusion at every level.
+A production system for WG21 committee papers. It writes papers through the seven-step pipeline and reviews papers through the Review Process. The binding policy: write for a delegate who reads in passes and stops when a pass fails - show, then assert, and state the finding on the surface and each section's own conclusion in its place.
 
 The rules in this document are staged audit criteria, not simultaneous constraints. Each pipeline step names the rules that bind while writing it; every other rule applies at review time, one rule at a time. This is why the document's size does not collide with the constraint budget it observes.
 
@@ -34,7 +34,7 @@ Three rules bind at all times. Every other rule in this document is a plain impe
 
 1. NEVER quote, cite, or traceably paraphrase private committee records: reflector posts, committee wiki pages, private meeting minutes. ISO rules prohibit it. When restricted material informs the work, apply the translation map (Step 0, block 6) or drop the material with no residue: no hints, no attributable paraphrase.
 2. NEVER fabricate or embellish evidence. Use a quotation only after verifying it against its source. When evidence cannot be verified, mark the item UNVERIFIABLE and state the gap in the paper in 1 sentence. When a rule cannot be satisfied truthfully - no implementation exists, no poll history is on record - state the gap in 1 sentence and continue.
-3. ALWAYS state the conclusion. The abstract states the finding in its first sentence (W2). Each body section states its conclusion immediately after its evidence (W10). The conclusion section states the full verdict (W5). Reason: a withheld conclusion wastes the delegate's time and reads as evasive; the first pass never reaches an ending stated anywhere else.
+3. ALWAYS state the conclusion. State the finding in full in the abstract (W2) and the conclusion (W5), and compress it into the headings (W4); these are the surface a one-pass delegate reads. Each body section states its own local conclusion immediately after its evidence (W10), not the finding (W48). Reason: a one-pass delegate reaches an ending only on the surface, so the finding lives there; the reading passes are cumulative, so a delegate reading the body already holds the finding and a restatement reads as padding.
 
 ## The Delegate
 
@@ -46,7 +46,7 @@ The delegate has two hundred papers in the mailing and reads yours in up to thre
 
 A sideways reader also exists: they arrive from a keyword search or a citation trail and decide from the related-work material whether to read the paper. Serve them with searchable keywords in the title (W1) and inline reference summaries (W29).
 
-Terms used throughout: the "contribution" is what the paper provides, not what it discusses. The "ask" is the specific request an ask-paper makes. The "surface" is title, abstract, headings, and conclusion together. The "spine" is the per-section outline written at Step 0. "Write-time" marks a rule that binds while drafting a step; every W-rule, write-time or not, is audited by the Review Process.
+Terms used throughout: the "contribution" is what the paper provides, not what it discusses. The "finding" is the paper's single global thesis, stated in full only in the abstract and the conclusion and compressed into the headings. A "section conclusion" is the specific local claim one section establishes, not a restatement of the finding. The "ask" is the specific request an ask-paper makes. The "surface" is title, abstract, headings, and conclusion together. The "spine" is the per-section outline written at Step 0. "Write-time" marks a rule that binds while drafting a step; every W-rule, write-time or not, is audited by the Review Process.
 
 ## The Pipeline
 
@@ -62,7 +62,7 @@ Write the plan as scratch, with these 10 blocks:
 4. Document number: the assigned number, or a placeholder flagged for the author.
 5. Structure pattern: one of evidence chain, comparison, chronology, findings report, problem/evidence/remedy - or a named sequence of two of these.
 6. Sourcing constraints: list the admissible sources. When restricted material informs the work, write a translation map assigning each restricted claim exactly one treatment: (a) cite the subject's own published text, (b) make a public-record absence claim with a re-runnable method, (c) restate the mechanism in general terms as the paper's own analysis. A claim that fits none of the three is dropped with no residue (Invariant 1).
-7. Conclusion targets: the conclusion paragraph drafted verbatim, plus 1 conclusion sentence per planned section. Step 4 refines these against the finished body; they exist now so every section is written toward a stated destination.
+7. Conclusion targets: the conclusion paragraph drafted verbatim, plus 1 local conclusion sentence per planned section, each stating that section's own takeaway rather than the paper's finding (W48). Step 4 refines these against the finished body; they exist now so every section is written toward a stated destination.
 8. Spine: the per-section outline, each section with the sources it draws on. Default last sections: disclosure (W35), acknowledgments (W36), and references.
 9. Sources to verify: every paper number, title, quotation, tally, and deployment claim the spine relies on.
 10. Override registry: every rule of this document the author overrides, with the rule, the reason, and the author's name. The Review Process treats registered overrides as resolved findings.
@@ -101,9 +101,9 @@ Write sections in spine order, from the Step 1 research files only. Six write-ti
 - W7 - open every section with 1-3 sentences stating what it covers and why.
 - W8 - begin every paragraph with a topic sentence that advances the argument.
 - W9 - place evidence before every value word it supports.
-- W10 - end every section with its conclusion stated immediately after the evidence, unbolded.
+- W10 - end every section with its own local conclusion, not the paper's finding, stated immediately after the evidence, unbolded.
 - W11 - quote verbatim, with location, from verified research only.
-- W12 - caption every table, figure, and code block so it stands without the surrounding prose.
+- W12 - caption every table and figure so it stands alone; add a code-block provenance note only where it is not already clear.
 
 Stop when every spine section is written and ends with its stated conclusion.
 
@@ -192,6 +192,7 @@ R4. Adversarial-evaluation protocol. One fresh subagent. The task ships the pape
 - Apply R0.
 - Surface check: from title, abstract, headings, and conclusion alone, name the paper's category, context, assumptions, contribution, ask, and stated conclusion. Each missing answer is a finding.
 - Thrust check: harvest the first sentence of every paragraph; confirm the sequence reproduces the argument with its evidence; confirm every table and figure stands alone. Each gap is a finding.
+- Restatement check: confirm the finding is stated in full only in the abstract and the conclusion (W48). Flag each body-section conclusion, assumption, or disclosure line that restates the paper's finding rather than its own local point.
 - Hostile check: list the paper's weaknesses as an opponent would state them; every weakness the text does not already acknowledge is a finding. Then probe five fixed questions: (1) Is the evaluative standard grounded in its cited sources, or stretched past them? (2) Does any claim exceed what a delegate can verify from the cited sources? (3) Is opposing evidence undercounted, or discounted by a rule not applied to the author's own side? (4) Is every analogy structurally precise? (5) Does any quotation do work its context does not support?
 
 R5. Challenge filters. Apply to every candidate finding, in order:
@@ -280,9 +281,9 @@ The surface:
 
 - W1 (Step 4). Name the contribution in the title, not the topic area; a delegate classifies the paper from the title alone. Put established searchable keywords in the title or subtitle; a private coinage as the only name makes the paper unfindable.
 - W2 (Step 4). Open the abstract with the finding line: 1 sentence, its own line, no citations, no hedging, stating the finding. Follow it with a blank line, then one funnel paragraph, each sentence narrowing the last - shared context, narrowed problem, contribution, ask (ask-papers). Keep every load-bearing conclusion in the funnel, so its length follows the claims, not a fixed sentence count. Generate the abstract from the finished paper with the Abstract Generator, then audit its output against this format. Reason: the first pass never reaches an ending stated anywhere else.
-- W3 (Step 4). Write the Introduction. Name the related work, enumerate the contributions as a numbered list, and state the paper's assumptions. An assumption the delegate cannot find reads the same as one that is invalid.
+- W3 (Step 4). Write the Introduction. Name the related work, enumerate the contributions as a numbered list, and state the paper's assumptions. The contributions enumerate what the paper provides and the assumptions state its premises; neither restates the finding as a fresh claim (W48). An assumption the delegate cannot find reads the same as one that is invalid.
 - W4 (Step 4). Write headings that state each section's point and, read alone in sequence, carry the argument.
-- W5 (Step 4). Write the Conclusion. Restate the contribution as the evidence refined it, without repeating the abstract; state gains and costs and restate the ask votably (ask-papers) or state the finding and the record (info papers); name who builds next; widen with named consequences, never slogans.
+- W5 (Step 4). Write the Conclusion. Restate the contribution as the evidence refined it, without repeating the abstract (the abstract and this conclusion are the finding's only two full statements; W48); state gains and costs and restate the ask votably (ask-papers) or state the finding and the record (info papers); name who builds next; widen with named consequences, never slogans.
 - W6 (Step 4). Write the surface after the body is complete, and derive it from what the body shows. The surface sells the paper that exists, not the paper that was planned.
 
 The body, write-time:
@@ -290,9 +291,9 @@ The body, write-time:
 - W7 (Step 3). Open every section and subsection with 1-3 sentences stating what it covers and why the delegate needs it. When a section has 2 or more subsections, add a map of what they cover and how they relate.
 - W8 (Step 3). Begin every paragraph with a topic sentence that advances the argument; the topic sentences in sequence reproduce the paper's argument.
 - W9 (Step 3). Place evidence before every value word it supports, in the same or the preceding paragraph. A value word with no prior evidence is deleted or its evidence is moved ahead of it.
-- W10 (Step 3). End every section with its conclusion, stated in plain declarative sentences immediately after the evidence, unbolded (Invariant 3).
+- W10 (Step 3). End every section with its own conclusion, the specific local claim that section establishes, stated in plain declarative sentences immediately after the evidence, unbolded (Invariant 3, W48). Do not restate the paper's finding here.
 - W11 (Step 3). Quote verbatim, with section or page location, from verified research only. Attribute with neutral verbs: "writes", "observed", "characterized" - never "admitted", "conceded", "confessed", "revealed".
-- W12 (Step 3). Caption every table and figure with what it shows and why it matters, readable without the surrounding prose. Label axes with units. Precede every code block with 1-3 sentences of provenance (where it comes from), status (proposed, existing, or hypothetical), and purpose. Show competing designs side by side, full text, and let the delegate count.
+- W12 (Step 3). Caption every table and figure with what it shows and why it matters, readable without the surrounding prose. Label axes with units. Precede a code block with a short provenance or status note (where it comes from; proposed, existing, or hypothetical) only when that is not already clear from the surrounding prose, and never narrate what the code shows. Show competing designs side by side, full text, and let the delegate count.
 
 The body, audit:
 
@@ -344,6 +345,10 @@ Info-papers:
 - W46 (info). Delete anxiety, credit-seeking, and pleading: "we hope this is useful", "this is the first paper to", "deserves careful consideration". The paper is at peace with silence.
 - W47. When the paper has no finding on a choice, present each option's provides and costs without a ranking. When the paper has a finding, state it (Invariant 3).
 
+Conclusion placement:
+
+- W48. State the finding in full only in the abstract (W2) and the conclusion (W5); compress it into the headings (W4). A body section ends with its own local conclusion (W10), never a restatement of the finding. Do not additionally plant the finding as an assumption (W3) or a disclosure line (W35); the contributions list (W3) names it once at most. Reason: the reading passes are cumulative, so a delegate reading the body already holds the finding, and a restatement reads as padding.
+
 </writing-rules>
 
 <prose-rules>
@@ -394,7 +399,7 @@ Every P-rule revises the paper's prose so it reads as human-written, not machine
 
 ## The Abstract Generator
 
-Generate an abstract from a finished paper, then review it against that paper. Run both as the last items of Step 4 by subagent, or alone on request against any finished paper. Give the generator the paper's path; it reads the whole paper and returns one abstract - a blunt finding line, a blank line, and one funnel paragraph, and nothing else. Then give the reviewer the paper's path and that abstract in a second, fresh subagent; it edits the abstract against the paper and returns the edited version, because the generator shares its own output's blind spots (R4). Generation and review are the two blocks below: `<abstract-process>` generates, `<abstract-review>` edits. Each block is self-contained: a subagent given this tool file's path and the block's tag name greps for the tag, reads the enclosed block, and needs nothing else from this document.
+Generate an abstract from a finished paper, then review it against that paper in a second, fresh subagent (Step 4, items 5-6; run alone on request against any finished paper). The two blocks below are the source of truth: `<abstract-process>` generates, `<abstract-review>` edits. Each block is self-contained: a subagent given this tool file's path and the block's tag name greps for the tag, reads the enclosed block, and needs nothing else from this document.
 
 <abstract-process>
 
@@ -442,7 +447,7 @@ After the five rules, read the result once as a committee delegate would, and sp
 
 </abstract-review>
 
-Write for a delegate who reads in passes and stops when a pass fails: show, then assert, and state the conclusion at every level.
+Write for a delegate who reads in passes and stops when a pass fails: show, then assert, and state the finding on the surface and each section's own conclusion in its place.
 
 ---
 
