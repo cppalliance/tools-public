@@ -192,7 +192,7 @@ R4. Adversarial-evaluation protocol. One fresh subagent. The task ships the pape
 - Apply R0.
 - Surface check: from title, abstract, headings, and conclusion alone, name the paper's category, context, assumptions, contribution, ask, and stated conclusion. Each missing answer is a finding.
 - Thrust check: harvest the first sentence of every paragraph; confirm the sequence reproduces the argument with its evidence; confirm every table and figure stands alone. Each gap is a finding.
-- Restatement check: confirm the finding is stated in full only in the abstract and the conclusion (W48). Flag each body-section conclusion, assumption, or disclosure line that restates the paper's finding rather than its own local point.
+- Restatement check: confirm the finding is stated in full only in the abstract and the conclusion (W48). Flag each body-section conclusion, section opener, mid-section recap, assumption, or disclosure line that restates the paper's finding rather than its own local point.
 - Hostile check: list the paper's weaknesses as an opponent would state them; every weakness the text does not already acknowledge is a finding. Then probe five fixed questions: (1) Is the evaluative standard grounded in its cited sources, or stretched past them? (2) Does any claim exceed what a delegate can verify from the cited sources? (3) Is opposing evidence undercounted, or discounted by a rule not applied to the author's own side? (4) Is every analogy structurally precise? (5) Does any quotation do work its context does not support?
 
 R5. Challenge filters. Apply to every candidate finding, in order:
@@ -280,45 +280,75 @@ Every W-rule is an audit criterion for the Review Process. A parenthetical step 
 The surface:
 
 - W1 (Step 4). Name the contribution in the title, not the topic area; a delegate classifies the paper from the title alone. Put established searchable keywords in the title or subtitle; a private coinage as the only name makes the paper unfindable.
-- W2 (Step 4). Open the abstract with the finding line: 1 sentence, its own line, no citations, no hedging, stating the finding. Follow it with a blank line, then one funnel paragraph, each sentence narrowing the last - shared context, narrowed problem, contribution, ask (ask-papers). Keep every load-bearing conclusion in the funnel, so its length follows the claims, not a fixed sentence count. Generate the abstract from the finished paper with the Abstract Generator, then audit its output against this format. Reason: the first pass never reaches an ending stated anywhere else.
-- W3 (Step 4). Write the Introduction. Name the related work, enumerate the contributions as a numbered list, and state the paper's assumptions. The contributions enumerate what the paper provides and the assumptions state its premises; neither restates the finding as a fresh claim (W48). An assumption the delegate cannot find reads the same as one that is invalid.
+- W2 (Step 4). Abstract.
+  - Open with the finding line: 1 sentence, its own line, no citations, no hedging, stating the finding.
+  - Follow it with a blank line, then one funnel paragraph, each sentence narrowing the last: shared context, narrowed problem, contribution, ask (ask-papers).
+  - Keep the one central finding and at most three load-bearing conclusions in the funnel (a load-bearing conclusion is one the finding depends on: remove it and the finding goes false or unsupported); move the rest to the introduction's contributions list (W3).
+  - Generate the abstract from the finished paper with the Abstract Generator, then audit its output against this format.
+  - Reason: the first pass never reaches an ending stated anywhere else.
+- W3 (Step 4). Write the Introduction. State the proposed change before any justification or history, so a surface-pass delegate can name what the paper proposes. Name the related work, enumerate the contributions as a numbered list, and state the paper's assumptions. The contributions enumerate what the paper provides and the assumptions state its premises; neither restates the finding as a fresh claim (W48). An assumption the delegate cannot find reads the same as one that is invalid.
 - W4 (Step 4). Write headings that state each section's point and, read alone in sequence, carry the argument.
-- W5 (Step 4). Write the Conclusion. Restate the contribution as the evidence refined it, without repeating the abstract (the abstract and this conclusion are the finding's only two full statements; W48); state gains and costs and restate the ask votably (ask-papers) or state the finding and the record (info papers); name who builds next; widen with named consequences, never slogans.
+- W5 (Step 4). Conclusion.
+  - Restate the contribution as the evidence refined it, without repeating the abstract (the abstract and this conclusion are the finding's only two full statements; W48).
+  - State gains and costs, and restate the ask votably (ask-papers) or state the finding and the record (info papers).
+  - Name who builds next.
+  - Widen with named consequences, never slogans.
 - W6 (Step 4). Write the surface after the body is complete, and derive it from what the body shows. The surface sells the paper that exists, not the paper that was planned.
 
 The body, write-time:
 
-- W7 (Step 3). Open every section and subsection with 1-3 sentences stating what it covers and why the delegate needs it. When a section has 2 or more subsections, add a map of what they cover and how they relate.
+- W7 (Step 3). Section preparation.
+  - Open every section and subsection with 1-3 sentences stating what it covers and why the delegate needs it.
+  - A section opener names the specific aspect the section addresses, not a compressed restatement of the paper's finding (W48).
+  - When a section has 2 or more subsections, add a map of what they cover and how they relate.
 - W8 (Step 3). Begin every paragraph with a topic sentence that advances the argument; the topic sentences in sequence reproduce the paper's argument.
-- W9 (Step 3). Place evidence before every value word it supports, in the same or the preceding paragraph. A value word with no prior evidence is deleted or its evidence is moved ahead of it.
+- W9 (Step 3). Place evidence before every value word (a value word evaluates rather than states: "simpler", "significant", "minimal") it supports, in the same or the preceding paragraph. A value word with no prior evidence is deleted or its evidence is moved ahead of it. Reason: a value word read before its evidence frames how the delegate reads that evidence, and a value word with none is a bare assertion a hostile delegate discounts.
 - W10 (Step 3). End every section with its own conclusion, the specific local claim that section establishes, stated in plain declarative sentences immediately after the evidence, unbolded (Invariant 3, W48). Do not restate the paper's finding here.
 - W11 (Step 3). Quote verbatim, with section or page location, from verified research only. Attribute with neutral verbs: "writes", "observed", "characterized" - never "admitted", "conceded", "confessed", "revealed".
-- W12 (Step 3). Caption every table and figure with what it shows and why it matters, readable without the surrounding prose. Label axes with units. Precede a code block with a short provenance or status note (where it comes from; proposed, existing, or hypothetical) only when that is not already clear from the surrounding prose, and never narrate what the code shows. Show competing designs side by side, full text, and let the delegate count.
+- W12 (Step 3). Caption and code context.
+  - Caption every table and figure with what it shows and why it matters, readable without the surrounding prose.
+  - Label axes with units.
+  - Precede a code block with a short provenance or status note (where it comes from; proposed, existing, or hypothetical) only when that is not already clear from the surrounding prose, and never narrate what the code shows.
+  - Show competing designs side by side, full text, and let the delegate count.
 
 The body, audit:
 
 - W13. Before analyzing a design, name 3 or more specific technical properties it provides, in attestation verbs ("provides", "enables"). Reason: earned recognition buys trust for the analysis of costs; perfunctory praise spends it.
-- W14. Give every domain term 1 sentence of context before it carries weight. Give every leaned-on reference a 1-sentence inline takeaway. Add a glossary at 5 or more new terms. Call each concept by exactly one name; when two similar terms differ, state the distinction where the second first appears.
+- W14. Self-containment and naming.
+  - Give every domain term 1 sentence of context before it carries weight.
+  - Give every leaned-on reference a 1-sentence inline takeaway (see W29).
+  - Add a glossary at 5 or more new terms.
+  - Call each concept by exactly one name; when two similar terms differ, state the distinction where the second first appears.
+  - Describe a competing design or prior work in the terms its authors use, not in the paper's analytical frame; the described author should recognize it. Reason: analytical vocabulary argues before the delegate knows the paper is arguing.
 - W15. Follow every claim of minimality, completeness, necessity, or exclusivity with what breaks when the thing is removed or why no alternative achieves the property. Delete the claim when the justification does not exist.
 - W16. Replace every vague quantifier with the actual items or the actual count. Delete the claim when the items cannot be named.
 - W17. Write every sentence as an assertion of fact, evidence, or argument. Convert rhetorical questions into the statements they imply. Replace slogans with the enumeration they compress. No freestanding bolded epigrams; write each section's closing conclusion as a plain sentence in the closing paragraph. Reason: slogan register hands a hostile delegate proof the paper is a campaign document.
-- W18. Connect consecutive ideas with transitions. Give no paragraph a sentence fragment as its opener. Expand any passage a first-time delegate would re-read. Repeat a phrase of 4 or more words only when the repetition adds meaning.
+- W18. Flow.
+  - Connect consecutive ideas with transitions.
+  - Give no paragraph a sentence fragment as its opener.
+  - Expand any passage a first-time delegate would re-read.
+  - Repeat a phrase of 4 or more words only when the repetition adds meaning.
+  - After changing subject, name the subject rather than open with "this", "it", or "the design"; after a topic shift an ambiguous pronoun binds to the wrong antecedent.
 - W19. When `audience` names EWG, LEWG, or WG21, write the problem statement, contribution, and conclusion for a competent C++ programmer with no domain expertise. When the audience is a single study group, assume its domain expertise; W14 still applies.
 - W20. Number the links of every causal chain and cite each link. State each link as a fact; the chain is the conclusion's evidence, and the stated conclusion follows it (W10).
 - W21. Order a sequence of evidence from simplest to most complex, each step adding exactly 1 new dimension. A delegate who accepts step N cannot escape step N+1.
 - W22. Include every item a survey found, especially the items that cut against the paper's position. Date every timeline entry. Reason: one curated omission, discovered, discredits every honest row.
 - W23. Attach every cost to a design or a mechanism, never to a person. Pair every cost with what it provides. Test: the designer reads the section and feels described, not accused.
-- W24. Apply every evaluative standard identically to both sides. Discount evidence that favors the paper's position by the same rule that discounts the opponent's; when the paper discounts the opponent's direction polls, it discounts its own side's direction polls in the same sentence class.
-- W25. When the authors of an evaluative standard are a party to the dispute it judges, disclose that where the standard is introduced, and state what the conclusion rests on if the standard is rejected.
+- W24. Apply every evaluative standard identically to both sides. Discount evidence that favors the paper's position by the same rule that discounts the opponent's; when the paper discounts the opponent's direction polls, it discounts its own side's direction polls in the same sentence class. Reason: an asymmetry a hostile delegate catches discredits every comparison the paper draws.
+- W25. When the authors of an evaluative standard are a party to the dispute it judges, disclose that where the standard is introduced, and state what the conclusion rests on if the standard is rejected. Reason: an undisclosed stake in the standard voids the conclusion built on it once a delegate finds it; disclosure and a stated fallback survive the discovery.
 - W26. Give expected objections their own section. State each objection in its strongest form as a quoted heading; answer only from evidence already presented in the paper.
 - W27. State every assumption and limitation before a delegate can discover it independently. Concede real limitations plainly, with no "however" softening the concession. A disclosed limitation is a scoping decision; a discovered one is a credibility failure that spreads.
-- W28. Provide the detail a delegate needs to check the work: implementation experience with links, measurements with their setup, alternatives with the reason each was rejected, search claims with their method.
+- W28. Provide the detail a delegate needs to check the work.
+  - Implementation experience with links.
+  - Measurements with their setup.
+  - Alternatives with the reason each was rejected.
+  - Search claims with their method.
 - W29. Attach a citation to every claim resting on prior work. Never delete a citation to save the delegate effort; add the 1-sentence inline summary beside it.
 - W30. Expand every abbreviation at first use. Give every meeting name a year. Cite sources a reader without institutional access can retrieve. Reason: the paper's most important reader opens it in 2032 and was not in the room.
 
 Voice, audit:
 
-- W31. Address no "should", "must", or "ought" to the committee, a subgroup, a chair, or an officer. Restate the sentence as evidence or observation: "the committee should revisit X" becomes "the conditions that produced X have changed".
+- W31. Address no "should", "must", or "ought" to the committee, a subgroup, a chair, or an officer. Restate the sentence as evidence or observation: "the committee should revisit X" becomes "the conditions that produced X have changed". Reason: an imperative aimed at the body that decides reads as lecturing it, where an observation lets the delegate reach the conclusion itself.
 - W32. Delete defensive negations ("this is not an attack") and self-credibility assertions ("the evidence is public", "the reader decides"). Reason: a negation plants the accusation it denies, and the citation apparatus already proves what the assertion claims.
 - W33. Replace every hit from `<loaded-words>` with its neutral column. For words not in the table, test by mechanism: side-label, intent-load, motive attribution, diminish, dramatize, conspiratorial frame, patronize, innuendo, delegitimize.
 - W34. Delete every sentence that adds no fact, no evidence, no citation, and no tradeoff.
@@ -348,6 +378,11 @@ Info-papers:
 Conclusion placement:
 
 - W48. State the finding in full only in the abstract (W2) and the conclusion (W5); compress it into the headings (W4). A body section ends with its own local conclusion (W10), never a restatement of the finding. Do not additionally plant the finding as an assumption (W3) or a disclosure line (W35); the contributions list (W3) names it once at most. Reason: the reading passes are cumulative, so a delegate reading the body already holds the finding, and a restatement reads as padding.
+
+Description and exposition:
+
+- W49 (Step 3). Write description and argument in separate sentences. Split any sentence that both names a feature of a competing design and argues it is wrong; describe first in the subject's terms (W14), then state the position. Reason: a fused sentence encodes the paper's position into text a delegate reads as neutral description, and forces the delegate to separate fact from claim.
+- W50 (Step 3). Specify a mechanism before justifying it; a rationale follows the spec it defends and never precedes it. Reason: justification before specification reads as salesmanship, and a delegate cannot judge a rationale for a mechanism not yet specified.
 
 </writing-rules>
 
@@ -403,27 +438,29 @@ Generate an abstract from a finished paper, then review it against that paper in
 
 <abstract-process>
 
-Read the whole paper, then run steps 1-4 in order. Return only the final abstract - not the conclusion list, not any halving or compression stage.
+Read the whole paper, then run steps 1-3 in order. Return only the final abstract, not the conclusion list or any intermediate stage.
 
 1. Enumerate. List every conclusion in the paper except the Abstract: each finding, judgment, scope statement, or concession the paper asserts on its own authority, not the evidence or quotations under it, and not the analytical apparatus it applies - frameworks, counts, and method are machinery, not conclusions. A conclusion drawn by applying a framework is enumerated; the framework and its count are not. Sweep the whole text, not one conclusion per section, since they cluster where the argument turns - one section may hold a dozen, another one. Number the list.
 
-2. Halve.
-- Halve the list repeatedly to about a dozen conclusions, then to about eight; stop there rather than halving past it.
-- Merge related conclusions.
-- When a merged conclusion turns into a list of instances, keep the category and cut the instances - unless the items are themselves the finding. Test each list by deleting it: if the claim survives, the list was trivia and stays cut; if the sentence goes vague or false, it was load-bearing and stays in.
-- Drop only support that a surviving conclusion already carries.
+2. Reduce to the Rule of One.
+- Reduce the list to one central message plus at most three supporting points. A multi-message abstract is less memorable and less convincing about each point; drop the surplus load-bearing conclusions from the abstract, since they belong in the introduction's contributions list, written separately.
+- Merge related conclusions; when a merged conclusion turns into a list of instances, keep the category and cut the instances, unless the items are themselves the finding.
 - Cut a qualifier - anything that bounds, scopes, or excepts a finding, or names an alternative it preserves - only with the finding it qualifies.
 
-Conserve the five C's in both the step 2 halving and the step 4 compression:
+Conserve the five C's through the reduction and the rewrite:
 - Category: keep the paper the same kind - proposal, analysis, position, or info.
 - Context: keep the shared background that locates the problem through every cut.
 - Correctness: keep every surviving claim true and not overclaimed; cut or keep each claim together with the scope, condition, or mechanism that makes it true.
-- Contributions: keep everything the paper provides.
+- Contributions: keep everything the paper provides; in the abstract that is the finding plus its at-most-three points, with the rest carried by the contributions list.
 - Clarity: keep the result readable prose, not shorthand.
 
 3. Rewrite. Cast what remains in the present tense of an abstract. First compress the whole set into one sentence - a main clause carrying the paper's dominant thesis, supporting conclusions hung on as subordinate clauses. Lift that main clause out as the finding line, blunt, on its own line. After a blank line, unfold the subordinate clauses into one funnel paragraph, each sentence narrower than the last: open on the context the audience already shares, move through the narrowed problem, close on the finding. Because finding line and funnel are split from the same sentence, the funnel narrows toward the finding by construction. If the one-sentence compression has no single main clause - only two co-equal claims joined by "and" - the paper has two theses; lead with one and fold the other into the funnel.
 
-4. Compress. Leave the finding line untouched. Length is a target, not a constraint; the load-bearing claims are a floor - if honoring the floor leaves the abstract long, keep it long. Sweep the funnel left to right in non-overlapping pairs - (1,2), then (3,4), and so on - fusing each where genuine fusion is possible, and stop once the target length is reached. Fusing two sentences means rewriting them into one new sentence of ordinary length that drops the overlap and connective tissue the merge makes redundant, not stapling both bodies behind a semicolon or "and"; subordinate one clause to the other. If a fused sentence ends up longer than those around it, you stapled instead of rewrote - redo it, or move a beat into a neighbor so the paragraph's sentences stay near-even in length. Never cut inside a sentence to shed mechanism. Refuse any fusion combining two load-bearing claims into one sentence, and stop the sweep there even if the target is not met. The funnel's opening context and closing finding are scaffolding: fuse them when light, but never delete them outright. Conserve the five C's above. Keep the result one blunt finding line, a blank line, and one paragraph.
+Pick the form from front matter. From `intent`: a proposal, ask, or info-advocacy paper opens the finding line with the proposed change ("This paper proposes X", problem plus approach); a findings paper opens with the result. From `audience`: a specialist venue (EWG, LEWG, an SG, WG21) leads with the finding and uses no context ramp; a broad venue gets one or two context sentences first.
+
+Cut from the abstract: citations, jargon and nonstandard abbreviations, methods detail, hedges, filler and metadiscourse, speculation, references to figures or sections, and any restatement of the document type. Do not open with a manufactured hook, a rhetorical question, or a coined slogan; a concrete finding in plain words earns the next sentence.
+
+The real limit is claim count, not word count (a soft 150-250 word ceiling). Leave the finding line untouched. Keep the result one blunt finding line, a blank line, and one paragraph.
 
 Before returning, confirm every qualifier that survived step 2 appears in the funnel, then compress the finished abstract back to one sentence as a check - if its main clause does not match the finding line, the funnel is aimed wrong; re-aim it. Return only that abstract.
 
@@ -431,7 +468,7 @@ Before returning, confirm every qualifier that survived step 2 appears in the fu
 
 <abstract-review>
 
-Inputs: the source paper's full text and the generated abstract. The abstract under review has this shape - a finding line (one blunt sentence on its own line, no citations, no hedging), a blank line, then a funnel paragraph whose sentences narrow from shared context to the finding. Read both inputs, then run rules 1-5 in order, editing the abstract in place. This pass edits presentation; it does not regenerate: assume the generator's selection of conclusions is correct, and fix only how they are aimed, voiced, scoped, and ordered. Return only the edited abstract - not the rule-by-rule findings, not a list of changes.
+Inputs: the source paper's full text and the generated abstract. The abstract under review has this shape - a finding line (one blunt sentence on its own line, no citations, no hedging), a blank line, then a funnel paragraph whose sentences narrow from shared context to the finding. Read both inputs, then run rules 1-5 in order, editing the abstract in place. This pass edits presentation; it does not regenerate: assume the generator's selection of conclusions is correct, and fix only how they are aimed, voiced, scoped, and ordered. Its jobs are to remove machine-writing tics and to catch overclaim against the paper; it does not grade quality. Whether the abstract is good, and its final aim, are the human editor's, exercised in the normal review of the whole paper. Return only the edited abstract - not the rule-by-rule findings, not a list of changes.
 
 1. Aim check. Compress the abstract to one sentence. If its main clause does not match the finding line, the funnel is aimed at the wrong thesis; re-aim it. If the finding line itself is wrong - it does not match the paper's stated purpose, read from the title, the final section, and any proposed actions or polls - fix the finding line first, because every later rule tests against it.
 
