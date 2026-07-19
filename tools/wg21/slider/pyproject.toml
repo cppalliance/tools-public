@@ -1,0 +1,30 @@
+[project]
+name = "slider"
+version = "0.1.0"
+description = "Convert structured Markdown into a themed PowerPoint slide deck"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "python-pptx>=1.0",
+    "mistune>=3.0",
+]
+
+[project.scripts]
+slider = "slider:main"
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+include = ["slider.py", "parser.py", "renderer.py", "theme.py"]
+
+[tool.hatch.build.targets.sdist]
+include = ["slider.py", "parser.py", "renderer.py", "theme.py", "test.md", "README.md", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

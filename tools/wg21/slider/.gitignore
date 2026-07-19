@@ -1,0 +1,9 @@
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+
+# Generated decks and verification artifacts
+*.pptx
+*.pdf
+_preview-*.png
