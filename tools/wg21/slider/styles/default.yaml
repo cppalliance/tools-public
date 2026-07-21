@@ -1,0 +1,98 @@
+# Slider layout style. Every appearance value the renderer uses lives here.
+# Canvas and panel geometry is absolute inches; body micro-spacing is an em
+# ratio multiplied by the element's own font size at render time.
+
+slide:
+  width: 13.333          # inches, PowerPoint 16:9
+  height: 7.5
+
+panels:
+  left_fraction: 0.62    # image-dominant left (navy) panel width as a fraction of the slide
+  left_pad: 0.4
+  right_pad: 0.5
+  content_bottom: 0.55
+  image_ratio: 0.75      # left-panel image height = width * ratio (4:3)
+
+title_slide:
+  title:    { x: 0.7,  y: 0.7,  h: 1.7, w_margin: 1.4 }   # box width = slide.width - w_margin
+  subtitle: { x: 0.72, y: 2.35, h: 1.0, w_margin: 1.5 }
+  year:     { x: 0.72, w: 3.0,  h: 0.4, bottom: 0.75 }    # y = slide.height - bottom
+
+content:
+  label: { y: 0.55, h: 0.4 }                       # section label, top of the left (navy) panel
+  title_right: { y: 0.6, h: 1.7, body_gap: 0.3 }   # title box on the right panel; body starts body_gap below it
+
+page_number: { w: 1.4, h: 0.35, right: 0.3, bottom: 0.5 }
+
+colors:
+  background: "111111"   # whole-slide fill (dark charcoal, rgb 17/17/17)
+  navy: "18213C"         # left panel, drawn on top of the background
+  orange: "E8A838"
+  white: "FFFFFF"
+  muted: "9AA0A6"
+  italic_dim: "BFBFBF"   # body white darkened 25%
+  code_bg: "222222"
+  code_text: "D6D9DF"
+  callout_bg: "1E1E1E"
+
+fonts:
+  title: "Quattrocento Sans"
+  body: "Quattrocento Sans"
+  label: "Quattrocento Sans"
+  italic: "Cambria"
+  mono: "Consolas"
+
+sizes:                   # points
+  section_label: 14
+  slide_title: 28
+  body: 20
+  bullet: 18
+  subbullet: 16
+  numbered: 18
+  subheading: 22
+  callout: 18
+  code: 14
+  page_number: 11
+  ts_title: 44
+  ts_subtitle: 24
+  year: 12
+
+min_sizes:               # auto-fit floors, points
+  slide_title: 18
+  body: 12
+  bullet: 11
+  subbullet: 10
+  numbered: 11
+  subheading: 14
+  callout: 11
+  code: 9
+  ts_title: 24
+  ts_subtitle: 14
+  fallback: 8            # any role with no explicit floor
+
+text:
+  line_spacing: 1.15
+  char_factor: 0.52      # avg glyph width / font size (Quattrocento Sans; was 0.50 for Calibri)
+  char_factor_mono: 0.60
+  gap_ratio: 0.45        # inter-element gap = gap_ratio * line height of the following element
+  min_body_scale: 0.5    # never shrink the body below half size
+
+body:                    # em ratios, multiplied by the element font size
+  bullet_indent: 1.4
+  bullet_indent_step: 1.2
+  marker_col: 1.3
+  box_pad_x: 0.8
+  box_pad_y: 0.5
+  accent_bar: 0.25
+
+markers:
+  square: "\u25AA"
+  circle: "\u2022"
+
+images:
+  # On build, PNG sources are re-encoded to JPEG in memory before being embedded,
+  # shrinking the .pptx while the original PNG files on disk stay untouched.
+  # Scale: 0 = off (embed PNGs unchanged); 1 = maximum compression (smallest,
+  # lowest quality); 9 = minimal compression (largest, highest quality).
+  # Transparency is flattened onto colors.background during conversion.
+  jpeg_quality: 5

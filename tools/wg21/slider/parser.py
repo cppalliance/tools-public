@@ -175,35 +175,38 @@ def _blockquote_runs(tok) -> list[TextRun]:
     return runs
 
 
-def _parse_list(list_tok, level=0) -> list[Bullet]:
-    out: list[Bullet] = []
+def _walk_list_items(list_tok, level: int = 0):
+    """Yield `(level, ordered, number, runs)` for each item, depth-first.
+
+    The one traversal shared by the on-slide bullet builder and the speaker-note
+    line builder; a parent is yielded before its nested children.
+    """
     ordered = list_tok.get("attrs", {}).get("ordered", False)
     number = list_tok.get("attrs", {}).get("start", 1) if ordered else None
     for item in list_tok.get("children", []):
         if item.get("type") != "list_item":
             continue
-        item_runs: list[TextRun] = []
-        nested: list[Bullet] = []
+        runs: list[TextRun] = []
+        sublists = []
         for sub in item.get("children", []):
             stype = sub.get("type")
             if stype in ("block_text", "paragraph"):
-                item_runs.extend(inline_to_runs(sub.get("children")))
+                runs.extend(inline_to_runs(sub.get("children")))
             elif stype == "list":
-                nested.extend(_parse_list(sub, level + 1))
-        visible = [r for r in item_runs if r.text.strip()]
-        highlight = bool(visible) and all(r.bold for r in visible)
-        out.append(
-            Bullet(
-                runs=item_runs,
-                level=level,
-                highlight=highlight,
-                ordered=ordered,
-                number=number,
-            )
-        )
+                sublists.append(sub)
+        yield level, ordered, number, runs
         if ordered and number is not None:
             number += 1
-        out.extend(nested)
+        for sublist in sublists:
+            yield from _walk_list_items(sublist, level + 1)
+
+
+def _parse_list(list_tok) -> list[Bullet]:
+    out: list[Bullet] = []
+    for level, ordered, number, runs in _walk_list_items(list_tok):
+        visible = [r for r in runs if r.text.strip()]
+        highlight = bool(visible) and all(r.bold for r in visible)
+        out.append(Bullet(runs=runs, level=level, highlight=highlight, ordered=ordered, number=number))
     return out
 
 
@@ -233,30 +236,16 @@ def _is_body(cur: dict | None) -> bool:
     return cur is not None and cur["kind"] == "content" and cur.get("section", 0) == 1
 
 
-def _list_to_note_lines(list_tok, level: int = 0) -> list[str]:
+def _list_to_note_lines(list_tok) -> list[str]:
     """Flatten a markdown list into plain-text note lines (`- item` / `N. item`)."""
     out: list[str] = []
-    ordered = list_tok.get("attrs", {}).get("ordered", False)
-    number = list_tok.get("attrs", {}).get("start", 1) if ordered else None
-    for item in list_tok.get("children", []):
-        if item.get("type") != "list_item":
-            continue
-        item_runs: list[TextRun] = []
-        nested: list[str] = []
-        for sub in item.get("children", []):
-            stype = sub.get("type")
-            if stype in ("block_text", "paragraph"):
-                item_runs.extend(inline_to_runs(sub.get("children")))
-            elif stype == "list":
-                nested.extend(_list_to_note_lines(sub, level + 1))
-        text = runs_to_plain(item_runs).strip()
+    for level, ordered, number, runs in _walk_list_items(list_tok):
         indent = "  " * level
+        text = runs_to_plain(runs).strip()
         if ordered and number is not None:
             out.append(f"{indent}{number}. {text}")
-            number += 1
         else:
             out.append(f"{indent}- {text}")
-        out.extend(nested)
     return out
 
 
@@ -373,9 +362,9 @@ def parse_markdown(text: str, base_dir: str | None = None) -> list[object]:
 
         if ttype == "list":
             if _is_notes(cur):
-                cur["notes"].extend(_list_to_note_lines(tok, level=0))
+                cur["notes"].extend(_list_to_note_lines(tok))
             elif _is_body(cur):
-                cur["body"].extend(_parse_list(tok, level=0))
+                cur["body"].extend(_parse_list(tok))
             continue
 
         if ttype == "block_quote":

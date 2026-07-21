@@ -12,6 +12,7 @@ import datetime as _dt
 import os
 import sys
 
+import style
 from parser import parse_markdown
 from renderer import build_presentation, save_presentation
 
@@ -24,6 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("input", help="Path to the Markdown source file.")
     ap.add_argument("-o", "--output", help="Path to the output .pptx (default: alongside input).")
     ap.add_argument("--year", help="Year stamp for title slides (default: current year).")
+    ap.add_argument("--style", help="Built-in style name or path (default: the deck's theme.inherits, else 'default').")
     args = ap.parse_args(argv)
 
     in_path = args.input
@@ -38,13 +40,16 @@ def main(argv: list[str] | None = None) -> int:
     with open(in_path, encoding="utf-8") as fh:
         text = fh.read()
 
-    slides = parse_markdown(text, base_dir=base_dir)
+    frontmatter, body = style.extract_frontmatter(text)
+    cfg = style.resolve(args.style, frontmatter.get("theme"))
+
+    slides = parse_markdown(body, base_dir=base_dir)
     if not slides:
         print("slider: no slides found (need at least one # or ## heading).", file=sys.stderr)
         return 1
 
-    prs = build_presentation(slides, year=year)
-    save_presentation(prs, out_path)
+    prs = build_presentation(slides, year=year, cfg=cfg)
+    save_presentation(prs, out_path, accent_hex=cfg["colors"]["orange"])
 
     n_title = sum(1 for s in slides if type(s).__name__ == "TitleSlide")
     n_content = len(slides) - n_title
