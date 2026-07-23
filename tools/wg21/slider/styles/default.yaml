@@ -72,6 +72,8 @@ min_sizes:               # auto-fit floors, points
 
 text:
   line_spacing: 1.15
+  single_line_height: 1.2  # a renderer's single-line box is the font's natural line height (~1.2x point size), and line_spacing multiplies that; without this factor we reserve ~17% too little per line and box bottoms clip
+  wrap_safety: 0.96        # treat the wrap width as 4% narrower than the box, so lines near the edge wrap in the estimate the same way they wrap when rendered
   char_factor: 0.52      # avg glyph width / font size (Quattrocento Sans; was 0.50 for Calibri)
   char_factor_mono: 0.60
   gap_ratio: 0.45        # inter-element gap = gap_ratio * line height of the following element

@@ -232,14 +232,14 @@ def _render_body(slide, cfg, geom, body):
 
         if isinstance(el, CodeBlock):
             inner = draw.draw_box(slide, cfg, (cx, y, cw, h), c["code_bg"], size)
-            tf = draw.add_textbox(slide, inner)
+            tf = draw.add_textbox(slide, inner, anchor=MSO_ANCHOR.MIDDLE)
             for j, line in enumerate(el.text.split("\n")):
                 p = tf.paragraphs[0] if j == 0 else tf.add_paragraph()
                 draw.fill_paragraph(p, [TextRun(line, code=True)], cfg, size, c["white"], code_color=c["code_text"])
 
         elif isinstance(el, Callout):
             inner = draw.draw_box(slide, cfg, (cx, y, cw, h), c["callout_bg"], size, accent_hex=c["orange"])
-            tf = draw.add_textbox(slide, inner)
+            tf = draw.add_textbox(slide, inner, anchor=MSO_ANCHOR.MIDDLE)
             draw.fill_paragraph(tf.paragraphs[0], _italic(el.runs), cfg, size, c["white"], mono_bg=c["code_bg"])
 
         elif isinstance(el, Subheading):

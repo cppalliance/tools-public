@@ -71,6 +71,29 @@ def test_estimate_lines_falls_back_to_char_factor_without_font():
     assert got == expected
 
 
+def test_line_height_reserves_the_fonts_natural_height():
+    cfg = _cfg()
+    size = 20
+    # A rendered line is the font's natural single-line box (single_line_height)
+    # scaled by line_spacing; both factors must be present or boxes clip.
+    expected = size * cfg["text"]["single_line_height"] * cfg["text"]["line_spacing"] / 72.0
+    assert layout.line_height_in(cfg, size) == pytest.approx(expected)
+    assert layout.line_height_in(cfg, size) > size * cfg["text"]["line_spacing"] / 72.0
+
+
+def test_wrap_safety_never_reduces_line_count():
+    cfg = _cfg()
+    body = cfg["fonts"]["body"]
+    if layout._resolve_font(body, 20) is None:
+        pytest.skip("body font not installed; measurement path unavailable")
+    text = "word " * 30
+    cw = cfg["text"]["char_factor"]
+    full = layout.estimate_lines(text, 4.0, 20, cw, font_family=body, wrap_safety=1.0)
+    trimmed = layout.estimate_lines(text, 4.0, 20, cw, font_family=body, wrap_safety=0.9)
+    # A narrower effective width can only hold the same or more lines.
+    assert trimmed >= full
+
+
 def test_measured_font_is_tighter_than_char_factor_at_boundary():
     cfg = _cfg()
     # The exact string that overcounted by a line under char_factor at the

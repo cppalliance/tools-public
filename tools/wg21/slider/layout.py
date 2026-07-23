@@ -86,12 +86,15 @@ def _resolve_font(family: str, size_pt: float):
     return font
 
 
-def _measured_lines(text: str, box_w_in: float, font) -> int:
+def _measured_lines(text: str, box_w_in: float, font, wrap_safety: float = 1.0) -> int:
     """Wrapped line count for `text` in a `box_w_in`-inch box via real glyph
     metrics. Pillow sizes glyphs in pixels at 72 DPI, so a point size loads as
     that many pixels and getlength returns points; the box width in points is
-    inches * 72. Wrapping is greedy word-by-word, matching how the box fills."""
-    limit = box_w_in * 72.0
+    inches * 72. `wrap_safety` (<=1) trims that width to absorb the small amount
+    PowerPoint/Google Slides lay text wider than Pillow measures, so borderline
+    lines wrap here the same way they wrap when rendered. Wrapping is greedy
+    word-by-word, matching how the box fills."""
+    limit = box_w_in * 72.0 * wrap_safety
     if limit <= 0:
         return 1
     total = 0
@@ -110,7 +113,7 @@ def _measured_lines(text: str, box_w_in: float, font) -> int:
 
 
 def estimate_lines(text: str, box_w: float, size_pt: float, char_w: float,
-                   font_family: str | None = None) -> int:
+                   font_family: str | None = None, wrap_safety: float = 1.0) -> int:
     """How many wrapped lines `text` occupies. Measures the real font when
     `font_family` resolves; otherwise falls back to the char_factor estimate."""
     if not text:
@@ -118,7 +121,7 @@ def estimate_lines(text: str, box_w: float, size_pt: float, char_w: float,
     if font_family:
         font = _resolve_font(font_family, size_pt)
         if font is not None:
-            return _measured_lines(text, box_w, font)
+            return _measured_lines(text, box_w, font, wrap_safety)
     char_in = char_w * size_pt / 72.0
     if char_in <= 0:
         return 1
@@ -127,12 +130,14 @@ def estimate_lines(text: str, box_w: float, size_pt: float, char_w: float,
 
 
 def line_height_in(cfg: dict, size_pt: float) -> float:
-    return size_pt * cfg["text"]["line_spacing"] / 72.0
+    t = cfg["text"]
+    return size_pt * t.get("single_line_height", 1.0) * t["line_spacing"] / 72.0
 
 
 def text_height_in(cfg: dict, text: str, box_w: float, size_pt: float,
                    mono: bool = False, font_family: str | None = None) -> float:
-    lines = estimate_lines(text, box_w, size_pt, _char_factor(cfg, mono), font_family)
+    lines = estimate_lines(text, box_w, size_pt, _char_factor(cfg, mono), font_family,
+                           cfg["text"].get("wrap_safety", 1.0))
     return lines * line_height_in(cfg, size_pt)
 
 
