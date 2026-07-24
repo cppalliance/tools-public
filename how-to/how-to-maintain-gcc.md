@@ -16,8 +16,8 @@ Follow these on every change; they are restated at the end.
 
 - Match GNU style exactly (section 2); send formatting-only fixes as separate commits, so review and regression bisection stay clean.
 - Emit diagnostics with explicit-location calls (`error_at`, `warning_at`), not the `input_location` globals, so messages point at the right code.
-- Add a test for every bug fix and feature (section 5); a change without a test is incomplete, because nothing guards against regression.
-- Build out of tree (section 6); in-tree builds are unsupported and fail.
+- Add a test for every bug fix and feature (section 8); a change without a test is incomplete, because nothing guards against regression.
+- Build out of tree (section 9); in-tree builds are unsupported and fail.
 - After adding a source file, add its `.o` to `OBJS` in `gcc/Makefile.in` and re-run `configure`; the build ignores files absent from `OBJS`.
 
 ## 1. Orientation
@@ -62,21 +62,67 @@ C++ policy (GCC bootstraps with a C++11 subset):
 - Cast with C++ casts (`static_cast`, `reinterpret_cast`); add no C-style casts.
 - Use `printf`-style output; add no `<iostream>`.
 - Assert with `gcc_assert (expr)`; mark impossible paths with `gcc_unreachable ()`; gate costly checks behind `gcc_checking_assert`.
-- Keep the standard library away from garbage-collected data (section 3.7); gengtype cannot trace it.
+- Keep the standard library away from garbage-collected data (section 4.7); gengtype cannot trace it.
 
 Diagnostics:
-- Write full sentences, so translation works.
-- Call `error_at`/`warning_at`/`inform` with a `location_t`.
-- Quote with format specifiers: `%qD` decl, `%qT` type, `%qE` expression, `%qs` string, `%<...%>` literal.
+- Write full, translatable sentences; start the message lowercase, with no trailing period and no embedded newline.
+- Call `error_at` (user-code defect), `warning_at` (advisory, with an `OPT_W*` id), `pedwarn` (standard-mandated), `sorry` (valid but unimplemented), or `inform` (a note on a prior diagnostic), each with a `location_t`; the `input_location` globals are deprecated.
+- Quote with format specifiers: `%qD` decl, `%q+D` decl relocated to its `DECL_SOURCE_LOCATION`, `%qT` type, `%qE` expression, `%qs` string, `%<...%>` literal, `%m` for `errno`.
+- `error ("Cannot convert '%s'.", s);` -> `error_at (loc, "cannot convert %qs", s);`
 
 Commits:
 - Write the subject as `component: summary [PRnnnnn]`, 75 characters or fewer.
 - Generate the ChangeLog body with `contrib/mklog.py`; verify with `git gcc-verify`.
 - Submit patches to `gcc-patches@gcc.gnu.org` via `git send-email`; GCC takes no GitHub pull requests.
 
-## 3. Core APIs
+## 3. GCC culture and idioms
 
-### 3.1 Tree (GENERIC)
+Write code that reads as native GCC. This matters beyond style: GCC bootstraps with `-Werror` and `gcc/system.h` poisons common libc calls, so non-idiomatic code often fails to build, not merely fails review. Each rule below pairs a `wrong -> right` fix.
+
+Memory and poisoned identifiers:
+- `system.h` poisons `malloc`, `calloc`, `realloc`, `strdup`, `strndup`, `rindex`, `strerror`, `bcopy`, `bzero`, and `bcmp`; any textual use is a compile error. `free`, `abort`, `exit`, and `index` are not poisoned.
+- Allocate with `XNEW (T)`, `XNEWVEC (T, n)`, `XCNEW (T)`, `xstrdup`, or `xrealloc`; free with `XDELETE` or `XDELETEVEC`. These abort on out-of-memory, so skip NULL checks.
+- Assert invariants with `gcc_assert`; mark dead paths with `gcc_unreachable`; raise an internal error with `internal_error`. Gate a runtime check on `flag_checking` and a compile-time one on `CHECKING_P`; `ENABLE_CHECKING` is poisoned.
+  - `p = malloc (n * sizeof (*p));` -> `p = XNEWVEC (elem_t, n);`
+  - `if (bad) abort ();` -> `gcc_assert (!bad);`
+
+Containers and garbage collection:
+- Prefer the RAII wrappers `auto_vec<T>` and `auto_bitmap` over manual `create`/`release`, so an early return cannot leak.
+- Store GC-managed data in `vec<T, va_gc> *` with a `GTY(())` marker and grow it with `vec_safe_push`; the standard library cannot hold GC data, because gengtype cannot trace it.
+  - `vec<tree> v; v.create (n); ... v.release ();` -> `auto_vec<tree> v (n);`
+  - `std::vector<tree> *cache;` in a GC struct -> `vec<tree, va_gc> *cache;` with a `GTY` marker
+
+Type-safe IR casts (`is-a.h`):
+- Move a base pointer to a subclass with `dyn_cast <gassign *> (stmt)` (NULL when it does not match), `as_a <gcall *> (stmt)` (when the code is already known), or test with `is_a <gphi *> (stmt)`; the same family covers `rtx_insn` subclasses. A C cast is banned and skips the checking assert.
+  - `gassign *a = (gassign *) stmt;` -> `if (gassign *a = dyn_cast <gassign *> (stmt))`
+
+Simplifications and tree building:
+- Put algebraic and constant simplifications in `gcc/match.pd` as `(simplify (pattern) (result))`, not open-coded in a pass, so GIMPLE and GENERIC folding share one rule.
+- Build constants and conversions with `build_int_cst`, `build_zero_cst`, `fold_build2`, and `fold_convert`; never assemble an `INTEGER_CST` by hand.
+  - an open-coded constant fold in a pass -> a `(simplify ...)` rule in `match.pd`
+
+Control-flow idioms:
+- Switch on `TREE_CODE` or `gimple_code`, handle the real cases, and put `gcc_unreachable ()` in an impossible `default`; mark intended fallthrough with `gcc_fallthrough ();`, so `-Wimplicit-fallthrough` stays clean.
+  - `default: gcc_assert (0);` -> `default: gcc_unreachable ();`
+
+Dump discipline:
+- Guard pass output with `if (dump_enabled_p ())` then `dump_printf_loc (MSG_NOTE, loc, ...)`, or with `if (dump_file && (dump_flags & TDF_DETAILS))`; the pass `name` field is the `-fdump-tree-<name>` suffix that surfaces the output.
+  - `printf ("folded\n");` -> `if (dump_enabled_p ()) dump_printf_loc (MSG_NOTE, gimple_location (stmt), "folded\n");`
+
+Include order:
+- Start every `gcc/*.cc` with `config.h`, then `system.h`, then `coretypes.h`, before any other header, because `system.h` installs the poison and wraps libc; a target `*.cc` includes `target-def.h` last.
+  - `#include "tree.h"` first -> `config.h`, `system.h`, `coretypes.h` first
+
+Reuse and types:
+- Search `tree.h`, `gimple.h`, `fold-const.h`, and `tree-ssa*.h` for an existing predicate or builder before writing one; the tree is dense with helpers.
+  - a hand-rolled "is this constant zero" test -> `integer_zerop (t)`
+- Size and offset IR with `HOST_WIDE_INT` or `poly_int64`, not bare `int`; reach IR fields only through checked accessors (`TREE_OPERAND`, `gimple_op`, `XEXP`); guard bad input with `error_operand_p (t)`.
+
+Diagnostics idioms live in section 2.
+
+## 4. Core APIs
+
+### 4.1 Tree (GENERIC)
 
 `tree` is the universal node handle; read its fields only through macros.
 - Identify: `TREE_CODE (t)`; type: `TREE_TYPE (t)`; operand: `TREE_OPERAND (t, i)`; list link: `TREE_CHAIN (t)`.
@@ -85,7 +131,7 @@ Commits:
 - Test kinds with `DECL_P`, `TYPE_P`, `VAR_P`; test for a propagated error by comparing against `error_mark_node`.
 - Inspect at a breakpoint: `debug_tree (t)`.
 
-### 3.2 GIMPLE
+### 4.2 GIMPLE
 
 Three-address IR; each statement is a typed tuple.
 - Kind: `gimple_code (g)`. Assign parts: `gimple_assign_lhs/rhs1/rhs2 (g)`, `gimple_assign_rhs_code (g)`. Call parts: `gimple_call_fndecl (g)`, `gimple_call_arg (g, i)`.
@@ -106,21 +152,21 @@ gsi_insert_before (&gsi, new_stmt, GSI_SAME_STMT);
 gsi_remove (&gsi, true);   /* true releases the defined SSA names */
 ```
 
-### 3.3 RTL
+### 4.3 RTL
 
 Low-level, target-facing IR.
 - Read: `GET_CODE (x)`, `GET_MODE (x)`, `XEXP (x, n)`.
 - Build: `gen_rtx_REG (mode, n)`, `gen_reg_rtx (mode)` for a new pseudo, `gen_rtx_MEM (mode, addr)`, `gen_rtx_SET (dst, src)`, `GEN_INT (v)`.
 - Emit into the instruction stream: `emit_insn (pattern)`.
 
-### 3.4 SSA
+### 4.4 SSA
 
 - Defining statement: `SSA_NAME_DEF_STMT (n)`; version number: `SSA_NAME_VERSION (n)`.
 - PHIs: `create_phi_node (var, bb)`, `add_phi_arg (phi, def, e, loc)`; iterate them with `gsi_start_phis (bb)`.
 - Visit every use of a name: `FOR_EACH_IMM_USE_STMT (stmt, iter, name)`.
 - After exposing new defs, return `TODO_update_ssa` from the pass so the updater rebuilds PHIs.
 
-### 3.5 CFG
+### 4.5 CFG
 
 Defined in `basic-block.h`, shared by GIMPLE and RTL.
 - Blocks: `FOR_EACH_BB_FN (bb, cfun)`; ends: `ENTRY_BLOCK_PTR_FOR_FN (cfun)`, `EXIT_BLOCK_PTR_FOR_FN (cfun)`.
@@ -128,35 +174,35 @@ Defined in `basic-block.h`, shared by GIMPLE and RTL.
 - Edit: `make_edge (src, dst, flags)`, `split_block (bb, stmt)`.
 - Dominance: `calculate_dominance_info (CDI_DOMINATORS)`, then `get_immediate_dominator` and `dominated_by_p`; release with `free_dominance_info`.
 
-### 3.6 Containers
+### 4.6 Containers
 
 - `auto_vec<T>` and `vec<T>`: `safe_push` grows, `quick_push` asserts space, plus `pop`, `length`, and `FOR_EACH_VEC_ELT (v, i, elt)`.
 - `hash_map<K,V>`: `put (k, v)`, `get (k)` returns NULL when absent. `hash_set<K>`: `add`, `contains`.
 - `bitmap` (sparse) and `sbitmap` (dense): `bitmap_set_bit`, `bitmap_bit_p`, iterate `EXECUTE_IF_SET_IN_BITMAP (b, 0, i, bi)`; prefer `auto_bitmap` for automatic cleanup.
 
-### 3.7 Memory
+### 4.7 Memory
 
 Pick the allocator by lifetime:
 - IR that outlives a pass: `ggc_alloc<T> ()`; tag every GC struct and global with `GTY (())` so gengtype emits marking code; collection runs at `ggc_collect`.
 - Pass-local temporaries: an obstack, or `object_allocator<T>` for many same-size nodes; release the whole pool when the pass ends.
 - Plain heap: `XNEW (T)`, `XNEWVEC (T, n)`, `xmalloc`; these abort on out-of-memory, so skip NULL checks.
 
-### 3.8 Machine modes
+### 4.8 Machine modes
 
 - Integer modes: `QImode` 8-bit, `HImode` 16, `SImode` 32, `DImode` 64, `TImode` 128. Float: `SFmode` 32, `DFmode` 64.
 - Query: `GET_MODE_SIZE` in bytes, `GET_MODE_BITSIZE` in bits, `SCALAR_INT_MODE_P (m)`.
 
-## 4. Extension recipes
+## 5. Extension recipes
 
 Each recipe lists the files to edit in order, then the pattern.
 
-### 4.1 Add a builtin `__builtin_x`
+### 5.1 Add a builtin `__builtin_x`
 
 1. Declare the type signature in `gcc/builtin-types.def` if none fits (`DEF_FUNCTION_TYPE_n`).
 2. Register it in `gcc/builtins.def` with `DEF_GCC_BUILTIN` (or `DEF_EXT_LIB_BUILTIN`).
 3. Fold or expand: put constant folding in `gcc/match.pd` or `gcc/gimple-fold.cc`; add RTL expansion in `gcc/builtins.cc` only when it emits instructions. Reason: `builtins.cc` is closed to new simplifications, which belong in `match.pd`.
 
-### 4.2 Add an optimization pass
+### 5.2 Add an optimization pass
 
 1. Create `gcc/tree-<name>.cc` with the skeleton below.
 2. Declare the factory in `gcc/tree-pass.h`: `extern gimple_opt_pass *make_pass_<name> (gcc::context *);`.
@@ -202,7 +248,7 @@ make_pass_mine (gcc::context *c)
 }
 ```
 
-### 4.3 Add a warning
+### 5.3 Add a warning
 
 1. Define the option in `gcc/common.opt` (or `gcc/c-family/c.opt`):
 
@@ -215,7 +261,7 @@ Warn about the specific condition.
 2. Emit it where detected: `warning_at (loc, OPT_Wmy_warning, "message %qE", expr);`. The `Warning` property generates `OPT_Wmy_warning`.
 3. Document it in `gcc/doc/invoke.texi`; add a `dg-warning` test.
 
-### 4.4 Add a command-line option
+### 5.4 Add a command-line option
 
 Add a 3-line stanza to the matching `.opt` file:
 
@@ -227,18 +273,48 @@ Enable my optimization.
 
 Properties: `Common` or `Target` for scope, `Var(x)` for storage, `Init(n)` for the default, `Optimization` to save and restore per function, `Joined UInteger` for an `=N` argument. Read the value as `flag_my_opt`.
 
-### 4.5 Add an attribute
+### 5.5 Add an attribute
 
 1. Write a handler in `gcc/c-family/c-attribs.cc` that validates the target node, sets `*no_add_attrs = true` on rejection, and returns `NULL_TREE`.
 2. Add a row to `c_common_gnu_attributes[]`: `{ "my_attr", min, max, decl_req, type_req, fn_type_req, false, handle_my_attribute, NULL }`.
 3. Query it later with `lookup_attribute ("my_attr", DECL_ATTRIBUTES (decl))`.
 
-### 4.6 Modify an existing pass
+### 5.6 Modify an existing pass
 
 - List passes with `-fdump-passes`; map the name to its file (`pass_vrp` lives in `gcc/tree-vrp.cc`).
-- Iterate with the section 3.2 pattern; rewrite operands, then `update_stmt`; return `TODO_update_ssa` when you exposed new defs.
+- Iterate with the section 4.2 pattern; rewrite operands, then `update_stmt`; return `TODO_update_ssa` when you exposed new defs.
 
-## 5. Testing
+## 6. Front end and parsing
+
+The front end lexes and parses source into GENERIC trees, runs semantic analysis, then genericizes and gimplifies into the middle end across language hooks. Most edits here add a diagnostic, a semantic check, or grammar for a new construct.
+
+- Files: `gcc/c/c-parser.cc` (C) and `gcc/cp/parser.cc` (C++) parse; `gcc/c/c-decl.cc` and `gcc/c/c-typeck.cc` do C semantics; `gcc/c-family/` holds rules shared by C and C++; language hooks are declared in `gcc/langhooks.h` and defaulted in `gcc/langhooks-def.h`.
+- Structure: the parser is hand-written recursive descent. Look ahead with `c_parser_peek_token`, advance with `c_parser_consume_token`; each grammar nonterminal is a `c_parser_*` function (C++ uses `cp_parser_*` over a `cp_lexer_*` token stream).
+- Where a change goes: token or grammar handling in the parser; a semantic check or new warning after parsing in `c-decl.cc` or `c-typeck.cc`; a rule that both C and C++ need in `c-family/`.
+- Handoff: the front end builds GENERIC, `c-family/c-gimplify.cc` and `cp/cp-gimplify.cc` lower language constructs, and `gimplify_function_tree` produces GIMPLE. A front end does not include middle-end headers such as `rtl.h` or `expr.h`; those include guards are poisoned under `IN_GCC_FRONTEND`.
+- Error recovery: emit one diagnostic, resynchronize to a safe token, and propagate `error_mark_node` rather than aborting, so one mistake does not cascade.
+
+## 7. Back end: expansion, machine descriptions, register allocation
+
+The expander lowers GIMPLE to RTL through optabs keyed by standard pattern names, RTL passes optimize, `recog` selects instructions, IRA then LRA allocate registers, and `final` prints assembly. Target behavior lives in machine descriptions plus target hooks.
+
+- Standard pattern names bridge the middle end to a target: `movM`, `addM3`, `cbranchM4`, where M is a mode such as SI or DI. `optabs.def` lists the optabs; `expr.cc` and `optabs.cc` drive expansion.
+- Machine descriptions in `gcc/config/<arch>/<arch>.md` use `define_insn` (recognize and print one instruction), `define_expand` (custom RTL generation that may call `DONE` or `FAIL`), `define_split`, `define_peephole2`, and `define_insn_and_split`. Operands are `match_operand:M N "predicate" "constraint"`, `match_dup`, and `match_operator`; iterate patterns with `define_mode_iterator` and `define_code_iterator`. Custom predicates go in `predicates.md`, constraints in `constraints.md`.
+
+```
+(define_insn "addsi3"
+  [(set (match_operand:SI 0 "register_operand" "=r")
+        (plus:SI (match_operand:SI 1 "register_operand" "r")
+                 (match_operand:SI 2 "register_operand" "r")))]
+  ""
+  "add %0,%1,%2")
+```
+
+- Build-time generators turn `.md` into C++: `genrecog` builds `insn-recog.cc`, `genemit` the `gen_*` emitters in `insn-emit.cc`, `genoutput` the templates in `insn-output.cc`, plus `genattrtab`, `genautomata`, and `genpreds`. A named pattern yields `CODE_FOR_<name>` and a `gen_<name> ()` function.
+- Target hooks: override defaults through `targetm` in `gcc/config/<arch>/<arch>.cc`, set by `TARGET_*` macros before `struct gcc_target targetm = TARGET_INITIALIZER;`; steer register allocation with constraints plus cost hooks such as `TARGET_RTX_COSTS` and `TARGET_REGISTER_MOVE_COST`.
+- Where a change goes: a new instruction is a `define_insn`; a multi-step sequence is a `define_expand`; a target cost tweak is a hook in `<arch>.cc`.
+
+## 8. Testing
 
 Tests use DejaGnu. Place a test by kind:
 - `gcc/testsuite/gcc.dg/` for C, `g++.dg/` for C++, `c-c++-common/` for both, `gcc.target/<arch>/` for target-specific.
@@ -266,7 +342,7 @@ make check-gcc RUNTESTFLAGS="-v -v dg.exp=mytest.c"  # verbose; prints the comma
 
 Read results in `testsuite/gcc/gcc.sum` for status and `gcc.log` for full output. A FAIL where PASS was expected is a regression; investigate every XPASS.
 
-## 6. Build and debug
+## 9. Build and debug
 
 Set up and build out of tree:
 
@@ -289,7 +365,7 @@ Debug the compiler:
 
 Before submitting: bootstrap and run the full testsuite on trunk and on your patch, then diff with `contrib/compare_tests`; a clean bootstrap plus zero new failures is the bar. Reason: the three-stage bootstrap proves the compiler compiles itself identically, catching miscompiles a single-stage build hides.
 
-## 7. File index
+## 10. File index
 
 | Concept | Files |
 |---|---|
@@ -301,14 +377,20 @@ Before submitting: bootstrap and run the full testsuite on trunk and on your pat
 | Builtins | `builtins.def`, `builtins.cc`, `match.pd`, `gimple-fold.cc` |
 | Options | `common.opt`, `c-family/c.opt`, `opts.cc` |
 | Attributes | `c-family/c-attribs.cc`, `attribs.cc` |
+| Front end | `c/c-parser.cc`, `cp/parser.cc`, `c-family/`, `langhooks.h` |
 | Diagnostics | `diagnostic-core.h`, `diagnostic.cc`, `pretty-print.h` |
 | Containers and memory | `vec.h`, `hash-map.h`, `bitmap.h`, `ggc.h`, `alloc-pool.h` |
+| Idiom headers | `system.h`, `is-a.h`, `dumpfile.h` |
+| Back end and codegen | `optabs.def`, `expr.cc`, `optabs.cc`, `recog.cc`, `ira.cc`, `lra.cc`, `final.cc` |
+| Machine descriptions | `config/<arch>/<arch>.md`, `config/<arch>/<arch>.cc`, `target.def` |
 | Targets and build | `config.gcc`, `config/<arch>/`, `Makefile.in` |
 | Docs | `doc/invoke.texi`, `doc/extend.texi`, `doc/gccint` |
 
 ## Binding rules (restated)
 
 - Match GNU style; keep formatting-only changes in their own commit.
+- Allocate with `XNEW` and GCC containers, and cast IR with `dyn_cast`; avoid libc allocators, the standard library for GC data, and C casts.
+- Put simplifications in `match.pd`, not open-coded in a pass.
 - Emit diagnostics through `error_at` and `warning_at` with a real location.
 - Add a test for every change; scan a pass dump to prove an optimization fired.
 - Build out of tree; register new files in `OBJS` and re-run `configure`.
