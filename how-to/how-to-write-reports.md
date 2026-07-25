@@ -1,18 +1,18 @@
 ---
-description: Audit and fix a draft report (any type) for structure, evidence, uncertainty, sourcing, and format discipline
+description: Write or audit a report (any type) for structure, evidence, uncertainty, sourcing, and format discipline
 ---
 
-<!-- When given a draft, run the Protocol (section 1) against it. -->
+<!-- When given a draft, or asked to write one, run the Protocol (section 1). -->
 
 # Report Rulebook
 
-Rules for writing reports that get read and acted on. Read this document to learn the craft; give it to a model to apply it. It governs any report whose reader must decide or act on it: the twelve types named in section 2. The document under revision is called the report. These rules are audit criteria, applied one at a time; they are not simultaneous generation constraints, so the rulebook's size does not collide with the constraint budget it prescribes.
+Rules for writing reports that get read and acted on. Read this document to learn the craft; give it to a model to apply it. It governs any report whose reader must decide or act on it: the twelve types named in section 2. The document under work is called the report. Write the report against these rules, then audit it against them one at a time. The rules are staged, not simultaneous, so the rulebook's size does not collide with the constraint budget it prescribes.
 
 ## 1. Protocol
 
 Execute these steps in order when given a report:
 
-1. Read the whole report and name its type from section 2 before changing anything.
+1. Read the whole report and name its type from section 2 before changing anything; when no report exists yet, name the type and write a draft first.
 2. Audit it against section 3 (every report), then against the one section-4 block that matches its type.
 3. Rewrite each violation in place; preserve the report's evidence, findings, and voice, and change how it reads, not what it claims.
 4. Verify every name, number, date, quotation, and citation against a source; where a fact resists verification, flag it and leave it unchanged rather than smoothing it into certainty.

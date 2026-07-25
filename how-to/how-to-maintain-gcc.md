@@ -8,7 +8,7 @@ description: Reference for a model making changes to GCC source - architecture, 
 
 This file equips a model to read, modify, and extend the GNU Compiler Collection. Read the preamble and the closing rules first; they bind every edit. Sections run from most to least frequently needed. Terms used throughout: "the tree" is the GCC source checkout; "a pass" is one optimization or transformation stage; "the middle end" is the target- and language-independent optimizers.
 
-<img src="images/how-to-maintain-gcc.png">
+![The GNU Toolsmiths](images/how-to-maintain-gcc.png)
 
 ## Non-negotiable edit rules
 

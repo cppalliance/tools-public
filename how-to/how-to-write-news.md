@@ -1,18 +1,18 @@
 ---
-description: Audit and fix a draft news article, feature, analysis, briefing, or press release for structure, leads, sourcing, style, and objectivity
+description: Write or audit a news article, feature, analysis, briefing, or press release for structure, leads, sourcing, style, and objectivity
 ---
 
-<!-- When given a draft, run the Protocol (section 1) against it. -->
+<!-- When given a draft, or asked to write one, run the Protocol (section 1). -->
 
 # News Rulebook
 
-Rules for writing news copy that editors run and readers finish. Read this document to learn the craft; give it to a model to apply it. It governs any draft written for a newsroom or a wire: a hard-news story, a feature, an analysis, a briefing, or a press release. The document under revision is called the draft. These rules are audit criteria, applied one at a time; they are not simultaneous generation constraints.
+Rules for writing news copy that editors run and readers finish. Read this document to learn the craft; give it to a model to apply it. It governs any draft written for a newsroom or a wire: a hard-news story, a feature, an analysis, a briefing, or a press release. The document under work is called the draft. Write the draft against these rules, then audit it against them one at a time. The rules are staged, not simultaneous.
 
 ## 1. Protocol
 
 Execute these steps in order when given a draft:
 
-1. Read the whole draft and name its genre - hard news, feature, analysis, briefing, or press release - before changing anything.
+1. Read the whole draft and name its genre - hard news, feature, analysis, briefing, or press release - before changing anything; when no draft exists yet, name the genre and write one first.
 2. Audit the draft against sections 2 through 10. Apply section 10 only to press releases and wire copy; skip it otherwise.
 3. Rewrite each violation in place. Preserve reported facts, quotations, and attribution; change how the copy reads, not what it reports.
 4. Verify every name, title, number, date, and quotation against a source. Where a fact resists verification, flag it and leave it unchanged rather than smoothing it into certainty.
