@@ -4,7 +4,7 @@ description: Drive a design document to a complete tested implementation through
 
 <!-- Load this file before planning or implementing any change beyond a single-file mechanical edit. Run the Protocol (section 1). -->
 
-# Vibe-Coding Rulebook
+# Vibe-Coding Planner
 
 Rules for taking a design document to a finished, tested implementation without accumulating debt on the way. This file governs any change to code beyond a single-file mechanical edit. Sections run in execution order and are consulted one at a time, so the length of this file is never the number of rules you hold at once.
 
