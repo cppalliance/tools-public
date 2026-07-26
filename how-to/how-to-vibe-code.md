@@ -10,7 +10,7 @@ Rules for taking a design document to a finished, tested implementation without 
 
 ![The Practice](images/how-to-vibe-code.png)
 
-Terms hold one sense throughout. The **design document** is the input written before any code, immutable once it passes admission. A **`design.md`** is an append-only log written during implementation; the design document and `design.md` are different files with different lifetimes. A **check** is one review criterion inside a criteria block; a **test** is executable code in the repository. A **criteria block** is a tag-delimited block dispatched to a subagent by name. The **main context** is the session holding the plan. A **work subagent** edits files; a **review subagent** reads and reports.
+Terms hold one sense throughout. The **design document** is the input written before any code, immutable once it passes admission. A **`vibe-notes.md`** is an append-only log written during implementation; the design document and `vibe-notes.md` are different files with different lifetimes. A **check** is one review criterion inside a criteria block; a **test** is executable code in the repository. A **criteria block** is a tag-delimited block dispatched to a subagent by name. The **main context** is the session holding the plan. A **work subagent** edits files; a **review subagent** reads and reports.
 
 ## 1. Protocol
 
@@ -29,7 +29,7 @@ Execute these steps in order:
 
 These two bind every phase. Every other rule in this file is phase-local and binds only inside its own section. They are restated at the end.
 
-**Subagent discipline.** The main context holds the plan, dispatches work, and records outcomes. It does not read source files and it does not write code. Reason: context accumulation degrades every model measurably, with degradation beginning well before the window fills, and the plan is the artifact that has to survive the whole run. Dispatch in parallel when no dispatch in the batch reads a file another writes; otherwise dispatch in order. If the same step fails dispatch twice, read the one file named in the failure, then re-dispatch.
+**Subagent discipline.** The main context holds the plan, dispatches work, and records outcomes. It does not read source files and it does not write code. Reason: context accumulation degrades every model measurably, with degradation beginning well before the window fills, and the plan is the artifact that has to survive the whole run. Dispatch in parallel when no dispatch in the batch reads a file another writes; otherwise dispatch in order. If the same step fails dispatch twice, read the one file named in the failure, then re-dispatch. If that re-dispatch also fails, write `plan/state.md`, report the step and the failure, and stop.
 
 **The commit cycle.** Author the commit, review it in fresh-context subagents, verify the findings, fix the survivors, confirm the suite dispatch returns pass, amend the commit. One commit per step, with the fix folded in rather than following behind. Reason for reviewing in a separate context: a model asked to review its own work in the context that produced it does worse than not reviewing at all, moving GPT-4 on GSM8K from 95.5% to 91.5% after one round and 89.0% after two, and models favor their own output when they can see it. Reason for amending rather than adding a commit: rewriting is safe before publishing and unsafe after, and a fix folded into the commit it fixes keeps one concern per commit. The amend choice rests on convention, not measurement; no study has compared it.
 
@@ -39,7 +39,7 @@ These two bind every phase. Every other rule in this file is phase-local and bin
 
 The two lists below are examples of the test applied, not an exhaustive enumeration, because an exhaustive list needs a new entry for every new command while the test already decides them all.
 
-Permitted, examples: read and write the plan files and both `design.md` files; dispatch subagents; `git add`, `git commit`, `git commit --amend`; the fixed-size query forms `git rev-parse`, `git branch --show-current`, and `git log --oneline -n <k>`; record findings that subagents return.
+Permitted, examples: read and write the plan files and both `vibe-notes.md` files; dispatch subagents; `git add`, `git commit`, `git commit --amend`; the fixed-size query forms `git rev-parse`, `git branch --show-current`, and `git log --oneline -n <k>`; record findings that subagents return.
 
 Dispatched, examples: the build and the test suite, because a red run is unbounded; the parent-commit replay of section 9; `git diff` and every command that emits the diff, since the diff is the review subagents' input and reading it in the main context defeats the cycle it feeds; `git checkout` and `git status`, whose output scales with conflicts and working-tree state; reading any source file; writing any code; searching the codebase; web research.
 
@@ -47,7 +47,7 @@ Classify a command on neither list by the test, not by resemblance to a listed o
 
 **Inspection without loading.** Where the main context needs a fact about something large, dispatch a query for the fact rather than the thing: the count of failing tests rather than the suite output, the paths a diff touches rather than the diff, whether a symbol exists rather than the file defining it. Reason: almost any question about a large artifact has a bounded form, and this is what keeps the bounded-output test from becoming a wall.
 
-**When a permitted command overruns anyway.** Finish the current step, write `plan/state.md`, and start a fresh main context that reads that record cold. Move the offending command to the dispatched list for the rest of the run and record the reclassification in the root `design.md`, creating that file if it does not exist yet. Reason: the context is already polluted and cannot be cleaned, so the remedy is recovery rather than a rule that pretends otherwise.
+**When a permitted command overruns anyway.** Finish the current step, write `plan/state.md`, and start a fresh main context that reads that record cold. Move the offending command to the dispatched list for the rest of the run and record the reclassification in the root `vibe-notes.md`, creating that file if it does not exist yet. Reason: the context is already polluted and cannot be cleaned, so the remedy is recovery rather than a rule that pretends otherwise.
 
 ### Artifact paths
 
@@ -56,7 +56,7 @@ Use these paths. Reason: a path the agent has to search for is a path it will no
 - `plan/L1.md` - the ordered step list.
 - `plan/L2-<NN>-<slug>.md` - one per L1 step, numbered so the order is visible in a directory listing.
 - `plan/state.md` - progress, decisions taken, problems open, and the working set of file paths. The sole run-state record.
-- `design.md` at each package root, and at the repository root for cross-package decisions.
+- `vibe-notes.md` at each package root, and at the repository root for cross-package decisions.
 
 ### Compaction
 
@@ -93,7 +93,7 @@ Every dispatch supplies all six elements, because what a task omits the subagent
 - **Output format** - the findings schema below for review dispatches; a named artifact path for work dispatches.
 - **Sources and tools** - this file's path and the tag name, plus the diff or the files in scope.
 - **Boundaries** - review dispatches read and report, editing nothing; work dispatches edit only the files their L2 step names.
-- **Effort budget** - the number stated in the dispatching section.
+- **Effort budget** - the number named in the prompt, or stated in the dispatching section or the criteria block. Where none names one, apply one pass.
 - **Return cap** - 1,000 to 2,000 tokens of distilled result, however many the subagent consumed internally. When the result does not compress that far, return the summary plus a path to the full text.
 
 Every check and every dispatch defines its behavior on the empty, missing, and malformed case. Where a section below does not name one, the default is to report the condition and stop rather than to proceed on an assumption.
@@ -191,7 +191,7 @@ One file per L1 step. Decompose until each step is the smallest unit of function
 
 **Stop condition.** A step is small enough when you can name the one test that goes red before it and green after. A step that still fails the stop condition gets an L3 plan. Cap the depth at L3: if an L3 step still fails the stop condition, split its L1 step in two and re-plan rather than adding an L4, because unbounded recursion is the failure mode here.
 
-Each step carries four named fields. The intent field is quoted verbatim into every review dispatch, so write it as one line a reviewer can test against.
+Each step carries four named fields. The intent field is quoted verbatim into every review dispatch, so write it as one line a reviewer can test against. The research field names the external package, API, protocol, or format the step uses, which is the subject the section 8 groups search against, or `none` with the reason no search is needed.
 
 ```
 ## 3. Encode the key prefix
@@ -249,32 +249,34 @@ On drift, revert and take the failure back to the plan rather than patching forw
 
 ## 8. Research before each step
 
-Dispatch 1 to 3 subagents to search the web about the specific thing the step is about to do, one per research question the L2 step names.
+Dispatch 3 subagents at the fast tier - a cheaper, quicker model than the one running the main context - to search the web about the specific thing the step is about to do, one per group named in the block below. Each prompt carries this file's path, the tag name `research-task`, the L2 plan path, the step number, and the subagent's group name, with the instruction to grep the tag and follow the enclosed block.
 
-Effort budget: 3 to 8 searches per question, compressed summaries only, raw pages stay in the subagent.
+Reason for the fast tier: this search repeats once per step, and it is a sanity check against doing something stupid rather than an evidence base. A step is one revertible commit, so a miss costs one pass through the audit gate. Research that runs once per project and ripples into everything built on it is the case that buys a slower tier; this is not that case.
+
+Effort budget: 2 searches per subagent, 6 per step. Compressed summaries only, raw pages stay in the subagent.
+
+Reason the groups are what they are: the three package-identity questions answer from the same registry and advisory pages, so one subagent covers them at the cost of one, while the alternatives and idiom questions are open-ended and each needs its own two searches to get past the first result. This is the split-by-evidence-source rule of section 10 applied to research.
 
 **Skip decision rule.** Search when the step uses an external package, API, protocol, or file format. Skip when it touches only code the plan already specifies, and record the skip in one line so it is auditable.
 
-**When the budget runs out unanswered.** Record the question as unresolved in the package's `design.md` and proceed with the step. Do not search past the budget and do not drop the question silently, because an unresolved question that leaves a trace can be revisited while one that vanishes reads as answered.
+**When the budget runs out unanswered.** Record the group's question as unresolved in the package's `vibe-notes.md` and proceed with the step. Do not search past the budget and do not drop the question silently, because an unresolved question that leaves a trace can be revisited while one that vanishes reads as answered.
 
 **Priority against section 7.** A finding that invalidates a step is a plan defect, so it returns through the audit gate rather than being absorbed inline.
 
 <research-task>
 Objective: find what a developer would want to know before writing this step, and return only what changes the step.
 
-Search for each of these, in this order:
+Read the step at the L2 plan path and step number given to you. Your dispatch names one of the three groups below; answer only that group's questions and ignore the other two. Search and report only, editing no file.
 
-1. Whether every package, module, or API the step names actually exists, at the version the step would pin.
-2. Known bugs, advisories, and CVEs against what the step would use.
-3. A better-suited alternative that is already established for this job.
-4. Breaking changes between the pinned version and the one the step assumes.
-5. The idiomatic pattern for this job in the current version, where it differs from the obvious one.
+- **package-identity** - Does every package, module, or API the step names exist, at the version the step would pin? Are there known bugs, advisories, or CVEs against it? What breaks between the pinned version and the version the step assumes?
+- **alternatives** - Is a better-suited alternative already established for this job?
+- **idiom** - What is the idiomatic pattern for this job in the current version, where it differs from the obvious one?
 
-Effort budget: 3 to 8 searches. Follow a lead when it bears on one of the five items above; stop when it does not.
+Effort budget: 2 searches. Follow a lead when it bears on your group; stop when it does not.
 
-Output format, 1 to 5 entries, highest impact first:
+Output format, 1 to 3 entries, highest impact first:
 
-- item: <which of the five>
+- group: <your group name>
   finding: <2 to 4 sentences, with the version numbers and dates>
   source: <url>
   changes_the_step: yes or no, and if yes, what
@@ -282,7 +284,7 @@ Output format, 1 to 5 entries, highest impact first:
 Report "nothing that changes the step" when that is the answer; it is a valid and useful result. Return at most 2,000 tokens. Raw pages stay with you.
 </research-task>
 
-Reason the first item leads: hallucinated package references run 4.62% to 6.10% across five frontier models released between October 2025 and March 2026, with 127 names invented identically by all five, so a package that does not exist is a live risk rather than a hypothetical.
+Reason package-identity is its own group rather than folded into the others: hallucinated package references run 4.62% to 6.10% across five frontier models released between October 2025 and March 2026, with 127 names invented identically by all five, so a package that does not exist is a live risk rather than a hypothetical.
 
 ## 9. Code, tests, checkpoint
 
@@ -431,9 +433,9 @@ Report an empty surviving list when that is the answer. Return at most 2,000 tok
 
 ## 11. The decision log
 
-Two artifacts with different lifetimes. The design document stays immutable. A `design.md` is append-only.
+Two artifacts with different lifetimes. The design document stays immutable. A `vibe-notes.md` is append-only.
 
-Create them: on the first step that touches a package, create `design.md` at that package's root; on the first cross-package decision, create `design.md` at the repository root. Routing rule: a decision touching more than one package goes to the root file, otherwise to the package's own.
+Create them: on the first step that touches a package, create `vibe-notes.md` at that package's root; on the first cross-package decision, create `vibe-notes.md` at the repository root. Routing rule: a decision touching more than one package goes to the root file, otherwise to the package's own.
 
 Log a decision the implementation forced that the design document did not settle. Do not restate the design document. Record any departure from the design document here with its reason, and leave the design document itself unedited, because it is the record of what was decided up front and editing it destroys the comparison.
 
@@ -486,7 +488,7 @@ Excluded as undecidable by tooling, with a reading agent covering it instead: de
 
 ## Emission Discipline
 
-Every plan, `design.md`, and source file this rulebook emits passes these constraints before it is written. The generated file never refers to any source document for these rules; they appear only by substance.
+Every plan, `vibe-notes.md`, and source file this rulebook emits passes these constraints before it is written. The generated file never refers to any source document for these rules; they appear only by substance.
 
 - Subagent-only exploration. The main context holds the plan, the state, and the outcomes; every search, read, and edit is dispatched.
 - Bounded state. `plan/state.md` is the sole run-state write.
@@ -507,7 +509,7 @@ Run these on the finished work. Each answers yes or no; each no returns to its s
 - Every behavior-changing commit carries a test that failed on the parent with an assertion failure. (9)
 - Every commit ran the four review blocks, the verifier, and the fixes before being amended. (10)
 - Every review loop and audit loop ended on no progress or at its cap of three. (6, 10)
-- Every decision the design document did not settle is logged in a `design.md`. (11)
+- Every decision the design document did not settle is logged in a `vibe-notes.md`. (11)
 - Every comment states a reason the code cannot state itself. (12)
 - Every quantity in the emitted plans is a number or a range. (2)
 - Every hard rule in the emitted plans has one defined action for when its precondition fails. (2)
