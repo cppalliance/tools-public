@@ -98,6 +98,56 @@ Transforms source files into a challenge-hardened review report with findings so
 _[tools/code/lib-review.md](tools/code/lib-review.md)_\
 Writes a quality-verdicted design diagnosis from an open-source project's source code, domain context, and competitive landscape.
 
+## How-To
+
+**How to Create an Abstract**\
+_[how-to/how-to-create-abstracts.md](how-to/how-to-create-abstracts.md)_\
+Write the abstract for a WG21 paper as one actionable finding stated first, the surface a delegate reads before anything else.
+
+**Maintaining Clang and LLVM**\
+_[how-to/how-to-maintain-clang.md](how-to/how-to-maintain-clang.md)_\
+Reference for a model changing Clang and LLVM source: architecture, conventions, core APIs, extension recipes, testing, and the build and debug workflow.
+
+**Maintaining GCC**\
+_[how-to/how-to-maintain-gcc.md](how-to/how-to-maintain-gcc.md)_\
+Reference for a model changing GCC source: architecture, conventions, core APIs, extension recipes, testing, and the build and debug workflow.
+
+**Reading Rulebook**\
+_[how-to/how-to-read-papers.md](how-to/how-to-read-papers.md)_\
+Evaluate a paper's quality in three sequential passes, each with exit criteria, from the general idea to the depth a verdict needs.
+
+**Vibe-Coding Planner**\
+_[how-to/how-to-vibe-code.md](how-to/how-to-vibe-code.md)_\
+Drive a design document to a complete, tested implementation, scaling planning, research, and review to what the change actually touches, with subagent-only execution and a review-and-amend cycle on every commit.
+
+**Fiction Rulebook**\
+_[how-to/how-to-write-fiction.md](how-to/how-to-write-fiction.md)_\
+Write and audit narrative prose, from a scene to a novel segment, so it reads as if a human wrote it.
+
+**News Rulebook**\
+_[how-to/how-to-write-news.md](how-to/how-to-write-news.md)_\
+Write or audit a news article, feature, analysis, briefing, or press release for structure, leads, sourcing, style, and objectivity.
+
+**How to Write a Paper**\
+_[how-to/how-to-write-papers.md](how-to/how-to-write-papers.md)_\
+Draft a WG21 paper for a delegate who reads in passes and stops when one fails: show, then assert.
+
+**Prompt Rulebook**\
+_[how-to/how-to-write-prompts.md](how-to/how-to-write-prompts.md)_\
+Write or audit a prompt, plan, tool, or rule file for unambiguous instructions and efficient context management.
+
+**Prose Rulebook**\
+_[how-to/how-to-write-prose.md](how-to/how-to-write-prose.md)_\
+Revise model-generated prose so it reads as human-written, in sequential editing passes from structure to wording.
+
+**Report Rulebook**\
+_[how-to/how-to-write-reports.md](how-to/how-to-write-reports.md)_\
+Write or audit a report of any type for structure, evidence, uncertainty, sourcing, and format discipline.
+
+**Rust Coding Rulebook**\
+_[how-to/how-to-write-rust.md](how-to/how-to-write-rust.md)_\
+Reference for a model writing or maintaining Rust: layout, naming, ownership, API design, errors, crates, documentation, testing, tooling, performance, async, and unsafe.
+
 ## WG21
 
 **Advocatus Diaboli**\

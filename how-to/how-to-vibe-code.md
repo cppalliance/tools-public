@@ -1,12 +1,12 @@
 ---
-description: Drive a design to a complete tested implementation, scaling the planning, research, and review machinery to what the change actually touches, with subagent-only execution and a review-and-amend cycle on every commit
+description: Drive a design document to a complete tested implementation, scaling the planning, research, and review machinery to what the change actually touches, with subagent-only execution and a review-and-amend cycle on every commit; for any change beyond a single-file mechanical edit
 ---
 
 <!-- Load this file before planning or implementing any change beyond a single-file mechanical edit. Run the Protocol (section 1). -->
 
 # Vibe-Coding Planner
 
-Rules for taking a design document to a finished, tested implementation without accumulating debt on the way. This file governs any change to code beyond a single-file mechanical edit. Sections run in execution order; consult one at a time.
+Rules for taking a design document to a finished, tested implementation with every commit reviewed in a fresh context and every behavior change pinned by a test. Load this file for any change to code beyond a single-file mechanical edit, and it governs the run once loaded. Sections run in execution order; consult one at a time.
 
 ![The Practice](images/how-to-vibe-code.png)
 
@@ -22,7 +22,7 @@ Two boundaries, because completion-first otherwise reads as ship-anything.
 
 ## Terms
 
-Terms hold one sense throughout. The **design document** is the input written before any code, immutable once execution begins. A **`vibe-notes.md`** is an append-only log written during implementation; the design document and `vibe-notes.md` are different files with different lifetimes. A **check** is one review criterion inside a criteria block; a **test** is executable code in the repository. A **criteria block** is a tag-delimited block dispatched to a subagent by name. The **main context** is the session holding the plan, and it is the actor everywhere this file says a decision gets made; it has no second name. A **work subagent** edits files; a **review subagent** reads and reports. The **fast tier** is a cheaper, quicker model than the one running the main context.
+Terms hold one sense throughout. The **design document** is the input written before any code, immutable once execution begins; it is the `design-{slug}.md` that `tools/architect.md` produces. A **`vibe-notes.md`** is an append-only log written during implementation; the design document and `vibe-notes.md` are different files with different lifetimes. A **check** is one review criterion inside a criteria block; a **test** is executable code in the repository. A **criteria block** is a tag-delimited block dispatched to a subagent by name. The **main context** is the session holding the plan, and it is the actor everywhere this file says a decision gets made; it has no second name. A **work subagent** edits files; a **review subagent** reads and reports. The **fast tier** is a cheaper, quicker model than the one running the main context. A commit is **published** once it is pushed to a branch another person or process reads; amending is safe before that and unsafe after.
 
 The **grain conditions** are the five questions of section 3, each of which activates its own machinery when it answers yes. The **research lane** is the continuous background search of section 8, and the **agenda** is its list of questions, held inside `plan/state.md` and keyed by subject. A finding is **load-bearing** when its `affects` and its `contradicts` fields are both non-empty: it names work the run actually used, and it goes against an assumption that work rests on. A decision is **expensive to reverse** when a later step depends on it, or when undoing it once the work is finished would mean changing an on-disk format that holds data, a wire format another component speaks, or a public interface other code is written against. A step is **blocked** when it needs an external fact neither the design document nor the agenda holds, which the research lane resolves. A step has **no progress** when no option exists to complete it at all, which is the only condition that stops the run.
 
@@ -49,9 +49,9 @@ These three bind every phase. Every other rule in this file is phase-local and b
 
 **The Prime Directive.** Complete the result the user asked for. It decides every stop condition in this file and yields only to verification and to an action history cannot undo.
 
-**Subagent discipline.** The main context holds the plan, dispatches work, and records outcomes. It does not read source files and it does not write code. Reason: context accumulation degrades every model, and the plan is the artifact that has to survive the whole run. Dispatch in parallel when no dispatch in the batch reads a file another writes; otherwise dispatch in order. If the same step fails dispatch twice, read the one file named in the failure, then re-dispatch. If that re-dispatch also fails, narrow the dispatch to the smallest edit that would advance the step, and if that fails too, judge whether the step proceeds without it and record the judgement.
+**Subagent discipline.** The main context holds the plan, dispatches work, and records outcomes. It does not read source files and it does not write code. Reason: context accumulation degrades every model, and the plan is the artifact that has to survive the whole run. Dispatch in parallel when no dispatch in the batch reads a file another writes; otherwise dispatch in order. If the same step fails dispatch twice, dispatch a bounded query for the construct the failure names, then re-dispatch on the answer. If that re-dispatch also fails, narrow the dispatch to the smallest edit that would advance the step, and if that fails too, judge whether the step proceeds without it and record the judgement.
 
-**The commit cycle.** Author the commit, review it in fresh-context subagents, verify the findings, fix the survivors, confirm the suite dispatch returns pass, amend the commit. One commit per step, with the fix folded in rather than following behind. Reason for reviewing in a separate context: a model reviewing its own work in the context that produced it does worse than not reviewing at all. Reason for amending rather than adding: rewriting is safe before publishing and unsafe after, and folds one concern per commit.
+**The commit cycle.** Author the commit, review it in fresh-context subagents, verify the findings, fix the survivors, confirm the suite dispatch returns pass, amend the commit. One commit per step, with the fix folded in rather than following behind. Reason for reviewing in a separate context: a model reviewing its own work in the context that produced it does worse than not reviewing at all, and models favor their own output when they can see it. Reason for amending rather than adding: rewriting is safe before publishing and unsafe after, and folds one concern per commit. The amend choice rests on convention, not measurement; no study has compared it.
 
 ### What the main context may run
 
@@ -397,9 +397,9 @@ Execute one step at a time, in order, dispatching per section 2.
 
 **Read the affected package's `vibe-notes.md` before executing a step**, and carry the decisions bearing on that step's subjects into the work dispatch, since the work subagent does the editing and must see the mechanism decisions earlier steps made.
 
-**Re-inject the plan every 5 steps.** Restate the current step and the three standing rules into the working context at least once every five steps. Reason: a long run drifts off the plan without periodic re-injection.
+**Re-inject the plan every 5 steps.** Restate the current step and the three standing rules into the working context at least once every five steps. Reason: a long run drifts off the plan without periodic re-injection, which is the one intervention measured to reduce plan violations and improve success across every model tested, over 16,991 coding-agent trajectories.
 
-**This ordering is a bet, not a settled result.** No coding benchmark has compared plan-then-execute against mid-execution replanning; the case for pre-committed control flow is integrity rather than measured accuracy.
+**This ordering is a bet, not a settled result.** No coding benchmark has compared plan-then-execute against mid-execution replanning, and where the comparison has been run elsewhere replanning wins, by 10.31 points on one web-navigation benchmark and 8 points on one planning benchmark. Against that, 81.28% of tasks in one corpus were solvable by fully static plans with none requiring runtime replanning, so task shape may drive the gap. The case for pre-committed control flow is integrity rather than accuracy, bought at roughly 7 points of utility in the one system that measured the trade.
 
 **The corrective commit's place in the accounting.** A corrective commit is attributed to the step it corrects, does not advance the step counter, and carries its own red-to-green test like any other behavior change. One step may therefore own more than one commit. Amending the current unpublished commit stays correct; a correction to an earlier commit arrives as a new commit.
 
@@ -425,17 +425,17 @@ This heuristic governs missing information only. It reaches neither verification
 
 Every commit that changes behavior carries tests for that change.
 
-**The parent-commit replay.** One dispatch that checks out the parent, applies only the test files, runs them, and returns how the new test failed.
+**The parent-commit replay.** One dispatch that checks out the parent, applies only the test files, runs them, and returns how the new test failed. Reason for making it blocking: across 86,156 agent-authored test patches from 33,596 pull requests spanning five coding agents, 80.2% carried weak or no explicit oracle signal.
 
-**The gate is an assertion failure, not any failure.** A test counts as failing on any thrown error, including a syntax error, so "it fails against the parent" is trivially satisfied. The discriminator is the failure class. A test failing on the parent with an assertion failure is testing behavior; one failing with an import, module, or type error is testing nothing yet; one that passes on the parent is testing nothing at all. An error-class failure does not satisfy the gate.
+**The gate is an assertion failure, not any failure.** A test counts as failing on any thrown error, including a syntax error, so "it fails against the parent" is trivially satisfied: one measurement found 55.4% of attempts reaching any-failure against 10.1% reaching a genuine red-to-green. The discriminator is the failure class. A test failing on the parent with an assertion failure is testing behavior and is a valid test 50.4% of the time; one failing with an import, module, or type error is testing nothing yet, valid 9.1% of the time; one that passes on the parent is testing nothing at all, valid 0%. An error-class failure does not satisfy the gate.
 
-What the gate buys: a test failing on the parent by assertion actually exercises the lines the fix changes. It stays necessary, not sufficient, which is why `<test-review>` also checks what the assertion says.
+What the gate buys: a test failing on the parent by assertion actually exercises the lines the fix changes, reaching 0.91 to 0.96 change coverage of the fix's own lines, indistinguishable from developer-written tests at 0.93 to 0.99, while tests failing it reached 0.49 to 0.59. It stays necessary, not sufficient, which is why `<test-review>` also checks what the assertion says.
 
 Three edge cases:
 
 - The test does not compile against the parent because it calls a new API. Stub the new symbols in the parent working tree, confirm the assertion still fails, and record that the replay used stubs. Reason: an uncompilable test is an error-class failure, and stubbing is what converts it into an assertion-class one.
 - The commit changes no behavior, meaning formatting, comments, or a pure rename. Record "no behavior change" in the commit body and skip the replay. The suite still has to pass.
-- The replay contradicts expectation, passing where it should fail or failing where it should pass. Re-run it once before treating the result as authoritative. Reason: replay harnesses are non-deterministic, erring in both directions.
+- The replay contradicts expectation, passing where it should fail or failing where it should pass. Re-run it once before treating the result as authoritative. Reason: one harness marked a known-correct patch incorrect on 30 of 300 instances, a 10% non-deterministic rate erring in both directions.
 
 **Checkpoint.** The commit itself, once the build dispatch and the suite dispatch both return pass and the test named in the step's test field passes. The step named one test; that test is the checkpoint's evidence.
 
@@ -447,7 +447,7 @@ Four stages: review, verify, fix, amend.
 
 Every review check reports and edits nothing, so two of them leave the main context an action. On `<defect-review>` check 12, append the undeclared subject to the research agenda of section 8, so later steps get the blocking this one missed. On the grain re-check `<semantic-review>` returns, activate the machinery of any condition that turned out to hold.
 
-**Verify.** Dispatch one verifier against `<finding-verification>`. It receives the collected findings and the diff, and nothing else. Effort budget: one pass. Reason: validating every finding against the source before synthesis cuts false positives and catches line numbers that do not exist, which the fix stage would otherwise act on.
+**Verify.** Dispatch one verifier against `<finding-verification>`. It receives the collected findings and the diff, and nothing else. Effort budget: one pass. Reason: validating every finding against the source before synthesis cut false positives 40% and raised line-number accuracy from 67% to 92%, catching the wrong line numbers the fix stage would otherwise act on.
 
 **Fix.** Dispatch one work subagent per file the surviving findings touch, in parallel when no two findings touch the same file. Effort budget: one pass per finding, editing only the files that finding names. Then review the fix stage's own diff with `<defect-review>` and `<test-review>` before the amend. Reason: refinement is not monotonic - a fix cycle can introduce findings the previous state did not have - and the Prime Directive permits proceeding with surviving findings, which together would otherwise let a commit ship whose last edit no reviewer ever saw. The amended commit's predecessor stays recoverable from the reflog, so a regressive cycle can be dropped rather than built on.
 
@@ -459,13 +459,15 @@ Every review check reports and edits nothing, so two of them leave the main cont
 
 Every check is a question with a pass or fail answer.
 
+**Breadth means blocks, not checks.** The invariant in section 3 that review breadth never varies fixes the four blocks that always run, not the count of checks inside them; overlapping checks are consolidated whenever one subsumes another, so the check total can fall while the blocks that run stay fixed.
+
 **Why review is enumerated while design is not.** Review is a recall problem over a known set of defect classes where the failure mode is forgetting to look, while design is a generation problem over an open set where a fixed list would bound the search rather than aid it.
 
 Three blocks hold checks decidable from the diff alone with no project configuration. One block holds checks needing evidence from outside the diff, capped at 5 and dispatched on its own. Reason for splitting by what a check must read rather than by count: judge agreement is governed far more by a criterion's evidence type than by how the criteria are batched, and a batch of binary items costs nothing while evidence-heavy items over a long trajectory cost real accuracy.
 
 **Routing rule for a new check.** Decide by what the check must read to answer, in this order: if it needs evidence from outside the diff, `<semantic-review>`; if it is about a test file, `<test-review>`; if a failing answer means the code is wrong, `<defect-review>`; otherwise `<redundancy-review>`. Reason: subject overlaps across blocks, but what a check must read does not.
 
-**One assumption to hold loosely.** Splitting review across parallel specialists is supported in general, but no study splits a fixed criteria list into disjoint blocks the way this design does, so this is an inference; splitting work is also what makes the verify stage necessary.
+**One assumption to hold loosely.** Splitting review across parallel specialists is supported in general, with overlap measured lower than expected at a median pairwise Jaccard of about 0.37 and 56.5% of confirmed defects found by exactly one reviewer; but no study splits a fixed criteria list into disjoint blocks the way this design does, so this is an inference, and splitting work is also what makes the verify stage necessary.
 
 **Considered and not taken:** collapsing the three diff-only blocks into one dispatch, declined to preserve reviewer decorrelation; a later pass can take it.
 
@@ -500,6 +502,8 @@ Objective: find what is wrong in this diff. Read and report only. Apply all 12 c
 11. Does every non-obvious construct carry a comment stating its reason? Require one for a tuned constant, a swallowed handler, a sleep or retry, a workaround for an external bug, a deliberate departure from a nearby idiom, an ordering requirement, and a performance-motivated construction.
 12. Does the diff use an external package, API, protocol, or format the step's `research:` field does not name?
 
+For check 1, hallucinated package references run 4.62% to 6.10% across five frontier models, with 127 names invented identically, so a package that does not exist is a live risk rather than a hypothetical.
+
 Return the findings schema. Report "no findings" when all 12 pass. Return at most 2,000 tokens.
 </defect-review>
 
@@ -533,7 +537,7 @@ Every finding names the search terms used, because a search obligation is only c
 
 Also report, outside the numbered findings, the five grain conditions of section 3 checked against this finished diff: does the diff touch more than one package, change a public interface, add an external dependency, touch an authorization or concurrency path, or change an on-disk or wire format? Answer each yes or no with the evidence. Report only; the main context decides what that activates.
 
-Check 1 carries the most weight: most redundancy models produce is semantically equivalent code that no text-matching tool detects, so reading is the only method.
+Check 1 carries the most weight: most redundancy models produce is semantically equivalent code that no text-matching tool detects, measured at 1.87 times the human rate in agent-authored changes, so reading is the only method.
 
 Return the findings schema. Report "no findings" when all 5 pass. Return at most 2,000 tokens.
 </semantic-review>
@@ -668,6 +672,7 @@ Run these on the finished work. Each answers yes or no; each no returns to its s
 - Every step naming a subject with an open question waited for that answer, and every other question stayed in the background. (8)
 - Reports were harvested at step and commit boundaries only, and every load-bearing finding about committed work became a corrective commit naming what it corrects. (8)
 - Every filled gap carries a confidence and a falsifier, pinned by a test wherever it is expressible in code. (9, 12)
+- No claim in this run rests on a threshold that has no source and no label as a bet. (7, 10)
 - Every behavior-changing commit carries a test that failed on the parent with an assertion failure. (10)
 - Every commit ran the four review blocks, the verifier, and the fixes before being amended. (11)
 - The fix stage's own diff was reviewed before the amend. (11)
@@ -698,9 +703,8 @@ Restated: complete the result the user asked for, and stop only when no option e
 - Repair-loop convergence by iteration: "Is Three the Magic Number?", 2026; Zhong et al., "LDB", 2024; Madaan et al., "Self-Refine", 2023.
 - Criterion type outweighing batching: "RuVerBench", 2026; "CheckEval", EMNLP 2025.
 - Specialized reviewer splits and the verification pass: "CodeGenie", 2026; "Agentic Code Review", 2026. Reviewer complementarity: "A Single LLM Is an Incomplete Code Reviewer", 2026. Coordination failures: "Why Do Multi-Agent LLM Systems Fail?", NeurIPS 2025.
-- Semantic redundancy in agent-authored changes: "More Code, Less Reuse", 2026. Duplication and error-masking trends: GitClear, "The Maintainability Gap", 2026.
+- Semantic redundancy in agent-authored changes: "More Code, Less Reuse", 2026.
 - Package hallucination rates: Spracklen et al., USENIX Security 2025; "The Range Shrinks, the Threat Remains", 2026.
-- Secure-generation rates by weakness class: Veracode, GenAI Code Security Report, 2025.
 - Mutation score rejected as a gate: Petrović and Ivanković, "Practical Mutation Testing at Scale: A View from Google", TSE 2021.
 - Commit hygiene before publishing: `gitworkflows(7)`. Change decomposition in review: Di Biase et al., PeerJ CS 2019.
 
