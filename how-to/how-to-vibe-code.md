@@ -144,18 +144,20 @@ Findings return in the response, not as a file, so the main context holds them f
 
 Write no code without one. It holds every decision the implementer would otherwise invent, so implementation is execution rather than design.
 
-Required elements:
+**The admission test below is the gate. A heading inventory is not.** A document can lack any particular section and still leave nothing to invent, and it can carry every section anyone ever recommended while leaving a decision open. Only the second case breaks a build. Across thirteen established design-document formats just four elements recur near-universally - problem and context, the design itself, consequences and trade-offs, and status with authorship - so treat the list below as guidance and gate on the test.
 
+Elements a design document usually needs, in rough order of how often they earn their place:
+
+- The problem and its context, and one section per design decision.
+- Consequences and trade-offs, either as their own section or attached to each decision.
 - An executive summary closing on a recommendation and a confidence level.
-- A prior-art survey naming the closest existing systems and what each one lacks.
 - An architecture section with a diagram, stating what each layer owns and what it does not.
-- A primitives list, where every mechanism named later in the document is a composition of the listed primitives. Name any mechanism that is not.
-- One section per design decision.
 - Worked examples, each with four parts: the artifact itself, the signatures it calls, the expected execution trace, and the tests.
+- A primitives list, where every mechanism named later in the document is a composition of the listed primitives. Name any mechanism that is not.
 - Explicit non-goals.
 - A build path naming the riskiest assumption and the fastest way to retire it.
-- A confidence level per area.
-- References.
+- A confidence level per area, with speculation marked as speculation rather than rated alongside measurement.
+- References, and status with authorship.
 
 A decision section takes this shape:
 

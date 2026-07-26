@@ -159,6 +159,8 @@ Apply this section when the target defines tools, spawns subagents, or runs unat
 - Give every compaction and truncation a quantified trigger, and clear consumed tool results first; a tool result already acted on is the cheapest thing to drop.
 - Tune a compaction prompt on real traces: maximize recall first, then raise precision by cutting superfluous content. Where the two conflict here, recall wins, because dropped context is unrecoverable while superfluous content only costs tokens.
 - Persist progress, decisions, and dependencies to a file outside the context at a fixed known path, and read it back after a reset. A path the agent has to search for is a path it will not find.
+- Write every plan so a reader who did not see the conversation can execute it. A plan may cite a file path or a URL, because those resolve for any reader; it may not depend on anything said in the conversation that produced it. The violation is observable: hand the plan to a fresh context and count the questions it has to ask.
+- Dispatch plan execution to a fresh context when the plan produces a large authored artifact, or when the conversation that produced the plan ran long. A context that wrote the plan covers its gaps from conversational memory instead of revealing them, so executing in place hides exactly the plan defects a fresh reader would surface.
 - Restate the binding rules into the working context on a fixed step interval. This is the runtime form of loading the edges (section 3).
 - Choose the technique by task shape: compaction for extended back-and-forth, notes for iterative work with clear milestones, subagents for exploration that parallelizes. They combine.
 - Re-audit prescriptive scaffolding on every model upgrade and delete what the new model no longer needs. Yesterday's scaffolding is today's attention cost.
@@ -229,6 +231,7 @@ Run these checks on the finished target. Each answers yes or no; each no returns
 - Every subagent return is capped and specified. (8)
 - Every token source names a behavior it changes. (9)
 - The target declares what enters the main context and what never does. (9)
+- Every plan is executable by a reader who did not see the conversation that produced it. (9)
 - Every command run in the main context bounds its own output. (9)
 - Every compaction has a quantified trigger, and every loop has a stop condition. (9)
 - No emitted artifact names a source document for its rules. (10)
