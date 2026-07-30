@@ -8,7 +8,7 @@ description: Write or audit a prompt, plan, tool, or rule file for unambiguous i
 
 Rules for writing instructions that language models follow reliably, and for managing the tokens those instructions run in. Read this document to learn the craft; give it to a model to apply the craft. It governs any document whose reader is a model: a prompt, a plan, a tool file, a rule file, a subagent task.
 
-![The Prompt Architect](images/how-to-write-prompts.png)
+![The Prompt Architect](images/prompts-how-to.png)
 
 Two rules bind everything below:
 

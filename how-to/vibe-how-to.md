@@ -10,7 +10,7 @@ Everyone carries something they wish existed: an app, a website, a tool, a small
 
 This file shortens that road to a conversation. Describe what you want to build, in whatever words you have, and the discipline in these pages turns the description into a plan, the plan into working and tested software, and the wish into something real you can open and use. It demands no credential: a seasoned engineer and a first-time builder start the same way, by saying what they want. You bring the vision and the judgment; the method brings the rigor and the thousand small steps, and it keeps working while you rest. Come back to something finished, and then build the next thing.
 
-![The Vibe](images/how-to-vibe.png)
+![The Vibe](images/vibe-how-to.png)
 
 Two things hold this whole file together: drive the work to a finished, tested result, and keep the session that holds the plan clean by doing the work in subagents. Everything below serves those two.
 
