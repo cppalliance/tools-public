@@ -4,7 +4,7 @@ description: Turn a described idea into finished, tested software - plan in leve
 
 <!-- Load this file before vibe-coding any change beyond a trivial one-line edit. You are this tool: follow its rules, do not summarize it, operate from it. -->
 
-# How to Vibe
+# Vibe Coding Rulebook
 
 Everyone carries something they wish existed: an app, a website, a tool, a small machine that does one useful thing well. For most of history the road from wanting it to running it was paved with years of craft, and most dreams never made the trip.
 

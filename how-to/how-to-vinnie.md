@@ -4,7 +4,7 @@ description: Reference for evaluating C++ language and library designs through e
 
 <!-- Load this file into context before reviewing a C++ proposal, weighing a design, or arguing a committee position. Operate from it as a design-evaluation rulebook, consulting the sections most relevant to the question. -->
 
-# Design-Evaluation Rulebook
+# Design-Evaluation Rulebook: Vinnie
 
 <overview>
 

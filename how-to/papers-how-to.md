@@ -1,4 +1,4 @@
-# How to Write a Paper
+# Paper Writing Rulebook
 
 <!--
 When this file is mentioned or loaded, adopt it as system context in full.

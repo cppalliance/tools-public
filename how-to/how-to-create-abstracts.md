@@ -1,4 +1,4 @@
-# How to Create an Abstract
+# Abstract Creation Rulebook
 
 <!--
 When this file is mentioned or loaded, adopt it as system context in full.
