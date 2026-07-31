@@ -113,6 +113,8 @@ APPEND by StrReplace on the report, one call per non-empty lane. Replace the lan
 - Fabrication: replace "<!-- FABRICATION-TURNS -->" with "{your fabrication bullets}\n\n<!-- FABRICATION-TURNS -->".
 Do not touch any other marker.
 
+TOOLS - HARD LIMIT: use ONLY Read (on the transcript) and StrReplace (on the report at the given path). NEVER delete, move, rename, or create any file; NEVER run a shell command; NEVER modify any file other than that one report. If anything blocks you, stop and report it in your return - do not improvise any file operation.
+
 GUARDS: judge each turn only from the text present; lane and write every human turn in your window exactly once; assign fabrication or a grade only when you can quote the evidence; write motivation, not a character verdict; never lead with "Because."
 
 RETURN to your caller only three short lines and nothing else:
@@ -134,6 +136,8 @@ DO YOUR TARGET:
 - reactive: write a three-sentence brutal summary of the reactive bullets; StrReplace "<!-- REACTIVE-SUMMARY -->" with it.
 - proactive: write a three-sentence brutal summary of the proactive bullets; StrReplace "<!-- PROACTIVE-SUMMARY -->" with it.
 - sentence: read the reactive summary and proactive summary (and the fabrication paragraph if "<!-- FABRICATION-SUMMARY -->" was filled), and compress them into ONE brutal sentence; StrReplace "<!-- SENTENCE-SUMMARY -->" with it.
+
+TOOLS - HARD LIMIT: use ONLY Read (on the report) and StrReplace (on the report). NEVER delete, move, rename, or create any file, and NEVER run a shell command.
 
 HARD GUARD: no digit and no numeric grade may appear in your output. Describe engagement in words - "outright refutations," "bare hand-offs," "shallow nods" - never "(3)" or "2 of 5". Replace only your own marker; leave every other marker untouched. Return one line: "done: <target>".
 </summary-prompt>
