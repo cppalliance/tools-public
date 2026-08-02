@@ -27,9 +27,13 @@ Each human turn goes into exactly one lane, decided in this order:
   - `(3)` acts on specifics - corrects an error, answers a posed question, chooses among offered options with a reason, or redirects on the reply's content.
 - **Proactive** - opens a fresh task or follows a trivial reply; sentence only, no grade. A fresh directive is not a failure to engage.
 
+A low reactive grade is not automatically a lapse. A bare approval or hand-off that responds to a genuinely small, contained item - greenlighting a one-line fix, naming a branch for a commit - is the appropriate move, not a missed chance to engage. Read `(0)` and `(1)` as failures only when the reply actually demanded more than the person gave; otherwise they are efficient sign-off. Summaries must not frame routine sign-off on trivial items as a weakness.
+
 ## Invocation and paths
 
-Invoke with a person name and the person's transcripts - explicit `.md` paths or a directory (for example `chat-logs/{name}/`) whose `.md` files are all inputs. Resolve the name and every transcript to an absolute path before anything else. Write exactly one output file at an absolute path: `cabinet/_output/skillgate-{name}.md`. Nothing else is written. Every subagent dispatch names only absolute paths.
+Invoke with a person name and the person's transcripts - explicit `.md` paths or a directory (for example `chat-logs/{name}/`) whose `.md` files are all inputs. Resolve the name and every transcript to an absolute path before anything else.
+
+Write exactly one output file at an absolute path: `cabinet/_output/skillgate-{slug}.md`. The `{slug}` is derived from the input transcript, not from the operator name: take the transcript's basename without its `.md` extension and drop a leading `chatlight-` prefix if present. For example `chatlight-mcp-client-and-agentic-harness.md` yields `skillgate-mcp-client-and-agentic-harness.md`. When several transcripts are given, derive the slug from their shared directory name (or, if they sit in one directory that is the person's, from that directory's name) by the same drop-`chatlight-` rule. Nothing else is written. Every subagent dispatch names only absolute paths.
 
 ## Procedure
 
@@ -100,6 +104,8 @@ LANE each turn, in this order:
   3 acts on specifics - corrects an error, answers a posed question, chooses among offered options with a reason, or redirects on the reply's content.
 - Proactive: not fabrication, opens a fresh task or follows a trivial reply. No grade.
 
+A low grade is not automatically a lapse. When a bare approval or hand-off responds to a genuinely small, contained item (a one-line fix, a branch name for a commit), that quick sign-off is the appropriate move; grade it honestly but do not write the sentence as a failing. Reserve the failure reading of `0`/`1` for turns where the reply plainly demanded more than the person gave.
+
 WRITE one bullet per turn, in transcript order, as "- {sentence}":
 - Reactive ends with the grade in parentheses, e.g. "(3)".
 - Fabrication ends with "(FABRICATION)".
@@ -139,5 +145,5 @@ DO YOUR TARGET:
 
 TOOLS - HARD LIMIT: use ONLY Read (on the report) and StrReplace (on the report). NEVER delete, move, rename, or create any file, and NEVER run a shell command.
 
-HARD GUARD: no digit and no numeric grade may appear in your output. Describe engagement in words - "outright refutations," "bare hand-offs," "shallow nods" - never "(3)" or "2 of 5". Replace only your own marker; leave every other marker untouched. Return one line: "done: <target>".
+HARD GUARD: no digit and no numeric grade may appear in your output. Describe engagement in words - "outright refutations," "bare hand-offs," "shallow nods" - never "(3)" or "2 of 5". Do not frame routine quick sign-off on trivial, contained items as a lapse or weakness; a bare approval of a one-line fix is appropriate delegation, not a failure to engage. Call something a shortcoming only when the reply demanded more than the person gave. Replace only your own marker; leave every other marker untouched. Return one line: "done: <target>".
 </summary-prompt>
