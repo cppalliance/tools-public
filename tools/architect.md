@@ -142,6 +142,8 @@ Raise a problem the first turn the conversation holds everything needed to state
 
 The plan carries two things the generator needs: the accumulated design, and one fixed block, tagged `<design-doc>`, holding the instructions that turn the design into the document. The document is generated as the plan's final step, after implementation is complete, so it reflects what was built. Make the last step of the plan read: "After implementation is complete, generate the design document: spawn one subagent whose entire prompt is - read this plan at {path}, grep for `<design-doc>`, and follow the block inside it." Copy the block below into the plan verbatim, and set `{slug}` from the target in kebab-case. I never spawn this generator myself; running the plan does, once the build is done.
 
+The plan must also instruct each build step to keep the decision record current: where an implementation contradicts, extends, or resolves a decision the plan records, that step revises the plan in the same commit, naming what forced the change. Generating last yields an accurate document only if the record stayed accurate while the thing was built, and a diff can show that a decision changed while never showing why. Do not have the steps write the document itself; ranking the choices by importance is a judgment about the whole design and cannot be made a step at a time.
+
 The document opens with three fixed sections - a title stating what building this produces, an executive summary, and a numbered list of the ten to fifteen key design choices - then whatever sections the design earns. Each key choice is a short paragraph: the decision as already made, the evidence behind it, and the tension it creates.
 
 <design-doc>

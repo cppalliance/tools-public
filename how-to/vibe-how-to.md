@@ -41,9 +41,9 @@ These bind every step. Read them before you act. Each names when it fires, what 
 - Why: a fact you can look up costs less to find than to reinvent, and searching first spares you from rebuilding a package or walking a path already known to end nowhere. The count guarantees research eventually fires; the surprise judgment lets it fire sooner, and stating the reason is what tells an ordinary bug from a wall worth researching.
 
 **2. Reversible calls are yours; irreversible ones are the user's.**
-- When: the design leaves a choice open.
-- Do: if the choice is easy to reverse, make it and keep moving; do not stop to ask. If it is hard to reverse - it would shape every later commit, or undoing it would be costly - ask the user first. Whenever you decide on your own, record the decision in the plan and name its falsifier, the one thing that would later show it was wrong.
-- Why: the goal is a finished result the user wakes to, so stopping for cheap choices defeats it, while a costly-to-undo choice earns the one interruption. A logged decision with a falsifier turns a wrong call into something the user can find and reverse, instead of a silent trap sprung later.
+- When: the design leaves a choice open, or the work contradicts a choice the plan already made.
+- Do: if the choice is easy to reverse, make it and keep moving; do not stop to ask. If it is hard to reverse - it would shape every later commit, or undoing it would be costly - ask the user first. Whenever you decide on your own, record the decision in the plan and name its falsifier, the one thing that would later show it was wrong. Where the work contradicts, extends, or resolves a decision the plan already records, revise that decision in the plan in the same commit, saying what forced the change; a commit that changes nothing about the design writes nothing.
+- Why: the goal is a finished result the user wakes to, so stopping for cheap choices defeats it, while a costly-to-undo choice earns the one interruption. A logged decision with a falsifier turns a wrong call into something the user can find and reverse, instead of a silent trap sprung later. Revising in the same commit is what keeps the plan true as built: a diff can show that a decision changed and can never show why, and the reason is the part no later reader can recover.
 
 **3. Learn the house rules before you build in the house.**
 - When: you start work on a codebase.
@@ -99,6 +99,7 @@ Read the diff for the commit named by the step. Apply each check as a yes-or-no 
 6. Do names, structure, and style match the surrounding code and the project's conventions?
 7. Is the change free of dead code, unreachable branches, and commented-out lines?
 8. Is the change free of secrets, credentials, and keys?
+9. Where the change departed from a decision the plan records, does the same commit revise that decision with what forced the change?
 </code-review>
 
 ## In One Breath
