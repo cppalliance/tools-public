@@ -70,7 +70,9 @@ FAMILIES=(voice interview tutor)
 # is a whole directory: SKILL.md plus whatever scripts it calls. That distinction
 # is why they need their own list and their own install path. Add a skill here by
 # its directory, not by a filename.
-SKILLS=()
+SKILLS=(
+  tools-wg21/pick-pr-review
+)
 
 # Split the colon-separated SKILL_DEST into an array.
 SKILL_DESTS=()
