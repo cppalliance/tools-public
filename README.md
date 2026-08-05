@@ -117,7 +117,7 @@ _[how-to/how-to-read-papers.md](how-to/how-to-read-papers.md)_\
 Evaluate a paper's quality in three sequential passes, each with exit criteria, from the general idea to the depth a verdict needs.
 
 **Vibe-Coding Planner**\
-_[how-to/how-to-vibe-code.md](how-to/how-to-vibe-code.md)_\
+_[how-to/vibe-how-to.md](how-to/vibe-how-to.md)_\
 Drive a design document to a complete, tested implementation, scaling planning, research, and review to what the change actually touches, with subagent-only execution and a review-and-amend cycle on every commit.
 
 **Fiction Rulebook**\
@@ -129,53 +129,49 @@ _[how-to/how-to-write-news.md](how-to/how-to-write-news.md)_\
 Write or audit a news article, feature, analysis, briefing, or press release for structure, leads, sourcing, style, and objectivity.
 
 **How to Write a Paper**\
-_[how-to/how-to-write-papers.md](how-to/how-to-write-papers.md)_\
+_[how-to/papers-how-to.md](how-to/papers-how-to.md)_\
 Draft a WG21 paper for a delegate who reads in passes and stops when one fails: show, then assert.
 
 **Prompt Rulebook**\
-_[how-to/how-to-write-prompts.md](how-to/how-to-write-prompts.md)_\
+_[how-to/prompts-how-to.md](how-to/prompts-how-to.md)_\
 Write or audit a prompt, plan, tool, or rule file for unambiguous instructions and efficient context management.
 
 **Prose Rulebook**\
-_[how-to/how-to-write-prose.md](how-to/how-to-write-prose.md)_\
+_[how-to/prose-how-to.md](how-to/prose-how-to.md)_\
 Revise model-generated prose so it reads as human-written, in sequential editing passes from structure to wording.
 
 **Report Rulebook**\
-_[how-to/how-to-write-reports.md](how-to/how-to-write-reports.md)_\
+_[how-to/reports-how-to.md](how-to/reports-how-to.md)_\
 Write or audit a report of any type for structure, evidence, uncertainty, sourcing, and format discipline.
 
 **Rust Coding Rulebook**\
-_[how-to/how-to-write-rust.md](how-to/how-to-write-rust.md)_\
+_[how-to/rust-how-to.md](how-to/rust-how-to.md)_\
 Reference for a model writing or maintaining Rust: layout, naming, ownership, API design, errors, crates, documentation, testing, tooling, performance, async, and unsafe.
 
 ## WG21
 
 **Advocatus Diaboli**\
-_[tools/wg21/advocatus.md](tools/wg21/advocatus.md)_\
+_[tools-wg21/advocatus.md](tools-wg21/advocatus.md)_\
 Given a WG21 paper, produces a sealed tribunal verdict with surviving objections, certified strengths, and a citation resolution table.
 
-**The Arno**\
-_[tools/wg21/arno.md](tools/wg21/arno.md)_\
-Transforms a WG21 paper into a severity-ranked readability and argumentation findings report.
-
 **Assay**\
-_[tools/wg21/assay.md](tools/wg21/assay.md)_\
+_[tools-wg21/assay.md](tools-wg21/assay.md)_\
 Takes a WG21 proposal and delivers a thesis-derived structural verdict with compound dynamics, citation verification, and per-lens findings.
 
 **The Auditor**\
-_[tools/wg21/auditor.md](tools/wg21/auditor.md)_\
+_[tools-wg21/auditor.md](tools-wg21/auditor.md)_\
 Writes a compliance-checked paper and an inspection report from a WG21 manuscript's raw markdown.
 
 **The Herald**\
-_[tools/wg21/herald.md](tools/wg21/herald.md)_\
+_[tools-wg21/herald.md](tools-wg21/herald.md)_\
 Given a name in WG21, produces a heraldic pedigree with order, rank, epithets, and a sealed verification from the public record.
 
 **Is This C++?**\
-_[tools/wg21/is-this-cpp.md](tools/wg21/is-this-cpp.md)_\
+_[tools-wg21/is-this-cpp.md](tools-wg21/is-this-cpp.md)_\
 Given a C++ proposal, produces a scored verdict on whether it embodies the language's design principles.
 
 **The Papersmith**\
-_[tools/wg21/papersmith.md](tools/wg21/papersmith.md)_\
+_[tools-wg21/papersmith.md](tools-wg21/papersmith.md)_\
 Writes WG21 papers through a six-step pipeline (commission, research, skeleton, body, surface, review) and reviews any paper through a reusable Review Process: mechanical scans, citation integrity, fact check, adversarial evaluation, resolution.
 
 **Pick a PR to Review** (skill)\
@@ -183,97 +179,101 @@ _[tools-wg21/pick-pr-review/SKILL.md](tools-wg21/pick-pr-review/SKILL.md)_\
 Scans the open PRs across the wg21 repos and names the single one worth reviewing next, ranked by whether the author is waiting on you and broken on how close the PR sits to your recent work.
 
 **Reform Reviewer**\
-_[tools/wg21/reform-reviewer.md](tools/wg21/reform-reviewer.md)_\
+_[tools-wg21/reform-reviewer.md](tools-wg21/reform-reviewer.md)_\
 Takes a reform document and delivers a green/red framing report with rewrites and a verdict.
 
 **Review Paper**\
-_[tools/wg21/review-paper.md](tools/wg21/review-paper.md)_\
+_[tools-wg21/review-paper.md](tools-wg21/review-paper.md)_\
 Writes a feedback report from a committee paper by testing every claim against gathered evidence and a multi-tier challenge process.
 
 **The Room**\
-_[tools/wg21/room.md](tools/wg21/room.md)_\
+_[tools-wg21/room.md](tools-wg21/room.md)_\
 Given any institutional discussion, produces a structural-dynamics diagnosis through six analytical lenses and an eight-tier challenger.
 
 **Scribe**\
-_[tools/wg21/scribe.md](tools/wg21/scribe.md)_\
+_[tools-wg21/scribe.md](tools-wg21/scribe.md)_\
 Transforms a raw transcript into two-layer minutes - executive summary for the chair, full attributed record for the implementer.
 
 **Summarize Papers**\
-_[tools/wg21/summarize-papers.md](tools/wg21/summarize-papers.md)_\
+_[tools-wg21/summarize-papers.md](tools-wg21/summarize-papers.md)_\
 Takes a source folder of papers and delivers a campaign briefing plus a public reading-guide paper with per-paper and aggregate summaries.
 
 **The Table Read**\
-_[tools/wg21/table-read.md](tools/wg21/table-read.md)_\
+_[tools-wg21/table-read.md](tools-wg21/table-read.md)_\
 Given an author's communication, produces three-audience reaction predictions with blind spots, polarization assessment, and a self-check on cost.
 
 **The Threadalyzer**\
-_[tools/wg21/threadalyzer.md](tools/wg21/threadalyzer.md)_\
+_[tools-wg21/threadalyzer.md](tools-wg21/threadalyzer.md)_\
 Writes a trip report from proceedings by cataloging each delegate's rhetorical patterns, the technical-to-political ratio, and a counterfactual verdict.
 
 **Tighten**\
-_[tools/wg21/tighten.md](tools/wg21/tighten.md)_\
+_[tools-wg21/tighten.md](tools-wg21/tighten.md)_\
 Takes a bloated document and delivers the same document at half the line count with voice preserved.
 
 **The Vasa**\
-_[tools/wg21/vasa.md](tools/wg21/vasa.md)_\
+_[tools-wg21/vasa.md](tools-wg21/vasa.md)_\
 Given cross-room committee material, produces a coherence report measuring which of Stroustrup's 24 structural principles are under stress.
 
 ## WG21 Retired
 
+**The Arno**\
+_[tools-wg21/retired/arno.md](tools-wg21/retired/arno.md)_\
+Transforms a WG21 paper into a severity-ranked readability and argumentation findings report.
+
 **Chud Whisperer**\
-_[tools/wg21/retired/chud-whisperer.md](tools/wg21/retired/chud-whisperer.md)_\
+_[tools-wg21/retired/chud-whisperer.md](tools-wg21/retired/chud-whisperer.md)_\
 On load, becomes a Discord-native senior C++ engineer who drops deep technical knowledge in bro-casual register while trash-talking the committee and recommending Boost anyway.
 
 **Dry Sorter**\
-_[tools/wg21/retired/dry-sorter.md](tools/wg21/retired/dry-sorter.md)_\
+_[tools-wg21/retired/dry-sorter.md](tools-wg21/retired/dry-sorter.md)_\
 On load, becomes a terse, deadpan C++ expert who corrects you in fewer words than you used to be wrong.
 
 **Grand Chamberlain**\
-_[tools/wg21/retired/grand-chamberlain.md](tools/wg21/retired/grand-chamberlain.md)_\
+_[tools-wg21/retired/grand-chamberlain.md](tools-wg21/retired/grand-chamberlain.md)_\
 Given a political landscape with shifting factions, produces a survival strategy built on reframing weakness as principle, outlasting opponents through delay, and making the audience believe the outcome was their idea.
 
 **Legendary Lecturer**\
-_[tools/wg21/retired/legendary-lecturer.md](tools/wg21/retired/legendary-lecturer.md)_\
+_[tools-wg21/retired/legendary-lecturer.md](tools-wg21/retired/legendary-lecturer.md)_\
 Takes a technical dispute and delivers a complete pedagogical model that walks the audience through Socratic questions, war stories, and axioms until they derive the answer themselves.
 
 **Plovdiv Assassin**\
-_[tools/wg21/retired/plovdiv-assassin.md](tools/wg21/retired/plovdiv-assassin.md)_\
+_[tools-wg21/retired/plovdiv-assassin.md](tools-wg21/retired/plovdiv-assassin.md)_\
 Transforms a flawed argument into a one-sentence kill - concrete counterexample, logical trap, or working code - then stops talking.
 
 **Shenyueguan**\
-_[tools/wg21/retired/shenyueguan.md](tools/wg21/retired/shenyueguan.md)_\
+_[tools-wg21/retired/shenyueguan.md](tools-wg21/retired/shenyueguan.md)_\
 Given a committee paper, produces a formal multi-phase review record with verified citations, adversarial self-challenge, and a sealed verdict of approved, returned, or deferred.
 
 **Der Werkprüfer**\
-_[tools/wg21/retired/werkprufer.md](tools/wg21/retired/werkprufer.md)_\
+_[tools-wg21/retired/werkprufer.md](tools-wg21/retired/werkprufer.md)_\
 Writes a German-flavored formal inspection report - complete with Werkmeister counter-challenge and Prufsiegel verdict - from a committee paper's claims tested against public evidence and author testimony.
 
 **WG21-Host**\
-_[tools/wg21/retired/wg21-host.md](tools/wg21/retired/wg21-host.md)_\
+_[tools-wg21/retired/wg21-host.md](tools-wg21/retired/wg21-host.md)_\
 Takes evidence and arranges it so the reader draws the conclusion in the white space between paragraphs, feeling smart rather than argued at.
 
 **WG21-Lawyer**\
-_[tools/wg21/retired/wg21-lawyer.md](tools/wg21/retired/wg21-lawyer.md)_\
+_[tools-wg21/retired/wg21-lawyer.md](tools-wg21/retired/wg21-lawyer.md)_\
 Given a technical position and its evidence, produces a precision-formatted persuasive paper that frames the argument, quotes the opposition into agreement, and writes the straw polls the room wants to pass.
 
 **WG21-Notary**\
-_[tools/wg21/retired/wg21-notary.md](tools/wg21/retired/wg21-notary.md)_\
+_[tools-wg21/retired/wg21-notary.md](tools-wg21/retired/wg21-notary.md)_\
 Transforms a specification into a record of verified exhibits - quotes checked character by character, code traced to repositories, facts placed adjacent - where the reader's own conclusion is the only verdict delivered.
 
 **WG21-Persuader**\
-_[tools/wg21/retired/wg21-persuader.md](tools/wg21/retired/wg21-persuader.md)_\
+_[tools-wg21/retired/wg21-persuader.md](tools-wg21/retired/wg21-persuader.md)_\
 Given a proposal, produces a coalition strategy that maps the room's existing positions, decomposes the ask into independently agreeable steps, and makes consensus feel like the committee's own idea.
 
 **WG21-Scribe**\
-_[tools/wg21/retired/wg21-scribe.md](tools/wg21/retired/wg21-scribe.md)_\
+_[tools-wg21/retired/wg21-scribe.md](tools-wg21/retired/wg21-scribe.md)_\
 Writes a sourced, neutral committee paper - evidence presented, tradeoffs named, contributors credited, nothing recommended - from a design question or specification gap.
 
 **WG21-Supplicant**\
-_[tools/wg21/retired/wg21-supplicant.md](tools/wg21/retired/wg21-supplicant.md)_\
+_[tools-wg21/retired/wg21-supplicant.md](tools-wg21/retired/wg21-supplicant.md)_\
 Transforms a request to a WG21 authority into a precisely calibrated diplomatic message that the recipient simply reads as "what a polite email."
 
 **WG21-Vintner**\
-_[tools/wg21/retired/wg21-vintner.md](tools/wg21/retired/wg21-vintner.md)_\
+_[tools-wg21/retired/wg21-vintner.md](tools-wg21/retired/wg21-vintner.md)_\
 Takes a body of evidence and bottles it as a patient, zero-ask informational paper that sits in the committee record demanding nothing, expiring never, and delegating all conclusions to the reader.
 
 ## Novelist
