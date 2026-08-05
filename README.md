@@ -178,6 +178,10 @@ Given a C++ proposal, produces a scored verdict on whether it embodies the langu
 _[tools/wg21/papersmith.md](tools/wg21/papersmith.md)_\
 Writes WG21 papers through a six-step pipeline (commission, research, skeleton, body, surface, review) and reviews any paper through a reusable Review Process: mechanical scans, citation integrity, fact check, adversarial evaluation, resolution.
 
+**Pick a PR to Review** (skill)\
+_[tools-wg21/pick-pr-review/SKILL.md](tools-wg21/pick-pr-review/SKILL.md)_\
+Scans the open PRs across the wg21 repos and names the single one worth reviewing next, ranked by whether the author is waiting on you and broken on how close the PR sits to your recent work.
+
 **Reform Reviewer**\
 _[tools/wg21/reform-reviewer.md](tools/wg21/reform-reviewer.md)_\
 Takes a reform document and delivers a green/red framing report with rewrites and a verdict.
