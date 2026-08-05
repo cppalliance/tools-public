@@ -6,6 +6,7 @@
 - Every directory that contains tools or dossiers also contains an `images/` subdirectory for their paired images.
 - Every `.md` file pairs with `images/<name>.png` in the same directory group. The image filename always matches the `.md` filename (minus extension).
 - Directory-style tools (e.g., `voice/voice.md`) key on the parent directory name: `voice/` pairs with `images/voice.png`. Sub-tools inside a directory may have their own images in the same `images/`.
+- Skills are directories holding a `SKILL.md` plus the scripts it calls. A skill is registered by adding its directory to the `SKILLS` array in `install.sh`, and installs to `~/.claude/skills/` and `~/.cursor/skills/` rather than `~/.claude/commands/`. Unlike a command, the whole directory ships, so anything the prompt calls must live inside it.
 
 ## Image invariant
 
