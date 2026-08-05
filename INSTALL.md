@@ -1,5 +1,15 @@
 # Installing tools-public
 
+Two ways to install. **Claude Code users can use the plugin marketplace**, which handles updates and uninstall for you:
+
+```
+/plugin marketplace add cppalliance/tools-public
+/plugin install tools-public@cppalliance
+```
+
+Refresh later with `/plugin marketplace update`. **Cursor users, and anyone who prefers a plain copy, use the installer below**, which is the only path that installs into `~/.cursor/skills/`.
+
+
 The installer registers the tools in this repo as user-level Claude Code slash commands by writing them into `~/.claude/commands/`. After install, each tool is invoked as `/<name>` from any Claude Code session.
 
 It also installs **skills**, the directory-based tools that ship a script alongside the prompt. Those go to `~/.claude/skills/` and `~/.cursor/skills/`, since Claude Code and Cursor both read the `SKILL.md` format. They are invoked as `/<name>` in either agent.
@@ -84,6 +94,14 @@ SKILLS=(
 ```
 
 The installer skips any entry without a `SKILL.md`, copies the whole directory to each root in `SKILL_DEST`, and clears the previous copy first so a file dropped upstream does not linger. Uninstall removes a directory only if it exists and still contains a `SKILL.md`.
+
+After editing `TOP_LEVEL`, `FAMILIES`, or `SKILLS`, regenerate the plugin manifest from them and check both agree with the tree:
+
+```bash
+./scripts/sync_plugin_manifest.py          # rewrite .claude-plugin/plugin.json
+./scripts/sync_plugin_manifest.py --check  # exit 1 if it is stale
+claude plugin validate . --strict          # exit 1 if any listed path is missing
+```
 
 Skills that shell out to a tool the user may not have (`gh`, `python3`) should say so in the `SKILL.md` and fail with a clear message rather than a stack trace.
 
