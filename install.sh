@@ -45,24 +45,33 @@ for arg in "$@"; do
 done
 [[ "${UNINSTALL:-}" == "1" ]] && MODE="uninstall"
 
+# Commands, as paths relative to the repo root. The slash command is named after
+# the file, so tools-wg21/tighten.md installs as /tighten regardless of where it
+# sits in the tree.
 TOP_LEVEL=(
-  advocatus.md
-  auditor.md
-  boost-review.md
-  btc-talk.md
-  code-cleanup.md
-  code-review.md
-  herald.md
-  is-this-cpp.md
-  lib-review.md
-  normalize.md
-  refine-plan.md
-  research.md
-  review-paper.md
-  tighten.md
+  tools/btc-talk.md
+  tools/normalize-prompt.md
+  tools/refine-plan.md
+  tools/research.md
+  tools/code/boost-review.md
+  tools/code/code-cleanup.md
+  tools/code/code-review.md
+  tools/code/lib-review.md
+  tools-wg21/advocatus.md
+  tools-wg21/auditor.md
+  tools-wg21/herald.md
+  tools-wg21/is-this-cpp.md
+  tools-wg21/review-paper.md
+  tools-wg21/tighten.md
 )
 
-FAMILIES=(voice interview tutor)
+# Families are a parent prompt plus a directory of sub-prompts: tools/voice.md
+# installs as /voice, and tools/voice/*.md as /voice:<name>.
+FAMILIES=(
+  tools/voice
+  tools/interview
+  tools/tutor
+)
 
 # Skills, as paths relative to the repo root.
 #
@@ -131,37 +140,50 @@ extract_description() {
 # TARGETS[i] = absolute path under $DEST
 # SKILL_NAMES[i] / SKILL_SOURCES[i] = skill command name and its source directory
 plan() {
-  local src="$1"
-  local root="$2"
+  local root="$1"
   NAMES=()
   SOURCES=()
   TARGETS=()
   SKILL_NAMES=()
   SKILL_SOURCES=()
+  MISSING=()
 
+  local f base
   for f in "${TOP_LEVEL[@]}"; do
-    [[ -f "$src/$f" ]] || continue
-    NAMES+=("/${f%.md}")
-    SOURCES+=("$src/$f")
-    TARGETS+=("$DEST/$f")
+    # A listed command that does not resolve is a repo error, not a normal
+    # condition. Silently skipping is how this list drifted out of sync with the
+    # tree in the first place, so collect it and report at the end.
+    if [[ ! -f "$root/$f" ]]; then
+      MISSING+=("$f")
+      continue
+    fi
+    base="$(basename "$f")"
+    NAMES+=("/${base%.md}")
+    SOURCES+=("$root/$f")
+    TARGETS+=("$DEST/$base")
   done
 
-  for family in "${FAMILIES[@]}"; do
-    if [[ -f "$src/$family/$family.md" ]]; then
+  local family_path family
+  for family_path in "${FAMILIES[@]}"; do
+    family="$(basename "$family_path")"
+    if [[ -f "$root/$family_path.md" ]]; then
       NAMES+=("/$family")
-      SOURCES+=("$src/$family/$family.md")
+      SOURCES+=("$root/$family_path.md")
       TARGETS+=("$DEST/$family.md")
+    else
+      MISSING+=("$family_path.md")
     fi
-    if [[ -d "$src/$family" ]]; then
-      for f in "$src/$family"/*.md; do
+    if [[ -d "$root/$family_path" ]]; then
+      for f in "$root/$family_path"/*.md; do
         [[ -e "$f" ]] || continue
-        local base
         base="$(basename "$f" .md)"
         [[ "$base" == "$family" ]] && continue
         NAMES+=("/$family:$base")
         SOURCES+=("$f")
         TARGETS+=("$DEST/$family/$base.md")
       done
+    else
+      MISSING+=("$family_path/")
     fi
   done
 
@@ -350,7 +372,9 @@ do_uninstall() {
   done
 
   # Drop empty family subdirs we may have created.
-  for family in "${FAMILIES[@]}"; do
+  local family_path family
+  for family_path in "${FAMILIES[@]}"; do
+    family="$(basename "$family_path")"
     if [[ -d "$DEST/$family" ]]; then
       rmdir "$DEST/$family" 2>/dev/null || true
     fi
@@ -381,9 +405,8 @@ do_uninstall() {
 
 acquire_source() {
   if [[ -n "$LOCAL_SRC" ]]; then
-    SRC="$LOCAL_SRC/tools"
     ROOT="$LOCAL_SRC"
-    [[ -d "$SRC" ]] || die "LOCAL_SRC=$LOCAL_SRC has no tools/ subdirectory"
+    [[ -d "$ROOT/tools" ]] || die "LOCAL_SRC=$LOCAL_SRC has no tools/ subdirectory"
     echo "Source: local checkout at $LOCAL_SRC"
     return
   fi
@@ -397,10 +420,11 @@ acquire_source() {
   echo "Source: downloading ${REPO}@${BRANCH}..."
   curl -fsSL "$TARBALL_URL" | tar -xz -C "$TMP"
 
-  SRC="$(find "$TMP" -maxdepth 2 -type d -name tools | head -n 1)"
-  [[ -n "$SRC" && -d "$SRC" ]] || die "could not locate tools/ in extracted tarball"
-  # Skills are listed relative to the repo root, which is tools/'s parent.
-  ROOT="$(dirname "$SRC")"
+  # Everything is listed relative to the repo root, which is tools/'s parent.
+  local tools_dir
+  tools_dir="$(find "$TMP" -maxdepth 2 -type d -name tools | head -n 1)"
+  [[ -n "$tools_dir" && -d "$tools_dir" ]] || die "could not locate tools/ in extracted tarball"
+  ROOT="$(dirname "$tools_dir")"
 }
 
 main() {
@@ -410,8 +434,19 @@ main() {
 
   acquire_source
 
-  plan "$SRC" "$ROOT"
+  plan "$ROOT"
   [[ $(( ${#NAMES[@]} + ${#SKILL_NAMES[@]} )) -gt 0 ]] || die "nothing to process"
+
+  # Loud, because a missing entry means the lists have drifted from the tree and
+  # someone is quietly not getting a tool they should have.
+  if (( ${#MISSING[@]} > 0 )); then
+    echo >&2
+    echo "warning: ${#MISSING[@]} listed entries were not found and will be skipped:" >&2
+    for entry in "${MISSING[@]}"; do
+      echo "  $entry" >&2
+    done
+    echo "Fix the TOP_LEVEL or FAMILIES list in install.sh." >&2
+  fi
 
   echo
   if [[ "$MODE" == "install" ]]; then
