@@ -43,6 +43,11 @@ Already excluded: the user's own PRs, PRs they approved with no changes since,
 and drafts they have no involvement with. Tier 4 never wins the top slot, so
 `pick` is null when only tier 4 remains.
 
+An unsubmitted draft review (the `PENDING` state step 5 leaves behind) is not a
+review anyone else can see, so it does not set a tier. It surfaces instead as
+`my_pending_review` on the candidate, and it means review work is sitting there
+unsent.
+
 ## 2. Report
 
 Keep it to a handful of lines. No preamble, no tables, no em dashes.
@@ -53,6 +58,11 @@ Keep it to a handful of lines. No preamble, no tables, no em dashes.
   top pick is cheap.
 - If `pick` is null, say the queue is clear. Do not promote a tier-4 PR into the
   top slot to have something to recommend.
+- **Unsubmitted drafts**: any candidate with `my_pending_review` gets its own
+  line, wherever it ranks, naming the PR and the date the draft was started.
+  Those comments are invisible until the user submits them, so an old one is
+  review work already done and going to waste. Say that even when the top pick
+  is something else.
 
 ## 3. Offer, do not start
 

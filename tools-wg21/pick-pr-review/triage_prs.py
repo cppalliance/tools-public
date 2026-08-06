@@ -36,7 +36,7 @@ query($owner:String!,$name:String!){
    number title isDraft url createdAt updatedAt additions deletions changedFiles
    author{login}
    reviewRequests(first:20){nodes{requestedReviewer{__typename ... on User{login} ... on Team{slug}}}}
-   reviews(last:30){nodes{author{login} state submittedAt}}
+   reviews(last:30){nodes{author{login} state submittedAt createdAt}}
    commits(last:1){nodes{commit{committedDate}}}
    comments(last:20){nodes{author{login} createdAt}}
    reviewThreads(first:60){nodes{isResolved comments(last:5){nodes{author{login} createdAt}}}}
@@ -73,7 +73,16 @@ def fetch_open_prs(repo: str) -> list[dict]:
     payload = json.loads(out)
     if payload.get("errors"):
         raise RuntimeError(f"{repo}: {payload['errors']}")
-    return payload["data"]["repository"]["pullRequests"]["nodes"]
+    nodes = payload["data"]["repository"]["pullRequests"]["nodes"]
+    for pr in nodes:
+        # A PENDING review is a draft you started and never submitted, so it comes
+        # back with submittedAt null. Nobody else can see it, and a null timestamp
+        # poisons every downstream comparison, so split it out of the review list
+        # and keep it as its own signal.
+        reviews = pr["reviews"]["nodes"]
+        pr["reviews"]["nodes"] = [r for r in reviews if r.get("submittedAt")]
+        pr["pendingReviews"] = [r for r in reviews if not r.get("submittedAt")]
+    return nodes
 
 
 # --- time helpers ------------------------------------------------------------
@@ -276,6 +285,12 @@ def my_last_review(pr: dict, me: str) -> dict | None:
     return mine[-1] if mine else None
 
 
+def my_pending_review(pr: dict, me: str) -> dict | None:
+    """A review you drafted and never submitted. Invisible to everyone but you."""
+    mine = [r for r in pr["pendingReviews"] if (r.get("author") or {}).get("login") == me]
+    return mine[-1] if mine else None
+
+
 def requested_from_me_at(pr: dict, me: str) -> datetime | None:
     stamps = [
         parse_ts(node["createdAt"])
@@ -294,15 +309,16 @@ def classify(pr: dict, me: str, include_drafts: bool) -> dict | None:
     reviewers = requested_reviewers(pr)
     requested = me in reviewers
     last_review = my_last_review(pr, me)
+    pending_review = my_pending_review(pr, me)
 
-    if pr["isDraft"] and not include_drafts and not (requested or last_review):
+    if pr["isDraft"] and not include_drafts and not (requested or last_review or pending_review):
         return None
 
     responded_at = author_activity_at(pr, author)
     my_review_at = parse_ts(last_review["submittedAt"]) if last_review else None
     author_moved = bool(my_review_at and responded_at and responded_at > my_review_at)
 
-    if last_review and last_review["state"] == "APPROVED" and not author_moved:
+    if last_review and last_review["state"] == "APPROVED" and not author_moved and not pending_review:
         return None  # already approved and nothing has changed since
 
     if author_moved:
@@ -332,6 +348,7 @@ def classify(pr: dict, me: str, include_drafts: bool) -> dict | None:
         "my_last_review": (
             {"state": last_review["state"], "at": last_review["submittedAt"]} if last_review else None
         ),
+        "my_pending_review": ({"at": pending_review["createdAt"]} if pending_review else None),
         "author_activity_at": responded_at.isoformat() if responded_at else None,
         "other_reviewers": sorted(
             {
@@ -357,6 +374,10 @@ def reason_for(cand: dict) -> str:
         return "nobody has reviewed it yet"
     if cand["my_last_review"]:
         return f"you reviewed it on {cand['my_last_review']['at'][:10]}, no response from the author since"
+    if cand["my_pending_review"]:
+        return (
+            f"you drafted a review on {cand['my_pending_review']['at'][:10]} and never submitted it"
+        )
     return f"reviewed by {', '.join(cand['other_reviewers']) or 'others'}, not by you"
 
 
@@ -459,6 +480,11 @@ def main(argv: list[str]) -> int:
             f"     {c['changed_files']} files, +{c['additions']}/-{c['deletions']}, "
             f"affinity {c['affinity']:.2f} {c['matched_areas'][:3]}"
         )
+        if c["my_pending_review"]:
+            print(
+                f"     ! unsubmitted draft review of yours from "
+                f"{c['my_pending_review']['at'][:10]}, nobody else can see it"
+            )
         print()
     return 0
 
