@@ -4,9 +4,11 @@ description: Write or audit a report (any type) for structure, evidence, uncerta
 
 <!-- When given a draft, or asked to write one, run the Protocol (section 1). -->
 
-# Report Rulebook
+# Rulebook: Structuring Reports
 
 Rules for writing reports that get read and acted on. Read this document to learn the craft; give it to a model to apply it. It governs any report whose reader must decide or act on it: the twelve types named in section 2. The document under work is called the report. Write the report against these rules, then audit it against them one at a time. The rules are staged, not simultaneous, so the rulebook's size does not collide with the constraint budget it prescribes.
+
+![The Strategist](images/reports-rulebook.png)
 
 ## 1. Protocol
 

@@ -1,8 +1,10 @@
-# Fiction Rulebook
+# Rulebook: Writing Fiction
 
 Rules for writing fiction that reads as if a human wrote it. Read this document to learn the craft; give it to a model to apply it. It governs any document whose output is narrative prose: a chapter, a scene, a short story, a novel segment. The document under work is called the draft. Write the draft against these rules, then audit it against them one at a time, finishing with the checklist in section 11. The rules are staged, not simultaneous, so the rulebook's size does not collide with the constraint budget it prescribes.
 
-Distilled from 40+ sources across five research domains: scene craft (Swain, Bickham, Scofield, Palahniuk, Clarion), character and dialogue (McKee, Truby, Weiland, Stein, Sorkin, Leonard), structure and pacing (McKee, Snyder, Coyne, Weiland), prose style (Le Guin, Hale, Francine Prose, Browne & King, Hemingway), and AI fiction failure patterns (NousResearch AutoNovel, StoryScope/UMD-DeepMind 2026, SleuthSayers, CRAFT Literary Magazine, nostalgebraist). Evidence files in `cabinet/_research/2026-07-12-*.md`.
+Distilled from 40+ sources across five research domains: scene craft (Swain, Bickham, Scofield, Palahniuk, Clarion), character and dialogue (McKee, Truby, Weiland, Stein, Sorkin, Leonard), structure and pacing (McKee, Snyder, Coyne, Weiland), prose style (Le Guin, Hale, Francine Prose, Browne & King, Hemingway), and AI fiction failure patterns (NousResearch AutoNovel, StoryScope/UMD-DeepMind 2026, SleuthSayers, CRAFT Literary Magazine, nostalgebraist).
+
+![The Storyteller](images/fiction-rulebook.png)
 
 ## 1. Scene
 

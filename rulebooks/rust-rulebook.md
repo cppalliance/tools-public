@@ -4,11 +4,11 @@ description: Reference for a model writing or maintaining Rust - project layout,
 
 <!-- Load this file into context before writing or reviewing Rust. Highest-value reference only; consult doc.rust-lang.org for depth. -->
 
-# Rust Coding Rulebook
+# Rulebook: Writing Rust
 
 This file equips a model to write, extend, and maintain Rust. Read the preamble and the closing rules first; they bind every edit. Sections run from most to least frequently needed and are consulted one at a time, so the length of this file is never the number of rules you hold at once. Terms used throughout: "the crate" is one unit of compilation and publication; "a member" is one crate inside a workspace; "the tree" is the repository checkout; "a target" is one buildable artifact, meaning a lib, bin, test, bench, or example. Target current stable Rust with edition 2024 and resolver 3.
 
-![The Rust Workshop](images/rust-how-to.png)
+![The Rust Workshop](images/rust-rulebook.png)
 
 ## Non-negotiable rules
 

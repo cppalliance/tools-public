@@ -1,6 +1,8 @@
-# Reading Rulebook
+# Rulebook: Reading Technical Papers
 
 Rules for reading a paper to evaluate its quality. Give this document to a model along with a paper; the paper under evaluation is called the target. The method is three passes, each building on the last: the first pass yields the general idea, the second the content, the third the depth a verdict needs. Passes are sequential stages with exit criteria, not simultaneous demands; run each to its exit before starting the next, and stop at the depth the task requires.
+
+![The Scholar](images/read-papers-rulebook.png)
 
 ## 1. Protocol
 

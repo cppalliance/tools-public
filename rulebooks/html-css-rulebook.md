@@ -4,11 +4,11 @@ description: Reference for a model writing, reviewing, or cleaning up HTML and C
 
 <!-- Load this file into context before writing, reviewing, or cleaning up HTML or CSS. Sections are consulted one at a time; their combined length is never the constraint count. -->
 
-# HTML & CSS Coding Rulebook
+# Rulebook: Writing HTML and CSS
 
 This file equips a model to write, extend, and clean up modern HTML and CSS. Read the non-negotiable rules and the closing restatement first; they bind every edit. Sections run from most to least frequently needed during cleanup and are consulted one at a time, so the file's length does not collide with the constraint budget. Every rule is chosen to be mechanically detectable with a concrete bad -> good correction. Rules that change layout or behavior in ways needing review are flagged as suggestions, not silent auto-fixes.
 
-![The Web Design Atelier](images/html-css-how-to.png)
+![The Web Design Atelier](images/html-css-rulebook.png)
 
 ## Non-negotiable rules
 

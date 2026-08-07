@@ -4,11 +4,11 @@ description: Reference for a model writing, reviewing, or cleaning up modern Jav
 
 <!-- Load this file into context before writing, reviewing, or cleaning up JavaScript. Sections are consulted one at a time; their combined length is never the constraint count. -->
 
-# JavaScript Coding Rulebook
+# Rulebook: Writing JavaScript
 
 This file equips a model to write, extend, and clean up modern JavaScript (ES2022+). Read the non-negotiable rules and the closing restatement first; they bind every edit. Sections run from most to least frequently needed during cleanup and are consulted one at a time, so the file's length does not collide with the constraint budget. Every rule is chosen to be mechanically detectable with a concrete bad -> good correction. Rules that change runtime behavior are marked as suggestions, not silent auto-fixes.
 
-![The JavaScript Workshop](images/javascript-how-to.png)
+![The JavaScript Workshop](images/javascript-rulebook.png)
 
 ## Non-negotiable rules
 

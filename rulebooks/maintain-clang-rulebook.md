@@ -4,11 +4,11 @@ description: Reference for a model making changes to Clang and LLVM source - arc
 
 <!-- Load this file into context before editing Clang or LLVM. Highest-value reference only; consult llvm.org/docs for depth. -->
 
-# Clang and LLVM Maintenance Rulebook
+# Rulebook: Maintaining Clang and LLVM
 
 This file equips a model to read, modify, and extend Clang and LLVM. Read the preamble and the closing rules first; they bind every edit. Sections run from most to least frequently needed. Terms used throughout: "the tree" is the llvm-project checkout; "a pass" is one LLVM IR transformation or analysis; "the new pass manager" is the current PassBuilder-based pipeline; "the frontend" is Clang (Lex, Parse, Sema, AST, CodeGen). Target current LLVM built with assertions on.
 
-![The Dragon Keepers](images/how-to-maintain-clang.png)
+![The Dragon Keepers](images/maintain-clang-rulebook.png)
 
 ## Non-negotiable edit rules
 

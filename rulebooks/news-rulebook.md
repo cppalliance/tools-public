@@ -4,9 +4,11 @@ description: Write or audit a news article, feature, analysis, briefing, or pres
 
 <!-- When given a draft, or asked to write one, run the Protocol (section 1). -->
 
-# News Rulebook
+# Rulebook: Writing News Stories
 
 Rules for writing news copy that editors run and readers finish. Read this document to learn the craft; give it to a model to apply it. It governs any draft written for a newsroom or a wire: a hard-news story, a feature, an analysis, a briefing, or a press release. The document under work is called the draft. Write the draft against these rules, then audit it against them one at a time. The rules are staged, not simultaneous.
+
+![The Editor](images/news-rulebook.png)
 
 ## 1. Protocol
 
