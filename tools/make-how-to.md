@@ -1,5 +1,5 @@
 ---
-description: Build a design-evaluation rulebook (how-to-{person}.md) from a named person's written record - parallel search under one fixed keep-criterion, parallel distillation into plain-bullet rules, then mechanical assembly, dedupe, trim to 100, and emergent thematic grouping.
+description: Build a design-evaluation rulebook (how-to-{person}.md) from a named person's written record - parallel search under one fixed keep-criterion, parallel distillation into plain-bullet rules, then mechanical assembly, dedupe, trim to 100, emergent thematic grouping, and a closing Approach paragraph compressed from what did not convert.
 ---
 
 <!--
@@ -25,7 +25,8 @@ flowchart TD
     S2a -->|no| S2c
     S2c --> S3["3 Distill (5 subagents, 1 per file): plain-bullet rule files"]
     S3 --> S4["4 Assemble + dedupe + trim to 100 + group (shell + 1 strong subagent)"]
-    S4 --> S5["5 Finalize (main): numbering, headings, tags, executive summary"]
+    S4 --> S4b["4b Approach paragraph (1 strong subagent): compress Not Converted"]
+    S4b --> S5["5 Finalize (main): numbering, headings, tags, executive summary"]
     S5 --> S6["6 Emission audit (subagent)"]
 ```
 
@@ -100,6 +101,12 @@ Main shell first, then one strong subagent.
 
 The grouping subagent works on compact bullets, not verbose evidence, so context pressure stays low. It returns the output path and, for each group, its name and rule count. Its output stays plain bullets under stanza-headed groups (**scratch**).
 
+### Step 4b - Approach paragraph
+
+One subagent. Strong model.
+
+The merged "Not converted" list is raw material, not a deliverable: it holds the person's philosophy, preferences, aesthetics, and temperament - everything that teaches but does not command. Dispatch one subagent by reference: give it this file's path, the tag `approach-task`, the person's name, the grouped-draft path (which ends with the merged "Not converted" list), and an output path. It greps for the approach-task tag, executes the block it encloses, writes one paragraph (**scratch**), and returns only the path.
+
 ### Step 5 - Finalize
 
 Runs in the main context. Deterministic. Reads only the compact grouped draft.
@@ -108,7 +115,7 @@ Runs in the main context. Deterministic. Reads only the compact grouped draft.
 2. Title each section with a Roman numeral and its group name.
 3. Wrap each section, its stanza and its numbered rules, in one uniquely named tag whose name is the section slug, opening and closing on their own lines.
 4. Add the house-style frontmatter `description`, the operate-from-this HTML comment, the H1 title, a short executive summary paragraph, the binding-idea line, the image reference, and the italic `date - model` footer.
-5. Append the merged "Not converted" appendix after the last section.
+5. Append a final section headed "The Approach Behind the Rules" containing the paragraph from Step 4b. The merged "Not converted" list itself never appears in the emitted rulebook; it survives only in the scratch draft for audit.
 6. Write the rulebook to the output path (**output**).
 
 Apply the Emission Discipline below before writing, and run its generation checklist after.
