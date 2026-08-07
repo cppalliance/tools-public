@@ -124,7 +124,7 @@ This group covers how to write, review, and maintain plans that produce reliable
 
 44. **Pre-flight target files into the plan.** Before running a plan that modifies existing files, read each target file, record its size and relevant metadata, and bake that information into the plan. Pre-flighting reveals mismatches (wrong file, missing section, unexpected format) before execution, where they can be fixed without wasting a run.
 
-45. **Inject how-to rulebook files into plans.** Load a how-to rulebook (a file of distilled authoring rules) into the plan during the planning phase by referencing its path. The how-to governs both the plan's own wording and the artifacts the plan produces. A plan written without a governing how-to drifts toward the model's default register, which is verbose and hedged.
+45. **Inject how-to manuals into plans.** Load a how-to manual (a file of distilled authoring rules) into the plan during the planning phase by referencing its path. The how-to governs both the plan's own wording and the artifacts the plan produces. A plan written without a governing how-to drifts toward the model's default register, which is verbose and hedged.
 
 46. **Incremental tranches from a master plan.** Put everything into one master plan, then implement a subset as a tranche. Subtract the completed subset from the plan, continue planning, then do the next tranche. Make each tranche the smallest independently testable unit. This prevents the plan from going stale waiting for a monolithic execution.
 

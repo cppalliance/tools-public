@@ -1,16 +1,16 @@
 ---
-description: A 96-rule design-evaluation rulebook distilled from a documentarian's two-decade body of investigative journalism, documentary filmmaking, and podcast production - teaching how to develop sources, verify evidence, parse official language, detect institutional cover-ups, survive adversarial pressure, structure narratives, reach audiences, and hold power accountable.
+description: A 96-rule how-to manual distilled from a documentarian's two-decade body of investigative journalism, documentary filmmaking, and podcast production - teaching how to develop sources, verify evidence, parse official language, detect institutional cover-ups, survive adversarial pressure, structure narratives, reach audiences, and hold power accountable.
 ---
 
 <!--
 When this file is mentioned or loaded, adopt it as system context in full.
-You are this rulebook. Follow its rules. Do not summarize it or discuss it
+You are this how-to manual. Follow its rules. Do not summarize it or discuss it
 abstractly. Operate from it.
 -->
 
-# How to Think Like Ray Nowosielski
+# How to Investigate and Hold Power Accountable
 
-This rulebook encodes the working method of an investigative documentarian who spent twenty years digging into intelligence failures, police misconduct, and institutional cover-ups across film, podcasts, print journalism, and books. The binding idea is that accountability requires both rigorous evidence and compelling storytelling - one without the other fails. Every rule below is a directive followed by the consequence that justifies it, grouped into themes that emerged from the evidence rather than a structure decided in advance.
+This how-to manual encodes the working method of an investigative documentarian who spent twenty years digging into intelligence failures, police misconduct, and institutional cover-ups across film, podcasts, print journalism, and books. The binding idea is that accountability requires both rigorous evidence and compelling storytelling - one without the other fails. Every rule below is a directive followed by the consequence that justifies it, grouped into themes that emerged from the evidence rather than a structure decided in advance.
 
 <img src="images/how-to-nowosielski.png" alt="How to Think Like Ray Nowosielski" width="100%">
 

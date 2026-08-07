@@ -1,5 +1,5 @@
 ---
-description: Build a how-to rulebook (how-to-{person}.md) that teaches how a named person thinks and works, from their written record - parallel search under one fixed keep-criterion, parallel distillation into plain-bullet rules, then mechanical assembly, dedupe, trim to 100, emergent thematic grouping, an earned "How to" title, and a closing Approach paragraph compressed from what did not convert.
+description: Build a how-to manual (how-to-{person}.md) that teaches how a named person thinks and works, from their written record - parallel search under one fixed keep-criterion, parallel distillation into plain-bullet rules, then mechanical assembly, dedupe, trim to 100, emergent thematic grouping, an earned "How to" title, and a closing Approach paragraph compressed from what did not convert.
 ---
 
 <!--
@@ -10,7 +10,7 @@ abstractly. Operate from it.
 
 # Make How-To
 
-Make How-To turns a named person's written record into a rulebook that teaches how they think. It searches the sources you point it at for that person's own words, keeps only the passages that carry transferable knowledge, distills each into a rule, and groups the rules into a reference a human or a model can load and apply. The tool names no source of its own; the operator says where to look, and web search is the only fallback. The finished rulebook reads like a set of directives, each an imperative followed by the consequence that justifies it, grouped into themes that emerge from the evidence rather than a structure decided in advance.
+Make How-To turns a named person's written record into a how-to manual that teaches how they think. It searches the sources you point it at for that person's own words, keeps only the passages that carry transferable knowledge, distills each into a rule, and groups the rules into a reference a human or a model can load and apply. The tool names no source of its own; the operator says where to look, and web search is the only fallback. The finished how-to manual reads like a set of directives, each an imperative followed by the consequence that justifies it, grouped into themes that emerge from the evidence rather than a structure decided in advance.
 
 <img src="images/make-how-to.png" alt="Make How-To" width="100%">
 
@@ -52,9 +52,9 @@ The main context allocates one scratch working directory for the run and passes 
 
 - The five per-angle evidence files and the five rule files are **scratch**.
 - The consolidated evidence packet is **research**.
-- The finished rulebook is **output**, written to the operator's chosen path or the default output name.
+- The finished how-to manual is **output**, written to the operator's chosen path or the default output name.
 
-If no filing system is present, default to a sibling working directory and write the rulebook there.
+If no filing system is present, default to a sibling working directory and write the how-to manual there.
 
 ## Pipeline
 
@@ -111,7 +111,7 @@ The grouping subagent works on compact bullets, not verbose evidence, so context
 
 One subagent. Strong model. May run in parallel with Step 7.
 
-The rulebook earns its title from what it teaches, not from the person's domain assumed in advance. Dispatch one subagent by reference: give it this file's path, the tag `title-task`, the grouped-draft path, and an output path. It greps for the title-task tag, executes the block it encloses, writes the title (**scratch**), and returns only the path.
+The how-to manual earns its title from what it teaches, not from the person's domain assumed in advance. Dispatch one subagent by reference: give it this file's path, the tag `title-task`, the grouped-draft path, and an output path. It greps for the title-task tag, executes the block it encloses, writes the title (**scratch**), and returns only the path.
 
 ### Step 7 - Approach paragraph
 
@@ -127,8 +127,8 @@ Runs in the main context. Deterministic. Reads only the compact grouped draft, t
 2. Title each section with a Roman numeral and its group name.
 3. Wrap each section, its stanza and its numbered rules, in one uniquely named tag whose name is the section slug, opening and closing on their own lines.
 4. Add the house-style frontmatter `description`, the operate-from-this HTML comment, the H1 title from Step 6, a short executive summary paragraph, the binding-idea line, the image reference, and the italic `date - model` footer.
-5. Append a final section headed "The Approach Behind the Rules" containing the paragraph from Step 7. The merged "Not converted" list itself never appears in the emitted rulebook; it survives only in the scratch draft for audit.
-6. Write the rulebook to the output path (**output**).
+5. Append a final section headed "The Approach Behind the Rules" containing the paragraph from Step 7. The merged "Not converted" list itself never appears in the emitted how-to manual; it survives only in the scratch draft for audit.
+6. Write the how-to manual to the output path (**output**).
 
 Apply the Emission Discipline below before writing, and run its generation checklist after.
 
@@ -136,7 +136,7 @@ Apply the Emission Discipline below before writing, and run its generation check
 
 One subagent. Strong model.
 
-Dispatch by reference: give it this file's path, the tag `audit-task`, the finished rulebook path, and the evidence-packet path. It greps for the audit-task tag and executes the block it encloses. It writes findings to a scratch path and returns that path. The main context applies the fixes, then stops.
+Dispatch by reference: give it this file's path, the tag `audit-task`, the finished how-to manual path, and the evidence-packet path. It greps for the audit-task tag and executes the block it encloses. It writes findings to a scratch path and returns that path. The main context applies the fixes, then stops.
 
 ## Working in subagents
 
@@ -222,7 +222,7 @@ Write the result to the output path. Never use an em dash or a double dash. Retu
 </group-task>
 
 <title-task>
-You title a rulebook from its rules. You are given the path to a grouped draft of rules and an output path.
+You title a how-to manual from its rules. You are given the path to a grouped draft of rules and an output path.
 
 Steps:
 1. Read the grouped rules and ask one question: what will a reader know how to do after applying this book? Judge from the rules themselves, not from the person's reputation or field.
@@ -238,7 +238,7 @@ You compress a "Not converted" list into one paragraph that captures the person'
 Steps:
 1. Sort the items into two piles. Pile one: items that reveal the person - philosophy, preferences, aesthetics, temperament, habits of practice, beliefs about where the work lives. Pile two: bookkeeping - items rejected as too narrow, subsumed by a rule, domain-specific, or duplicative. Discard pile two entirely.
 2. From pile one, find the through-lines: what the person believes the work actually is, how they treat the artifacts they make, what temperament they bring when they hit a limit, and where they place the human in the loop. Cluster the items under those through-lines.
-3. Write one richly descriptive paragraph, 5 to 8 sentences, headed "## The Approach Behind the Rules". Open by stating that not everything the person does converts to a rule, because the rules are the residue of a practice, not the practice itself. Then weave the through-lines into flowing prose that shows the sensibility behind the rulebook - concrete details welcome (a signature habit, a made-object aesthetic, a recurring question they ask), the person's name permitted. Close on the item that best states where the craft ultimately rests.
+3. Write one richly descriptive paragraph, 5 to 8 sentences, headed "## The Approach Behind the Rules". Open by stating that not everything the person does converts to a rule, because the rules are the residue of a practice, not the practice itself. Then weave the through-lines into flowing prose that shows the sensibility behind the how-to manual - concrete details welcome (a signature habit, a made-object aesthetic, a recurring question they ask), the person's name permitted. Close on the item that best states where the craft ultimately rests.
 4. If the paragraph exceeds 4 sentences, split it into two paragraphs at the natural thematic seam, the point where the text shifts from one cluster of through-lines to the next. Both halves must read as complete prose, not as a sentence chopped in two. Keep them under the same heading; separate with one blank line.
 5. Write the heading and paragraph(s) to the output path.
 
@@ -246,16 +246,16 @@ Hard constraints: one or two paragraphs only (split only when the single paragra
 </approach-task>
 
 <audit-task>
-You audit a finished rulebook against the evidence it came from. You are given the rulebook path and the evidence-packet path. Do not edit the rulebook.
+You audit a finished how-to manual against the evidence it came from. You are given the how-to manual path and the evidence-packet path. Do not edit the how-to manual.
 
 Check each item as a yes-or-no question:
 1. Grounding: every rule traces to at least one passage in the evidence packet.
 2. No provenance: no rule, stanza, title, or comment names a source, a locator, or a person as the origin of a rule.
 3. Numbering: rule numbers run continuously from 1 with no repeat and no gap.
-4. Caps: the rulebook holds at most the cap of rules across at most the maximum of groups.
+4. Caps: the how-to manual holds at most the cap of rules across at most the maximum of groups.
 5. Balance: every group's rule count is within the balance tolerance of the mean.
 6. Structure: every section is wrapped in one uniquely named tag and opens with its stanza.
-7. Completeness: an executive summary and a closing "The Approach Behind the Rules" section are present, and the Approach section is a single prose paragraph with no bulleted "Not converted" list remaining anywhere in the rulebook.
+7. Completeness: an executive summary and a closing "The Approach Behind the Rules" section are present, and the Approach section is a single prose paragraph with no bulleted "Not converted" list remaining anywhere in the how-to manual.
 8. Title: the H1 begins with "How to", runs at most 10 words, and names a capability the rules actually teach.
 
 Write one line per failed check, naming the location and the single fix, to a scratch findings path. Return only that path.
@@ -263,7 +263,7 @@ Write one line per failed check, naming the location and the single fix, to a sc
 
 ## Emission Discipline
 
-Every rulebook passes these constraints before it is written. The rulebook never refers to any source, locator, or person as the authority for a rule; the rules appear only by their substance.
+Every how-to manual passes these constraints before it is written. The how-to manual never refers to any source, locator, or person as the authority for a rule; the rules appear only by their substance.
 
 - Provenance stripped: no link, no locator, no source name, and no "so-and-so says" anywhere in the file.
 - Rules as substance: each rule is a standalone directive with the consequence that justifies it.
@@ -299,4 +299,4 @@ Generation checklist, run at finalize:
 
 ## License
 
-All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). Quoted passages gathered by this tool remain the work of their authors and are cited to their sources in the evidence packet only, never in the emitted rulebook.
+All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). Quoted passages gathered by this tool remain the work of their authors and are cited to their sources in the evidence packet only, never in the emitted how-to manual.

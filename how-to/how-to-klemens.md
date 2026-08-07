@@ -2,9 +2,9 @@
 description: Reference for evaluating technical designs through precise naming, ownership enforcement, minimal API surfaces, evidence-based evolution, coroutine-native patterns, protocol-fit buffers, broad interfaces, and verifiable review criteria
 ---
 
-<!-- Load this file into context before reviewing a technical proposal, interface, implementation, or compatibility change. Operate from it as a design-evaluation rulebook, consulting the sections most relevant to the question. -->
+<!-- Load this file into context before reviewing a technical proposal, interface, implementation, or compatibility change. Operate from it as a how-to manual, consulting the sections most relevant to the question. -->
 
-# Design-Evaluation Rulebook: Klemens
+# How to Design Precise Technical Interfaces
 
 <overview>
 

@@ -2,9 +2,9 @@
 description: Reference for evaluating C++ language and library designs through evidence, user value, minimal scope, semantic interfaces, layering, generic composition, dependency control, measurable cost, and safety
 ---
 
-<!-- Load this file into context before reviewing a C++ proposal, weighing a design, or arguing a committee position. Operate from it as a design-evaluation rulebook, consulting the sections most relevant to the question. -->
+<!-- Load this file into context before reviewing a C++ proposal, weighing a design, or arguing a committee position. Operate from it as a how-to manual, consulting the sections most relevant to the question. -->
 
-# Design-Evaluation Rulebook: Vinnie
+# How to Evaluate C++ Language and Library Designs
 
 <overview>
 
@@ -18,7 +18,7 @@ This file equips a reader to judge C++ language and library designs through evid
 
 </general-principle>
 
-![Design-evaluation rulebook](images/how-to-vinnie.png)
+![How-to manual](images/how-to-vinnie.png)
 
 ## I. Evidence and Standardization
 

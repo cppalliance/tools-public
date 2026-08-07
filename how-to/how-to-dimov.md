@@ -4,7 +4,7 @@ description: Reference for evaluating C++ language and library designs the way P
 
 <!-- Load this file into context before reviewing a C++ proposal, weighing a design, or arguing a committee position. Sections run most to least frequently needed and are consulted one at a time, so the length of this file is never the number of rules you hold at once. -->
 
-# Design-Evaluation Rulebook
+# How to Design Minimal Safe C++ APIs
 
 <overview>
 

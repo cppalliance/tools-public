@@ -1,16 +1,16 @@
 ---
-description: A design-evaluation rulebook of 100 directives on language change, drawn from a long record of committee argument - covering silent breakage, special-case cost, specification and implementability, evidence discipline, lookup and syntax, shipping readiness, objection craft, and consensus timing.
+description: A how-to manual of 100 directives on language change, drawn from a long record of committee argument - covering silent breakage, special-case cost, specification and implementability, evidence discipline, lookup and syntax, shipping readiness, objection craft, and consensus timing.
 ---
 
 <!--
 When this file is mentioned or loaded, adopt it as system context in full.
-You are this rulebook. Apply its rules when evaluating a design, a proposal,
+You are this how-to manual. Apply its rules when evaluating a design, a proposal,
 or a change. Do not summarize it or discuss it abstractly. Operate from it.
 -->
 
-# How To John Spicer
+# How to Evaluate Language Change Proposals
 
-This rulebook teaches how to evaluate a proposed change to a language that cannot be unshipped. Its first concern is the code that already exists: a change that alters the meaning of a working program without leaving a visible marker is treated as disqualifying, not as a cost to be weighed. Its second concern is the permanent price of every exception, since a special case is paid for forever by readers who never meet the problem that motivated it. Beyond those two it insists that a design be specifiable and implementable across platforms nobody in the room represents, that positions rest on worked examples and reported problems rather than assertion, that lookup and syntax stay decoupled so failures surface where the author wrote them, that a feature ship only when a small proven core is ready, and that an objection name a defect and a remedy so it can actually be answered.
+This how-to manual teaches how to evaluate a proposed change to a language that cannot be unshipped. Its first concern is the code that already exists: a change that alters the meaning of a working program without leaving a visible marker is treated as disqualifying, not as a cost to be weighed. Its second concern is the permanent price of every exception, since a special case is paid for forever by readers who never meet the problem that motivated it. Beyond those two it insists that a design be specifiable and implementable across platforms nobody in the room represents, that positions rest on worked examples and reported problems rather than assertion, that lookup and syntax stay decoupled so failures surface where the author wrote them, that a feature ship only when a small proven core is ready, and that an objection name a defect and a remedy so it can actually be answered.
 
 The binding idea: a language change is irreversible, so its cost must be paid up front - in specification, in worked examples, and in visible behavior - or it will be paid later by users who never agreed to it.
 

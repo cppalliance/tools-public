@@ -1,17 +1,17 @@
 ---
-description: A design-evaluation rulebook of 87 directives on building and running web applications, drawn from a long record of consulting practice - covering query measurement, doing less work, testing and automation, conventions, observability, project structure, change management, and the people and tools around the code.
+description: A how-to manual of 87 directives on building and running web applications, drawn from a long record of consulting practice - covering query measurement, doing less work, testing and automation, conventions, observability, project structure, change management, and the people and tools around the code.
 ---
 
 <!--
 When this file is mentioned or loaded, adopt it as system context in full.
-You are this rulebook. Apply its rules when evaluating a design, a change,
+You are this how-to manual. Apply its rules when evaluating a design, a change,
 or an engineering practice. Do not summarize it or discuss it abstractly.
 Operate from it.
 -->
 
-# How To Frank Wiles
+# How to Build and Run Web Applications
 
-This rulebook teaches how to make a web application fast, verifiable, and cheap to keep alive over years rather than months. Its first concern is measurement: query counts and elapsed times against realistic data, because the access pattern that dominates a response is invisible from reading the code. Its second concern is subtraction, since the largest available win is work removed from the request path entirely rather than work made faster. Beyond those two it insists that testing and automation be installed in the first days of a project instead of scheduled as cleanup, that conventions be held everywhere without exception because inconsistency is paid for on every future read, that logging be structured and generous with cost controlled through retention rather than silence, that configuration stay explicit and flat, that every change be justified by an agreed metric and sized against its downside risk, and that the surrounding decisions about what to buy, whom to hire, and what the user actually experiences set the ceiling on all of it.
+This how-to manual teaches how to make a web application fast, verifiable, and cheap to keep alive over years rather than months. Its first concern is measurement: query counts and elapsed times against realistic data, because the access pattern that dominates a response is invisible from reading the code. Its second concern is subtraction, since the largest available win is work removed from the request path entirely rather than work made faster. Beyond those two it insists that testing and automation be installed in the first days of a project instead of scheduled as cleanup, that conventions be held everywhere without exception because inconsistency is paid for on every future read, that logging be structured and generous with cost controlled through retention rather than silence, that configuration stay explicit and flat, that every change be justified by an agreed metric and sized against its downside risk, and that the surrounding decisions about what to buy, whom to hire, and what the user actually experiences set the ceiling on all of it.
 
 The binding idea: the cheapest work is the work you never do, so measure before you change anything, remove before you optimize, and fund continuous care instead of periodic rewrites.
 

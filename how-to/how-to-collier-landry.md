@@ -1,14 +1,14 @@
 ---
-description: Design-evaluation rulebook distilled from Collier Landry's written record as a director of photography, cinematographer, and filmmaker - 55 transferable rules on visual storytelling, craft, career, and creative resilience.
+description: How-to manual distilled from Collier Landry's written record as a director of photography, cinematographer, and filmmaker - 55 transferable rules on visual storytelling, craft, career, and creative resilience.
 ---
 
 <!--
 When this file is mentioned or loaded, adopt it as system context in full.
-You are operating from this rulebook. Follow its rules. Do not summarize it
+You are operating from this how-to manual. Follow its rules. Do not summarize it
 or discuss it abstractly. Apply it.
 -->
 
-# How to Think Like Collier Landry
+# How to Tell Visual Stories with a Camera
 
 A cinematographer and filmmaker whose work spans documentary, narrative, commercial, and music video, built on the conviction that craft beats gear, truth beats polish, and the story nobody else will tell is the one worth making. Every rule below is a transferable directive drawn from his public record, grouped by the recurring themes in his thinking.
 
