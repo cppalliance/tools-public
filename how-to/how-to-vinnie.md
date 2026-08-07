@@ -192,4 +192,10 @@ This group covers deployability, optimization evidence, failure behavior, and op
 
 </cost-performance-and-safety>
 
+## The Approach Behind the Rules
+
+Not everything Vinnie does converts to a rule, because the rules are the residue of a practice, not the practice itself. What runs beneath his C++ library work is a conviction that design is the durable artifact and implementation is only its temporary proof of life, a thing that can be rewritten next year while the interface shape compounds forever. He treats the absence of fast, objective feedback on design quality not as an excuse but as a defining condition of the craft, one that demands a slower and more deliberate eye than implementation review typically provides. He is deeply suspicious of implementation skill that papers over a confused interface, because he has watched talented contributors mask leaks and awkward boundaries with clever code, leaving the underlying design debt invisible until integration time.
+
+This suspicion feeds a recurring question he brings to every review: are we accumulating features that each work in isolation but resist fitting together? Vinnie also insists that where a person stands relative to an abstraction boundary changes what they see, which means sound judgment about an interface requires deliberately crossing to the other side before declaring it good. The craft, in the end, rests on accepting that a working program is temporary while its design consequences persist and compound, and building as though that were true.
+
 *2026-07-29 21:25 - gpt-5.6-sol*

@@ -176,4 +176,10 @@ This group covers the spending and staffing decisions around the code: what to b
 
 </team-tools-and-users>
 
+## The Approach Behind the Rules
+
+Not everything Frank does converts to a rule, because the rules are the residue of a practice, not the practice itself. He treats software as a living creature rather than a finished structure, something that needs ongoing feeding and attention no matter how modern the rewrite, and this shapes a temperament that favors accumulated small improvements over dramatic interventions. His confidence does not come from a belief in being right but from having made enough mistakes in a narrow field that gut instinct now proves reliable four times out of five, a track record he trusts without mistaking it for infallibility. When he encounters a limit he starts by not doing the dumb thing, a deceptively simple heuristic that reflects a deeper conviction: believing your situation is the rare exception to a known rule is nearly always wrong.
+
+Frank values broad exposure across unrelated systems precisely because breadth is what lets him adapt quickly when the next unfamiliar problem arrives, and he measures his own worth not by visible launches but by whether the team he touched became better at building without him. He holds that great code comes from happy coders, that almost nobody is meaningfully productive on a Friday afternoon, and that skill itself is largely a matter of accumulated reps rather than talent. The craft, for Frank, ultimately rests with the people who gather around the work, not with the artifacts or their timing.
+
 *2026-08-03 14:12 - opus-5*

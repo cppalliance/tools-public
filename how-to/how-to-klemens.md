@@ -150,47 +150,10 @@ Review effectiveness depends on verifiable conditions and relevant communication
 
 </review-and-process>
 
-## Not converted
+## The Approach Behind the Rules
 
-- Extern template instantiation yielded a 2-3% compile-time improvement in Beast.
-- Process groups are implemented with job objects on Windows and process groups on POSIX.
-- Eager coroutines should be proactive by default.
-- Python's generator model informs lazy coroutine design with a send-None first-value convention.
-- Cross-executor co_await is the minimal primitive for adding multi-threading to a coroutine library.
-- Cancellation via select is a natural coroutine pattern.
-- Adding a binary type to json::value enables round-tripping with non-JSON formats like MessagePack.
-- Expanding serialization to binary enables competition with gRPC-class RPC frameworks.
-- Cancellation is a property of the handler, not the stream.
-- Admiration for effort is separate from evaluation of readiness.
-- A mature library should serve its users' real needs, not demonstrate a coding style.
-- "Sequence" is a suitable name for a type accepting T or range-of-T.
-- noexcept coroutines with result-based error handling may not suit a library built on asio.
-- A coroutine-first design that optimizes both compile and run-time is admirable.
-- Omitting a concept check is acceptable when the function is only called indirectly.
-- Whether naming helps new users depends on what platform knowledge they already have.
-- Existing Drone CI scripts should largely work on Forgejo's Woodpecker CI fork.
-- "Import from GitHub" is a reasonable default migration path for hosted Git platforms.
-- A mature library built for one codebase may carry features and style that do not belong in a general-purpose library.
-- "Vector" in computing now connotes SIMD to most non-C++ audiences, "tensor" may be a better name for multi-dimensional arrays.
-- Value-consuming generators pay off when state management is complex enough, but simple examples do not show the benefit.
-- Making eager-vs-lazy a runtime decision with valid semantics for both cases fits C++ better than always-lazy.
-- Expressing respect for the goal before delivering a negative verdict is effective framing.
-- Admiration for a coroutine-first alternative to asio, but the library is not ready.
-- Library is useful but too idiosyncratic for Boost (summary judgment without actionable fix).
-- New-user familiarity depends on what platform APIs they already know.
-- "tensor" suggested as alternative name to avoid collision with SIMD connotation of "vector."
-- Consider message relevancy before sending to a mailing list to avoid people tuning out.
-- First step for platform migration should be spinning up a Forgejo or Gitea mirror.
-- Copying JavaScript's default for NaN/Inf serialization was likely the wrong choice.
-- Per-value conditional branch added without profiling, acknowledged as probably overdoing it.
-- Question whether "restriction" is domain-specific terminology or a library-specific coinage.
-- Special-casing dimension-1 arrays and restricting data() to them lacks a clear use case.
-- Memory is untyped, so void* and size_t are the correct representation for raw buffers.
-- Typed register access looks exactly like C code but with compiler-enforced safety.
-- Mailing list emails trigger phone notifications, so relevancy should be considered before sending.
-- Freeform data types like json::value remain useful in statically typed languages for diagnostic and untyped data.
-- Python generators are lazy by design and require sending None as first value to push.
-- C++ proper stack unwinding eliminates the need for features that exist to work around Python's lack of it.
-- "Sequence of T" is a good name for something that means either T or a range of T.
+Not everything Klemens does converts to a rule, because the rules are the residue of a practice, not the practice itself. At the center of his craft is a conviction that a library exists to serve its users' real needs, never to demonstrate a coding style, and that a mature codebase built for one shop will carry features and habits that have no business in a general-purpose artifact. He reaches for abstractions that match reality on its own terms, insisting that memory is untyped so the interface should say so, that cancellation belongs to the handler rather than the stream, and that each language deserves solutions native to its strengths rather than workarounds imported from another. His pragmatism shows in design choices like making eager-versus-lazy a runtime decision with valid semantics for both paths, preferring to let the program decide rather than the library author.
+
+When he hits a limit in someone else's work, a signature habit appears: he leads with genuine admiration for the effort before delivering an honest verdict that the thing is not ready, separating respect for the goal from evaluation of the artifact. That same honesty turns inward, as when he acknowledges adding a conditional branch without profiling and calls it probably overdoing it, or admits that copying JavaScript's default for NaN serialization was likely the wrong choice. He is equally attentive to the humans around the code, weighing whether a mailing-list message is relevant enough to justify the phone notification it will trigger. The craft, for Klemens, ultimately rests in the gap between something that is useful and something that is ready, and in the willingness to say so plainly while still honoring the work that got it there.
 
 *2026-07-30 07:52 - claude-sonnet-4-20250514*

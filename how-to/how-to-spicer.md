@@ -188,4 +188,10 @@ This group covers when a decision is ripe, who needs to be in the room, and what
 
 </process-consensus-and-timing>
 
+## The Approach Behind the Rules
+
+Not everything John Spicer does converts to a rule, because the rules are the residue of a practice, not the practice itself. His craft begins with a conviction that user surprise is a verdict on the design, never on the user, and that the true test of a feature is not the first day someone encounters it but the moment an experienced practitioner tries to explain how to use it and how not to use it so the program behaves as expected. He treats brevity with suspicion when it claims a similarity the language does not actually check, preferring constructs that behave uniformly, where an expression acts like every other expression without boilerplate or ceremony to paper over a mismatch. History is always in the room: he reads seemingly arbitrary rules as carrying reasons, often ones that were welded in place late in a process when other rules already constrained the design, and he carries the lesson that the committee of the 1990s was not risk-averse enough, that some shipped features cost a decade of follow-on work to absorb.
+
+When a design fight reaches its limit he meets it with an unusual symmetry of feeling, recognizing that whoever loses this round feels exactly what the other side felt last round, and that pushing a feature as an individual contributor can still land it somewhere you cannot support. He notices when a broadcast discussion runs to dozens of messages in a few days and calls for a smaller working group instead, and he quietly marks the hour-long threshold after which deliberation turns unproductive. Where the craft ultimately rests, for John, is in a deceptively simple test of proportion: a large specification, a non-trivial implementation, and a steep learning curve together do not indicate a hard problem bravely tackled, they indicate a proposal that is simply too large.
+
 *2026-08-03 12:57 - opus-5*

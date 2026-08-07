@@ -153,4 +153,10 @@ Covers RAII, macro conventions, using-namespace, constexpr, test infrastructure,
 
 </code-hygiene-testing-and-portability>
 
+## The Approach Behind the Rules
+
+Not everything Glen does converts to a rule, because the rules are the residue of a practice, not the practice itself. His instinct is to build at the lowest viable layer and let higher-level consumers absorb the utility without fanfare, treating a single class template with the same care others reserve for an entire framework. He keeps dependency counts small on principle, believing that a library earns adoption by being easy to pull in rather than hard to avoid. When he hits a limit in tooling or specification, his temperament is pragmatic: concede the imperfect workaround now, file the intent to revisit, and keep shipping.
+
+He gravitates toward portable, allocation-aware primitives and returns again and again to the question of how a pointer abstraction should behave at its edges, whether null, fancy, or runtime-ranged. Process interests him only when it demonstrably serves the code; a gate nobody exercises is a gate he will challenge. He places the human squarely at the point of contribution: on the Boost mailing list, engagement and gratitude flow toward those who write code, and that current is the one he swims in. The craft, for Glen, ultimately rests in the act of contributing, not in the ceremony that surrounds it.
+
 *2026-08-05 17:42 - claude-opus-4-8-thinking-medium*

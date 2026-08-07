@@ -182,4 +182,10 @@ The purpose of investigative work is consequence for wrongdoing. These rules def
 
 </accountability-ethics>
 
+## The Approach Behind the Rules
+
+Not everything Ray does converts to a rule, because the rules are the residue of a practice, not the practice itself. His work begins with a conviction that the public cannot push for accountability without information, and so the investigator's job is to make hidden things visible, even when the investigator himself would rather stop pulling the thread. Ray finds stories by immersing himself in messy reality rather than imposing a template, embedding with subjects for extended periods to reach material that surface-level reporting never touches, and he uses empathy as an investigative instrument, trying to understand why people cover their tracks rather than simply condemning them for it. When he hits a wall, the temperament is stubbornly fair: he exhausts every alternative before naming a source publicly, offers subjects years-later chances to correct the record, and argues to their faces that silence will only make them appear one-dimensional.
+
+He treats the artifacts he makes as living material, repurposing interview footage and phone-call audio into new formats, framing investigative findings as serialized mystery on shoestring budgets, and collaborating with activists so the story sparks debate beyond whatever medium carried it first. Every project was supposed to be the last, but new leads kept emerging, and a partner's insistence or a verified fact he could not ignore would pull him back in, spooked but willing. The craft ultimately rests where the story meets the community that can act on it.
+
 *2026-08-05 09:47 - claude-opus-4-8-thinking-medium*

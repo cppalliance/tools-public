@@ -192,4 +192,10 @@ Async primitives must build in reentrancy protection and propagate cross-cutting
 
 </async-coroutines-and-evolution>
 
+## The Approach Behind the Rules
+
+Not everything Peter does converts to a rule, because the rules are the residue of a practice, not the practice itself. His practice begins with a demand for coherence: rejecting an interface because it allocates is incoherent when the constructors already allocate, a preference is not a rationale, and suspicion without a benchmark is not evidence. He treats the standard library as both a case study in template programming and a natural test bed for concepts, which means the artifacts he builds are expected to teach as well as to function. His designs are economical to the point of austerity, favoring a closed set of constructors over an open concept, choosing an early return on empty to avoid a spurious warning and a needless allocation, and admiring exceptions precisely because their annotation-free propagation is analogous to writing `std::copy` once.
+
+When he encounters a design fork he reduces it to the thinnest possible distinction, the way the entire variant question collapses to "exactly one of" versus "at most one of," and he insists that the algorithm's author must choose one behavior because a generic algorithm cannot know caller intent. He carries an empiricist's calm through committee deadlocks, noting that opposing factions often reject the same design for contradictory reasons, and that everything taught about reader-writer locks turns out to be useless in practice. Where the craft ultimately rests, for Peter, is in the people who hold the design knowledge, because when a sole domain expert disengages, the rationale leaves with them and the documentation gap cannot be filled.
+
 *2026-07-29 08:22 - claude-4.6-opus-medium-thinking*

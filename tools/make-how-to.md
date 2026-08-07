@@ -1,5 +1,5 @@
 ---
-description: Build a design-evaluation rulebook (how-to-{person}.md) from a named person's written record - parallel search under one fixed keep-criterion, parallel distillation into plain-bullet rules, then mechanical assembly, dedupe, trim to 100, emergent thematic grouping, and a closing Approach paragraph compressed from what did not convert.
+description: Build a how-to rulebook (how-to-{person}.md) that teaches how a named person thinks and works, from their written record - parallel search under one fixed keep-criterion, parallel distillation into plain-bullet rules, then mechanical assembly, dedupe, trim to 100, emergent thematic grouping, an earned "How to" title, and a closing Approach paragraph compressed from what did not convert.
 ---
 
 <!--
@@ -19,15 +19,17 @@ The whole tool holds two ideas together: keep the main context clean by doing ev
 ```mermaid
 flowchart TD
     S0["0 Intake (main)"] --> S1["1 Collect (5 subagents, distinct angles, fast)"]
-    S1 --> S2a{"All angles > 20?"}
-    S2a -->|yes| S2b["2a Per-file dedup (5 subagents, fast)"]
-    S2b --> S2c["2b Consolidate evidence (main + shell): research packet"]
-    S2a -->|no| S2c
-    S2c --> S3["3 Distill (5 subagents, 1 per file): plain-bullet rule files"]
-    S3 --> S4["4 Assemble + dedupe + trim to 100 + group (shell + 1 strong subagent)"]
-    S4 --> S4b["4b Approach paragraph (1 strong subagent): compress Not Converted"]
-    S4b --> S5["5 Finalize (main): numbering, headings, tags, executive summary"]
-    S5 --> S6["6 Emission audit (subagent)"]
+    S1 --> G{"All angles > 20?"}
+    G -->|yes| S2["2 Per-file dedup (5 subagents, fast)"]
+    S2 --> S3["3 Consolidate evidence (main + shell): research packet"]
+    G -->|no| S3
+    S3 --> S4["4 Distill (5 subagents, 1 per file): plain-bullet rule files"]
+    S4 --> S5["5 Assemble + dedupe + trim to 100 + group (shell + 1 strong subagent)"]
+    S5 --> S6["6 Title (1 strong subagent): a How-to title from the rules"]
+    S5 --> S7["7 Approach paragraph (1 strong subagent): compress Not Converted"]
+    S6 --> S8["8 Finalize (main): numbering, headings, tags, executive summary"]
+    S7 --> S8
+    S8 --> S9["9 Emission audit (subagent)"]
 ```
 
 ## Core Rule
@@ -74,17 +76,21 @@ Dispatch each subagent by reference: give it this file's path, the tag `collect-
 
 Each subagent writes its own evidence file (**scratch**) and returns only a count and a path.
 
-### Step 2 - Consolidate evidence
+### Step 2 - Per-file dedup (conditional)
 
-Runs in the main context with the shell. Off the critical path, so it may run in parallel with Step 3.
+Five subagents in parallel. Fast model.
 
-**Dedup strategy selection.** Check each evidence file's passage count. When every angle returned more than 20 passages, the corpus is large enough that cross-file duplicates will be significant. In that case, run Step 2a (per-file dedup) before consolidation. Otherwise, skip 2a and consolidate directly.
+Check each evidence file's passage count. When every angle returned more than 20 passages, the corpus is large enough that cross-file duplicates will be significant: run this step. Otherwise skip straight to Step 3.
 
-**Step 2a - Per-file dedup (conditional).** Dispatch five dedup subagents in parallel (fast model), one per evidence file. Each subagent reads its evidence file, removes near-duplicate passages within it (keeping the fullest version), writes the deduped file back to the same path, and returns only the new count and the path. This reduces the corpus before cross-file consolidation and keeps the later distillation subagents from wasting effort on redundant material.
+Dispatch five dedup subagents in parallel, one per evidence file. Each subagent reads its evidence file, removes near-duplicate passages within it (keeping the fullest version), writes the deduped file back to the same path, and returns only the new count and the path. This reduces the corpus before cross-file consolidation and keeps the later distillation subagents from wasting effort on redundant material.
 
-**Step 2b - Cross-file consolidation.** Concatenate the five (possibly deduped) evidence files with the shell into one packet and drop exact-duplicate passages across files. This is the reusable evidence packet (**research**), retained for audit and for reruns of the later phases. The main context does not read the passages; it concatenates by path.
+### Step 3 - Consolidate evidence
 
-### Step 3 - Distillation fan-out
+Runs in the main context with the shell. Off the critical path, so it may run in parallel with Step 4.
+
+Concatenate the five (possibly deduped) evidence files with the shell into one packet and drop exact-duplicate passages across files. This is the reusable evidence packet (**research**), retained for audit and for reruns of the later phases. The main context does not read the passages; it concatenates by path.
+
+### Step 4 - Distillation fan-out
 
 One subagent per evidence file (five in, five out), in parallel. Strong model.
 
@@ -92,7 +98,7 @@ Dispatch each by reference: give it this file's path, the tag `distill-task`, it
 
 Each subagent writes one rule file (**scratch**) of plain-bullet rules plus a local "Not converted" list, and returns only a count and a path.
 
-### Step 4 - Assemble, dedupe, trim, group
+### Step 5 - Assemble, dedupe, trim, group
 
 Main shell first, then one strong subagent.
 
@@ -101,26 +107,32 @@ Main shell first, then one strong subagent.
 
 The grouping subagent works on compact bullets, not verbose evidence, so context pressure stays low. It returns the output path and, for each group, its name and rule count. Its output stays plain bullets under stanza-headed groups (**scratch**).
 
-### Step 4b - Approach paragraph
+### Step 6 - Title
 
-One subagent. Strong model.
+One subagent. Strong model. May run in parallel with Step 7.
+
+The rulebook earns its title from what it teaches, not from the person's domain assumed in advance. Dispatch one subagent by reference: give it this file's path, the tag `title-task`, the grouped-draft path, and an output path. It greps for the title-task tag, executes the block it encloses, writes the title (**scratch**), and returns only the path.
+
+### Step 7 - Approach paragraph
+
+One subagent. Strong model. May run in parallel with Step 6.
 
 The merged "Not converted" list is raw material, not a deliverable: it holds the person's philosophy, preferences, aesthetics, and temperament - everything that teaches but does not command. Dispatch one subagent by reference: give it this file's path, the tag `approach-task`, the person's name, the grouped-draft path (which ends with the merged "Not converted" list), and an output path. It greps for the approach-task tag, executes the block it encloses, writes one paragraph (**scratch**), and returns only the path.
 
-### Step 5 - Finalize
+### Step 8 - Finalize
 
-Runs in the main context. Deterministic. Reads only the compact grouped draft.
+Runs in the main context. Deterministic. Reads only the compact grouped draft, the title, and the Approach paragraph.
 
 1. Assign continuous, unique numbers across all sections, starting at 1 and never restarting per section.
 2. Title each section with a Roman numeral and its group name.
 3. Wrap each section, its stanza and its numbered rules, in one uniquely named tag whose name is the section slug, opening and closing on their own lines.
-4. Add the house-style frontmatter `description`, the operate-from-this HTML comment, the H1 title, a short executive summary paragraph, the binding-idea line, the image reference, and the italic `date - model` footer.
-5. Append a final section headed "The Approach Behind the Rules" containing the paragraph from Step 4b. The merged "Not converted" list itself never appears in the emitted rulebook; it survives only in the scratch draft for audit.
+4. Add the house-style frontmatter `description`, the operate-from-this HTML comment, the H1 title from Step 6, a short executive summary paragraph, the binding-idea line, the image reference, and the italic `date - model` footer.
+5. Append a final section headed "The Approach Behind the Rules" containing the paragraph from Step 7. The merged "Not converted" list itself never appears in the emitted rulebook; it survives only in the scratch draft for audit.
 6. Write the rulebook to the output path (**output**).
 
 Apply the Emission Discipline below before writing, and run its generation checklist after.
 
-### Step 6 - Emission audit
+### Step 9 - Emission audit
 
 One subagent. Strong model.
 
@@ -136,10 +148,10 @@ Cap every return at a count and a path, or at a short findings path. No subagent
 
 ## Coverage angles
 
-The five angles parallelize collection by the form of knowledge sought, not by topic, so their results stay roughly 70 percent distinct. They are collection buckets only; they are not the output structure. Rule-level dedupe in Step 4 removes the residual overlap.
+The five angles parallelize collection by the form of knowledge sought, not by topic, so their results stay roughly 70 percent distinct. They are collection buckets only; they are not the output structure. Rule-level dedupe in Step 5 removes the residual overlap.
 
 1. Rationale, the reasoning that justifies a decision by connecting a goal to a choice or weighing cost against benefit.
-2. Advice, concrete and actionable guidance on how to design, specify, or evaluate.
+2. Advice, concrete and actionable guidance on how to do, make, or judge the work.
 3. Observation, a non-obvious insight or mental model that reframes a problem or names how something actually works.
 4. Critique, evaluation of a specific design or proposal, naming a flaw or weighing an alternative with its reason.
 5. Principle, a durable rule of thumb or invariant the person invokes across many cases.
@@ -151,7 +163,7 @@ You collect one person's teachable statements from the sources the operator supp
 
 Your angle, by index:
 1. Rationale - the reasoning that justifies a decision, connecting a goal to a choice or weighing cost against benefit. Seeds: the reason, because, rationale, motivation, the point is, cost/benefit.
-2. Advice - concrete, actionable guidance on how to design, specify, or evaluate. Seeds: you should, do not, prefer, avoid, instead, make sure.
+2. Advice - concrete, actionable guidance on how to do, make, or judge the work. Seeds: you should, do not, prefer, avoid, instead, make sure.
 3. Observation - a non-obvious insight or mental model that reframes a problem or names how something actually works. Seeds: the real issue, in practice, what actually happens, people think but, turns out.
 4. Critique - evaluation of a specific design or proposal, naming a flaw or weighing an alternative with its reason. Seeds: the problem with, this breaks, the flaw, does not work because, the alternative, I object.
 5. Principle - a durable rule of thumb or invariant invoked across many cases. Seeds: the principle, the rule, as a rule, in general, and the person's recurring named principles.
@@ -179,7 +191,7 @@ Return only the new passage count and the path.
 </dedup-task>
 
 <keep-criterion>
-Keep a passage only if it teaches something transferable about designing or evaluating technical work: a rationale, a piece of advice, an insight, a critique with its reason, or a principle. It must be in the person's own words, stand on its own once removed from its thread, and express judgment or knowledge. Discard anything that is only administrative, procedural scheduling, social pleasantry, or a bare factual answer with no reasoning. Keep the verbatim text; do not paraphrase. When in doubt, keep the passage that a reader could still learn from a year later and drop the rest.
+Keep a passage only if it teaches something transferable about how the person does their work: a rationale, a piece of advice, an insight, a critique with its reason, or a principle. It must be in the person's own words, stand on its own once removed from its thread, and express judgment or knowledge. Discard anything that is only administrative, procedural scheduling, social pleasantry, or a bare factual answer with no reasoning. Keep the verbatim text; do not paraphrase. When in doubt, keep the passage that a reader could still learn from a year later and drop the rest.
 </keep-criterion>
 
 <distill-task>
@@ -209,6 +221,30 @@ Steps:
 Write the result to the output path. Never use an em dash or a double dash. Return the output path and, for each group, its name and rule count.
 </group-task>
 
+<title-task>
+You title a rulebook from its rules. You are given the path to a grouped draft of rules and an output path.
+
+Steps:
+1. Read the grouped rules and ask one question: what will a reader know how to do after applying this book? Judge from the rules themselves, not from the person's reputation or field.
+2. Write a title of the form "How to {skill}", no more than 10 words total, where {skill} names the learnable capability in plain words a stranger would search for. Prefer the concrete over the categorical: name what the reader will build, decide, write, or evaluate. No colons, no subtitles, no person's name, no jargon that only insiders recognize.
+3. Write exactly one line, the title, to the output path.
+
+Return only the output path.
+</title-task>
+
+<approach-task>
+You compress a "Not converted" list into one paragraph that captures the person's approach to their craft. You are given the person's name, the path to a grouped draft whose final section is a merged "Not converted" list, and an output path. Read only that final list.
+
+Steps:
+1. Sort the items into two piles. Pile one: items that reveal the person - philosophy, preferences, aesthetics, temperament, habits of practice, beliefs about where the work lives. Pile two: bookkeeping - items rejected as too narrow, subsumed by a rule, domain-specific, or duplicative. Discard pile two entirely.
+2. From pile one, find the through-lines: what the person believes the work actually is, how they treat the artifacts they make, what temperament they bring when they hit a limit, and where they place the human in the loop. Cluster the items under those through-lines.
+3. Write one richly descriptive paragraph, 5 to 8 sentences, headed "## The Approach Behind the Rules". Open by stating that not everything the person does converts to a rule, because the rules are the residue of a practice, not the practice itself. Then weave the through-lines into flowing prose that shows the sensibility behind the rulebook - concrete details welcome (a signature habit, a made-object aesthetic, a recurring question they ask), the person's name permitted. Close on the item that best states where the craft ultimately rests.
+4. If the paragraph exceeds 4 sentences, split it into two paragraphs at the natural thematic seam, the point where the text shifts from one cluster of through-lines to the next. Both halves must read as complete prose, not as a sentence chopped in two. Keep them under the same heading; separate with one blank line.
+5. Write the heading and paragraph(s) to the output path.
+
+Hard constraints: one or two paragraphs only (split only when the single paragraph exceeds 4 sentences), no bullets, no lists, no colon-separated inventories chained with semicolons, no item-by-item accounting, no quotes of the discarded pile. Every sentence must read as prose a person would write, not as a compressed list. Never use an em dash or a double dash; use a single dash or a comma. Return only the output path.
+</approach-task>
+
 <audit-task>
 You audit a finished rulebook against the evidence it came from. You are given the rulebook path and the evidence-packet path. Do not edit the rulebook.
 
@@ -219,7 +255,8 @@ Check each item as a yes-or-no question:
 4. Caps: the rulebook holds at most the cap of rules across at most the maximum of groups.
 5. Balance: every group's rule count is within the balance tolerance of the mean.
 6. Structure: every section is wrapped in one uniquely named tag and opens with its stanza.
-7. Completeness: an executive summary and a "Not converted" appendix are present.
+7. Completeness: an executive summary and a closing "The Approach Behind the Rules" section are present, and the Approach section is a single prose paragraph with no bulleted "Not converted" list remaining anywhere in the rulebook.
+8. Title: the H1 begins with "How to", runs at most 10 words, and names a capability the rules actually teach.
 
 Write one line per failed check, naming the location and the single fix, to a scratch findings path. Return only that path.
 </audit-task>
@@ -241,17 +278,18 @@ Generation checklist, run at finalize:
 - [ ] Numbering is continuous and unique from 1.
 - [ ] Rule count is at or under the cap; group count is at or under the maximum; each group is within the balance tolerance of the mean.
 - [ ] Every section is wrapped in a unique tag and opens with its stanza.
-- [ ] The executive summary and the "Not converted" appendix are present.
+- [ ] The executive summary and the closing "The Approach Behind the Rules" paragraph are present, and no bulleted "Not converted" list remains in the file.
+- [ ] The H1 begins with "How to" and runs at most 10 words.
 
 ## Token economics
 
-**Fast model** for the five collection subagents. **Strong model** for the five distillation subagents, the grouping subagent, and the audit subagent.
+**Fast model** for the five collection subagents. **Strong model** for the five distillation subagents, the grouping subagent, the title subagent, the approach subagent, and the audit subagent.
 
 **What enters the main context:**
 
 - The invocation arguments, the candidate identifiers, and the chosen sources (Step 0).
 - Each subagent's return: a count and a path, or the grouping subagent's per-group names and counts, or the audit findings path.
-- The compact grouped-rules draft, read once at finalize (Step 5).
+- The compact grouped-rules draft, the title line, and the Approach paragraph, read once at finalize (Step 8).
 
 **What never enters the main context:**
 
