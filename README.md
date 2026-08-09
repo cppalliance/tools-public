@@ -112,7 +112,7 @@ Reference for writing, reviewing, or cleaning up TypeScript - configuration, typ
 
 **Autonomous Coding with Minimal Prompting**\
 _[rulebooks/vibe-rulebook.md](rulebooks/vibe-rulebook.md)_\
-Turn a described idea into finished, tested software - plan in levels of resolution, build one testable commit at a time, review each commit in a fresh context, and drive the whole thing to completion.
+Turn a described idea into finished, tested software - plan in levels of resolution, build one testable commit at a time with two work subagents, review-and-fix once, verify on a schedule, and drive to completion.
 
 ## Tools
 

@@ -20,6 +20,7 @@ Follow these on every change; they are restated at the end.
 - Document every public item, giving `# Errors`, `# Panics`, and `# Safety` where they apply, and write each example as a doctest (section 10); an example that is not compiled rots silently.
 - Add a test in the same change as the code (section 11); a change without a test is incomplete, because nothing guards against regression.
 - Run `cargo fmt --all --check` and `cargo clippy --all-targets --all-features -- -D warnings` before every commit (section 12); both questions are settled by the tool, not by taste.
+- Verify a crate is the intended, existing package before adding it to `Cargo.toml` (section 9); a hallucinated or near-miss name compiles like any other and turns a typo into a supply-chain compromise.
 
 ## 1. Orientation
 
@@ -110,6 +111,13 @@ Conversion prefixes carry a cost and an ownership promise; match the receiver to
 
 Put `mut` where it lands in the return type: `as_mut_slice`, not `as_slice_mut`.
 
+Detect in existing code:
+
+- a function, method, field, or local not in `snake_case`, or a type or trait not in `UpperCamelCase` - clippy's naming lints flag most.
+- a `get_` prefix on a plain getter, or `as_` on a method that allocates - the prefix promises the wrong cost.
+- a glob `use` outside a `#[cfg(test)]` module or one documented `prelude` - it hides where a name comes from.
+- an acronym split across words (`b_tree_map`, `HTTP_client`) - treat an acronym as one word.
+
 ## 3. Idioms
 
 Write code that reads as native Rust. Each rule below has a mechanical reason, and the pairs that follow show the correction.
@@ -132,6 +140,7 @@ Corrections:
 - `fn parse(s: String)` -> `fn parse(s: &str)` - forces an allocation on a caller holding a slice.
 - `fn total(v: &Vec<i64>)` -> `fn total(v: &[i64])` - accepts arrays and slices, one less indirection.
 - `.iter().cloned()` on `&[u32]` -> `.iter().copied()` - `copied` cannot silently clone an expensive type.
+- `arc.clone()` on an `Arc` or `Rc` -> `Arc::clone(&arc)` - a reference-count bump should read differently from a deep copy at the call site.
 - `.collect::<Vec<_>>().len()` -> `.count()` - the allocation is pure waste.
 - `if let Some(x) = o { .. } else { return Err(e) }` -> `let Some(x) = o else { return Err(e) };` - keeps the happy path unindented.
 - `fn render(&self, fancy: bool, dark: bool)` -> `fn render(&self, style: Style, theme: Theme)` - booleans carry no meaning at the call site.
@@ -176,9 +185,10 @@ Most borrow errors are design errors with a mechanical fix. Own data at the top 
 - Reach for `thread::scope` when threads must borrow locals, and `move` plus owned data or `Arc` for `thread::spawn` and `tokio::spawn`.
 - Break an `Rc` or `Arc` cycle with `Weak`; a cycle of strong handles leaks unconditionally.
 - Hold a `MutexGuard` or a `RefCell` borrow for the shortest possible scope, and never across an `.await`.
-- Clone to unblock yourself, commit that, then remove the clone in a separate pass. A clone that exists only to quiet the borrow checker is debt, because the two copies drift apart.
+- Clone to unblock yourself, commit that, then remove the clone in a separate pass. A `.clone()` whose only effect is to make a borrow error disappear is debt, not a fix: restructure the ownership, because the two copies drift apart. When auditing, hunt the clone whose removal reintroduces the borrow error, and replace it with a borrow or a field split.
 - Delete the type annotation on a closure parameter when you hit E0521; the annotation invents a fresh lifetime.
 - Write a lifetime annotation only when the compiler demands one; never restate what elision already infers.
+- When one branch returns a reference into a value and later code mutates that value, move the mutation off the returning path or repeat the lookup, rather than cloning or reaching for `unsafe`; the borrow checker rejects this shape even when the paths never overlap at runtime. When auditing, the tell is a clone or `unsafe` added around an `if let`, `match`, or early-`return` arm that hands back a borrow.
 
 Diagnose from the error code:
 
@@ -331,6 +341,14 @@ fn run() -> anyhow::Result<()> {
 }
 ```
 
+Detect in existing code:
+
+- `-> Result<_, String>` or `Err("...".into())` - stringly errors that cannot be matched or downcast.
+- `.unwrap()` or `.expect(` outside `#[cfg(test)]` - clippy `unwrap_used` and `expect_used` flag these.
+- `anyhow`, `eyre`, or `Box<dyn Error>` in a `pub fn` return in a library - erased variants a caller cannot match.
+- `#[error("Failed to ...")]`, a capitalized message, or a trailing period - message style to repair.
+- a variant that renders its source in `Display` and also returns it from `source()` - a doubled error chain.
+
 Corrections:
 
 - `pub fn parse(s: &str) -> anyhow::Result<Ast>` -> `Result<Ast, ParseError>` - a library caller has to match variants.
@@ -368,6 +386,14 @@ A public API is a promise about names, shapes, and what may change. Decide the f
 - Replace `bool` and stringly-typed parameters with enums or newtypes, and use `bitflags` for a flag set.
 - Make destructors infallible and non-blocking; expose `close()` or `shutdown()` returning `Result` for anything that can fail.
 - Run `cargo semver-checks` before publishing, and deprecate with `#[deprecated(since = "...", note = "...")]` before removing in a major release.
+
+Detect in existing code:
+
+- a getter named `get_*`, or one returning `&Option<T>` or a fresh clone - wrong prefix, shape, or cost.
+- `impl Into<_>` or `impl TryInto<_>` - implement `From`/`TryFrom` and take the blanket impl.
+- `&String`, `&Vec<T>`, or `&PathBuf` in a public parameter - take `&str`, `&[T]`, `&Path`.
+- a public `enum` or struct without `#[non_exhaustive]`, or a `pub` field on a type with invariants - later additions turn breaking.
+- `-> impl Trait` in a public return, or a generic method on a `dyn`-intended trait - lost names and dyn compatibility.
 
 Corrections:
 
@@ -581,6 +607,7 @@ The standard library deliberately omits an async runtime, HTTP, TLS, serializati
 
 - Add a dependency only when all four hold: it takes more than 100 lines to write correctly, you will keep using it, its own tree stays under about a dozen crates, and it has shipped a release within a year.
 - Check the last release date, open-issue triage, MSRV, license, `unsafe` count, and `cargo tree -d` depth before adding anything.
+- Confirm a crate is the specific, existing package you intend before adding it, and audit an existing `Cargo.toml` the same way, by matching each name against its docs.rs page and source repository; a near-miss or hallucinated name can resolve to an unrelated or squatted crate yet build like any other. When you cannot confirm identity, add nothing and reach for `std` or a crate already in the tree.
 - Run `cargo deny check` and `cargo audit` in CI, and add `cargo vet` when every dependency needs a human review.
 - Turn off default features you do not use, and gate anything heavy behind a feature of your own.
 - Reach for the standard library first: `LazyLock`, `OnceLock`, `core::error::Error`, and `const { assert!(...) }` all removed a common dependency.
@@ -724,6 +751,13 @@ Repository documentation carries what rustdoc cannot:
 | `ARCHITECTURE.md` | the bird's eye view, a codemap naming files and types, the invariants, the cross-cutting concerns |
 | `LICENSE-APACHE`, `LICENSE-MIT` | the dual license the ecosystem expects |
 
+Detect in existing code:
+
+- a `pub` item with no `///`, or a module or `lib.rs` with no `//!` - `missing_docs` flags these.
+- a `Result`-returning `pub fn` with no `# Errors`, or an `unsafe fn` with no `# Safety` - a required heading is missing.
+- ` ```ignore ` on a doc fence, or `.unwrap()` in a doc example - hidden rot and habits readers copy.
+- a hand-written `https://doc.rust-lang.org/...` link where an intra-doc link would resolve - it rots on the next layout change.
+
 Corrections:
 
 - `/// Return the length.` -> `/// Returns the length.` - third person indicative.
@@ -787,6 +821,13 @@ mod tests {
 | coverage | `cargo llvm-cov` |
 | wall-clock benchmarks | `criterion`, with `harness = false` |
 
+Detect in existing code:
+
+- `#[should_panic]` with no `expected = "..."` - it passes on any unrelated panic.
+- `#[ignore]` with no reason string, or a randomized test with no printed seed - silent gaps and unreproducible failures.
+- `tests/common.rs`, or several files directly under `tests/` - an accidental test binary, and a relink per file.
+- a test that writes inside the source tree instead of a `tempfile::TempDir` - cross-test interference.
+
 Corrections:
 
 - `tests/common.rs` -> `tests/common/mod.rs` - otherwise Cargo builds it as a test binary.
@@ -795,6 +836,7 @@ Corrections:
 - `cargo nextest run` alone -> plus `cargo test --doc` - nextest never runs doctests.
 - `#[bench] fn bench_parse` -> a `criterion` benchmark with `harness = false` - `#[bench]` is nightly-only.
 - `sleep(Duration::from_secs(1))` in an async test -> paused time and an explicit advance - deterministic and instant.
+- `#[test]` on an `async fn` -> `#[tokio::test]` - the bare attribute does not run the future, and current toolchains reject it outright.
 
 ## 12. Lints, tooling, CI, and maintenance
 
@@ -896,6 +938,13 @@ jobs:
       - run: cargo test --locked --workspace --all-features --doc
 ```
 
+Detect in existing code:
+
+- `#![deny(...)]`, `#![warn(...)]`, or `#![forbid(...)]` at a crate root - move lint levels into the `[lints]` tables.
+- `#[allow(...)]` with no `reason`, where `#[expect(...)]` would warn once it goes stale - unexplained, silent suppression.
+- `cargo clippy` invoked without `--all-targets --all-features -- -D warnings` - it skips tests, benches, and examples.
+- `msrv` in `clippy.toml`, or an MSRV asserted nowhere in CI - two sources of truth, or none.
+
 Corrections:
 
 - `#![deny(clippy::all)]` in `lib.rs` -> `[lints.clippy] all = { level = "deny", priority = -1 }` - inheritable, and covers all targets.
@@ -991,6 +1040,13 @@ impl Counter {
 // caller: let n = counter.bump(); do_io(n).await;
 ```
 
+Detect in existing code:
+
+- a `std::sync::MutexGuard`, `Rc`, or `RefCell` held across an `.await` - the future stops being `Send` and can deadlock.
+- `std::fs`, `std::thread::sleep`, `reqwest::blocking`, or `block_on` inside an `async fn` - blocking the executor; use `spawn_blocking` or the async equivalent.
+- `tokio::spawn` without `move`, or a spawn in a loop with no bound - a borrow escapes, or tasks grow without limit.
+- a `std::sync::Mutex` or channel shared by many tasks where an owner task would serialize access - contention the design can remove.
+
 Corrections:
 
 - `std::thread::sleep(d)` in an `async fn` -> the runtime's own sleep, awaited - thread sleep freezes every task on that worker.
@@ -1022,6 +1078,14 @@ pub unsafe fn as_slice<'a>(ptr: *const u8, len: usize) -> &'a [u8] {
     unsafe { std::slice::from_raw_parts(ptr, len) }
 }
 ```
+
+Detect in existing code:
+
+- an `unsafe` block with no `// SAFETY:` on the line above - clippy `undocumented_unsafe_blocks`.
+- a `pub unsafe fn` with no `# Safety` section - clippy `missing_safety_doc`.
+- `transmute`, or a `&mut` formed from a `&` - layout, value, or aliasing left unchecked.
+- `static mut` or `&STATIC_MUT` - a hard error in edition 2024; use `OnceLock` or an atomic.
+- `unsafe` wrapped around code that only silences a borrow error - restructure the ownership instead.
 
 Corrections:
 
@@ -1063,6 +1127,13 @@ fn main() {
 }
 // in lib.rs: include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 ```
+
+Detect in existing code:
+
+- an `extern "C"` function whose body can panic with no `catch_unwind` - unwinding across it aborts the process.
+- a Rust `enum`, `str`, `&T`, `Vec`, or generic exposed across an FFI boundary - only `#[repr(C)]` or `#[repr(transparent)]` types cross safely.
+- a bare path, not `$crate::...`, to a crate item inside an exported `macro_rules!` - it resolves in the caller's scope and breaks.
+- a `build.rs` that writes outside `OUT_DIR`, or reads `cfg!` for the target - non-hermetic, and wrong under cross-compilation.
 
 ## 17. Version-sensitive facts
 
@@ -1137,5 +1208,6 @@ Calls this file makes where the ecosystem is genuinely split, and the reason for
 - Document every public item, with `# Errors`, `# Panics`, and `# Safety` where they apply, and make examples doctests.
 - Test in the same change as the code, unit tests in the file under test and integration tests in one binary.
 - Format with rustfmt and pass Clippy with warnings denied before committing.
+- Verify every crate is the intended, existing package, in new code and when auditing `Cargo.toml`; a wrong name compiles like any other.
 
 *2026-07-25 - Opus 5 (Cursor agent). Distilled from web research on Rust project layout, API design, ownership, error handling, documentation, tooling, and the crate ecosystem.*
