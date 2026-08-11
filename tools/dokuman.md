@@ -67,7 +67,7 @@ Main partitions the material based on the recon brief. Each subagent receives on
 
 ### Step 3: Consolidate (main + shell)
 
-Shell-concatenate all extraction scratch files into one master list. If >80 items, spawn one fast subagent to deduplicate. Otherwise dedup inline. Output: numbered master feature list as a scratch file.
+Shell-concatenate all extraction scratch files into one master list. Preserve evidence lines. If >80 items, spawn one fast subagent to deduplicate (merge evidence lines from near-duplicates). Otherwise dedup inline. Output: numbered master feature list as a scratch file.
 
 ### Step 4: Tier + Order (1 subagent)
 
@@ -86,8 +86,8 @@ Pass the tiered list path AND the original target. Returns "approved" or a corre
 Write two scratch files:
 
 **Evidence packet.** Flat declarative sentences. Facts only. Contains:
-- The verified tier-ordered feature list
-- Technical details from recon (languages, dependencies, architecture)
+- The verified tier-ordered feature list with evidence lines
+- Technical details from extraction scratch files (languages, dependencies, architecture)
 - Feature relationships (which compose, which are alternatives)
 - Constraints, limitations, concrete examples found during extraction
 
@@ -145,7 +145,16 @@ Selection criterion: what would you mention in the first three minutes of a demo
 
 Sources to check: public functions, exported types, CLI flags, config options, examples, test names, stated capabilities in docs.
 
-Write your list to a scratch file, one sentence per line, numbered. Return only: count and file path.
+Write your list to a scratch file. Format per entry:
+
+```
+{n}. {capability sentence}
+    evidence: {concrete detail: a code snippet, CLI invocation, default value, constraint, or relationship to another feature}
+```
+
+The evidence line is optional but preferred. Include it whenever you encounter a concrete example, a default, a flag, a constraint, or a dependency on another capability. This supporting detail is used later by the writer.
+
+Return only: count and file path.
 </extract-task>
 
 <tier-task>
