@@ -12,14 +12,14 @@ Operate from it.
 
 The institutional operator walks through the checkpoint carrying a diplomatic pouch nobody can open. Everything inside stays technically compliant - the papers filed, the stamps real, the declarations in order. He moves product for his government through channels the inspection regime was never built to reach. The civilian walks through the same checkpoint with a suitcase full of honest work. Same X-ray machine, same customs form, same officer behind the glass. One of them the system can see.
 
-Point Cheat Finder at any proposal's documented record and it runs the detection criteria from P4196: fifteen behavioral tests, each with a falsification condition that separates procedural fluency from structural capture. It gathers evidence from whatever sources you aim it at, scores every item against the C2 baseline, and renders the assessment in a report where every classification traces back to a specific falsifier met or unmet.
+Point Cheat Finder at any proposal's documented record and it runs the detection criteria from P4196: sixteen behavioral tests, each with a falsification condition that separates procedural fluency from structural capture. It gathers evidence from whatever sources you aim it at, scores every item against the C2 baseline, and renders the assessment in a report where every classification traces back to a specific falsifier met or unmet.
 
 <img src="images/cheat-finder-1.png" alt="Cheat Finder" width="100%">
 
 ```mermaid
 flowchart TD
     S0["0 Receive (main)"] --> S1["1 Profile + Gather (parallel)"]
-    S1 --> S2["2 Score (parallel x15)"]
+    S1 --> S2["2 Score (parallel x16)"]
     S2 --> S3["3 Tally (main)"]
     S3 --> S4["4 Prepare (main + shell)"]
     S4 --> S5["5 Write (isolated subagent)"]
@@ -91,7 +91,7 @@ Each subagent writes a scratch file of evidence items. Format:
 1. {description (1-2 sentences)}
    date: {ISO or "Ongoing" or "Pattern"}
    source: {paper number, wiki page, file path, search query}
-   criteria: {comma-separated criterion numbers 1-15}
+   criteria: {comma-separated criterion numbers 1-16}
    quote: {verbatim if available, or "none"}
 ```
 
@@ -99,7 +99,7 @@ Each subagent makes at most 5 tool calls. Returns count + path only.
 
 After all Gather subagents return, shell-concatenate their scratch files into one master evidence file. Assign global IDs by prepending `G{n}.` to each item, sequential across all sources. These IDs are the stable references for Score subagents and the writer.
 
-### Step 2: Score (parallel-capable, 15 subagents)
+### Step 2: Score (parallel-capable, 16 subagents)
 
 Dispatch: read this tool file, grep for `<score-task>`, execute. The task directs the subagent to also grep for `<criteria-reference>` and read its own criterion's entry.
 
@@ -132,10 +132,10 @@ Returns path only.
 
 ### Step 3: Tally (main)
 
-Shell-grep the `TALLY:` line from each of the 15 score scratch files. Mechanical aggregation:
+Shell-grep the `TALLY:` line from each of the 16 score scratch files. Mechanical aggregation:
 
-- Build the grand tally table (15 rows + totals).
-- Check the combination signal: do criteria 1, 2, and 7 all have C3 hits? If yes, all three distinguishing markers are present simultaneously.
+- Build the grand tally table (16 rows + totals).
+- Check the combination signal: do criteria 1, 2, and 8 all have C3 hits? If yes, all three distinguishing markers are present simultaneously.
 - Write one-sentence verdict for the Executive Summary.
 - Write to a tally scratch file.
 
@@ -145,7 +145,7 @@ The analytical firewall. All analysis is complete. This step assembles what the 
 
 Write THREE scratch files:
 
-**File 1: Evidence packet.** Shell-concatenate the profile scratch file, all 15 score scratch files, and the tally scratch file. Preserve heading lines for section boundaries. This file is the writer's sole source of truth.
+**File 1: Evidence packet.** Shell-concatenate the profile scratch file, all 16 score scratch files, and the tally scratch file. Preserve heading lines for section boundaries. This file is the writer's sole source of truth.
 
 **File 2: Evidence details.** Copy the master evidence file from Gather. Raw quotes, source citations, dates. The writer consults this when constructing evidence tables.
 
@@ -169,7 +169,7 @@ Pass four inputs: draft report path, evidence packet path, evidence details path
 
 Fresh subagent reads the draft and cross-references against the evidence on five axes:
 
-1. **Completeness** - all 15 criterion sections present and filled, grand tally matches per-criterion tallies, executive summary tally matches grand tally.
+1. **Completeness** - all 16 criterion sections present and filled, grand tally matches per-criterion tallies, executive summary tally matches grand tally.
 2. **Accuracy** - every C1/C2/C3 assignment matches the evidence packet, no evidence items dropped or invented, quotes match evidence details.
 3. **Falsification fidelity** - every C3 item has a "why C2 does not explain" paragraph naming a specific falsifier from `<criteria-reference>`. Every C2 item states the falsifier was not met.
 4. **Template compliance** - all sections present in correct order, no duplicated front matter, footer present.
@@ -222,22 +222,23 @@ You are an evidence collection agent. Gather evidence items relevant to how a WG
 
 **What counts as evidence:** poll results, chair statements, procedural actions (scheduling, poll wording, agenda control), author statements on reflector or in papers, committee instructions and whether they were satisfied, institutional backing indicators, competing-design treatment, written record omissions or inclusions.
 
-**Tag each item with criterion numbers.** The 15 criteria are:
+**Tag each item with criterion numbers.** The 16 criteria are:
 1. Response to architectural objections
 2. Treatment of competing designs
 3. Pursuit of early directional polls
-4. Written record behavior
-5. Burden of proof management
-6. Use of procedural moves
-7. Moralization of opposition
-8. Coalition building
-9. Relationship with chair
-10. Transparency about design tradeoffs
-11. Response to "investigate the objection thoroughly"
-12. Behavior between meetings
-13. Reaction when pulled back
-14. Observable cost structure
-15. Predicted outcome if they win
+4. Treatment of minority objections
+5. Written record behavior
+6. Relationship with chair
+7. Coalition building
+8. Moralization of opposition
+9. Reaction when pulled back
+10. Burden of proof management
+11. Use of procedural moves
+12. Transparency about design tradeoffs
+13. Response to "investigate the objection thoroughly"
+14. Behavior between meetings
+15. Observable cost structure
+16. What happens if they win
 
 An item can tag multiple criteria (comma-separated).
 
@@ -344,7 +345,20 @@ A direction poll is converted into a permanent "mandate" that forecloses all sub
 
 ---
 
-CRITERION 4: Written Record Behavior
+CRITERION 4: Treatment of Minority Objections
+
+C2 BASELINE:
+A senior author addresses minority objections enough to satisfy the chair. May disagree after genuine engagement. Stops revisiting when consensus is achievable.
+
+C3 SIGNAL:
+Objections are dismissed as "no new information" when the core technical concern was never directly answered in writing. The same dismissal pattern repeats across multiple meetings without the substance of the objection ever being engaged.
+
+FALSIFIER:
+Objections dismissed as "no new information" when the core technical concern was never directly answered in writing. The same dismissal pattern repeats across multiple meetings without the substance of the objection ever being engaged.
+
+---
+
+CRITERION 5: Written Record Behavior
 
 C2 BASELINE:
 A senior author frames position favorably, cites favorable outcomes. Selective presentation is normal advocacy.
@@ -357,59 +371,7 @@ Specific unfavorable poll results are omitted from self-reported history while f
 
 ---
 
-CRITERION 5: Burden of Proof Management
-
-C2 BASELINE:
-A senior author cites prior decisions and asks "what's new?" Prevents infinite re-litigation.
-
-C3 SIGNAL:
-The burden shift is engineered through deliberate linguistic transformation across years: "competing design" becomes "alternative" becomes "objection" becomes "reopening settled question." A single direction poll is wielded as permanent authority against all subsequent challenge regardless of new evidence.
-
-FALSIFIER:
-A vote tally is used to dismiss objections that post-date the vote. The four-stage linguistic transformation ("competing design" -> "alternative" -> "objection" -> "reopening settled question") is documented across multiple arcs.
-
----
-
-CRITERION 6: Use of Procedural Moves
-
-C2 BASELINE:
-A senior author knows the full procedural move set and uses it within norms. Short incubation happens under deadline pressure.
-
-C3 SIGNAL:
-A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. The study group dissolved when its chair turns against the proposal. Poll wording drafted privately with the convener while objectors are excluded.
-
-FALSIFIER:
-A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. Poll wording drafted privately with leadership while objectors are excluded.
-
----
-
-CRITERION 7: Moralization of Opposition
-
-C2 BASELINE:
-A senior author may use sharp language under pressure. Characterizes the argument, not the opponent's conduct.
-
-C3 SIGNAL:
-The act of submitting an alternative is treated as illegitimate. A competing approach is equated with "halting all forward progress." Opposition is characterized as a conduct offense.
-
-FALSIFIER:
-The act of submitting an alternative is treated as illegitimate. A competing approach is equated with "halting all forward progress."
-
----
-
-CRITERION 8: Coalition Building
-
-C2 BASELINE:
-A senior author recruits co-authors, assembles broad support. Large co-author lists are standard.
-
-C3 SIGNAL:
-The coalition includes undisclosed financial relationships between the institutional sponsor and persons exercising oversight authority. Internal dissenters are excluded rather than accommodated.
-
-FALSIFIER:
-Internal dissenters are excluded rather than accommodated. The coalition includes undisclosed financial relationships with oversight personnel.
-
----
-
-CRITERION 9: Relationship with Chair
+CRITERION 6: Relationship with Chair
 
 C2 BASELINE:
 A senior author works collaboratively with the chair. The chair's favorable treatment may reflect genuine assessment.
@@ -422,46 +384,33 @@ The chair co-authors the proposal under their own oversight while receiving undi
 
 ---
 
-CRITERION 10: Transparency About Design Tradeoffs
+CRITERION 7: Coalition Building
 
 C2 BASELINE:
-A senior author frames tradeoffs favorably. Being candid under cross-examination is evidence of integrity.
+A senior author recruits co-authors, assembles broad support. Large co-author lists are standard.
 
 C3 SIGNAL:
-Weaknesses are concealed in written artifacts and conceded only under sustained cross-examination. The gap between what the authors know privately and what they present publicly is systematic.
+The coalition includes undisclosed financial relationships between the institutional sponsor and persons exercising oversight authority. Internal dissenters are excluded rather than accommodated.
 
 FALSIFIER:
-Weaknesses are conceded verbally under cross-examination but do not propagate into the written institutional record. Written artifacts omit or neutralize the verbal concession.
+Internal dissenters are excluded rather than accommodated. The coalition includes undisclosed financial relationships with oversight personnel.
 
 ---
 
-CRITERION 11: Response to "Investigate the Objection Thoroughly"
+CRITERION 8: Moralization of Opposition
 
 C2 BASELINE:
-A senior author investigates when cost-benefit is favorable. May decline if the objection is non-dispositive.
+A senior author may use sharp language under pressure. Characterizes the argument, not the opponent's conduct.
 
 C3 SIGNAL:
-A strong-consensus committee poll requesting investigation is overridden without being satisfied or formally reversed.
+The act of submitting an alternative is treated as illegitimate. A competing approach is equated with "halting all forward progress." Opposition is characterized as a conduct offense.
 
 FALSIFIER:
-A strong-consensus recorded committee instruction is overridden without being satisfied or formally reversed.
+The act of submitting an alternative is treated as illegitimate. A competing approach is equated with "halting all forward progress."
 
 ---
 
-CRITERION 12: Behavior Between Meetings
-
-C2 BASELINE:
-A senior author maintains relationships, coordinates with co-authors, prepares papers. Employer-funded teams are normal.
-
-C3 SIGNAL:
-The institutional sponsor funds persons exercising oversight authority through undisclosed financial relationships. Coordinated campaigns present decisions as already made before deliberation occurs.
-
-FALSIFIER:
-Undisclosed financial relationships with persons exercising oversight authority. Coordinated campaigns designed to present decisions as already made before deliberation occurs.
-
----
-
-CRITERION 13: Reaction When Pulled Back
+CRITERION 9: Reaction When Pulled Back
 
 C2 BASELINE:
 A senior author regroups, revises, returns with a plan. Persistence after rejection is normal and encouraged.
@@ -474,7 +423,72 @@ The unfavorable result is omitted from the paper's history section while only th
 
 ---
 
-CRITERION 14: Observable Cost Structure
+CRITERION 10: Burden of Proof Management
+
+C2 BASELINE:
+A senior author cites prior decisions and asks "what's new?" Prevents infinite re-litigation.
+
+C3 SIGNAL:
+The burden shift is engineered through deliberate linguistic transformation across years: "competing design" becomes "alternative" becomes "objection" becomes "reopening settled question." A single direction poll is wielded as permanent authority against all subsequent challenge regardless of new evidence.
+
+FALSIFIER:
+A vote tally is used to dismiss objections that post-date the vote. The four-stage linguistic transformation ("competing design" -> "alternative" -> "objection" -> "reopening settled question") is documented across multiple arcs.
+
+---
+
+CRITERION 11: Use of Procedural Moves
+
+C2 BASELINE:
+A senior author knows the full procedural move set and uses it within norms. Short incubation happens under deadline pressure.
+
+C3 SIGNAL:
+A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. The study group dissolved when its chair turns against the proposal. Poll wording drafted privately with the convener while objectors are excluded.
+
+FALSIFIER:
+A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. Poll wording drafted privately with leadership while objectors are excluded.
+
+---
+
+CRITERION 12: Transparency About Design Tradeoffs
+
+C2 BASELINE:
+A senior author frames tradeoffs favorably. Being candid under cross-examination is evidence of integrity.
+
+C3 SIGNAL:
+Weaknesses are concealed in written artifacts and conceded only under sustained cross-examination. The gap between what the authors know privately and what they present publicly is systematic.
+
+FALSIFIER:
+Weaknesses are conceded verbally under cross-examination but do not propagate into the written institutional record. Written artifacts omit or neutralize the verbal concession.
+
+---
+
+CRITERION 13: Response to "Investigate the Objection Thoroughly"
+
+C2 BASELINE:
+A senior author investigates when cost-benefit is favorable. May decline if the objection is non-dispositive.
+
+C3 SIGNAL:
+A strong-consensus committee poll requesting investigation is overridden without being satisfied or formally reversed.
+
+FALSIFIER:
+A strong-consensus recorded committee instruction is overridden without being satisfied or formally reversed.
+
+---
+
+CRITERION 14: Behavior Between Meetings
+
+C2 BASELINE:
+A senior author maintains relationships, coordinates with co-authors, prepares papers. Employer-funded teams are normal.
+
+C3 SIGNAL:
+The institutional sponsor funds persons exercising oversight authority through undisclosed financial relationships. Coordinated campaigns present decisions as already made before deliberation occurs.
+
+FALSIFIER:
+Undisclosed financial relationships with persons exercising oversight authority. Coordinated campaigns designed to present decisions as already made before deliberation occurs.
+
+---
+
+CRITERION 15: Observable Cost Structure
 
 C2 BASELINE:
 Significant employer backing with funded engineers and coordinated papers. How major facilities get standardized.
@@ -487,7 +501,7 @@ Cost structure includes undisclosed financial relationships with oversight autho
 
 ---
 
-CRITERION 15: Predicted Outcome If They Win
+CRITERION 16: What Happens If They Win
 
 C2 BASELINE:
 A feature shaped by negotiation enters the standard. It may have rough edges. The author schedules extensions for known gaps. Some dissent persists.
@@ -507,7 +521,7 @@ Co-author dissent, implementer "unusable" finding, major vendor non-implementati
 
 The P4196 game-theory framework identifies three author profiles that emerge from SD-4's incentive structure. This document applies the detection-criteria table derived from those profiles to the documented record of how {PROPOSAL} moved through the committee.
 
-The evidence record produces **{C1_TOTAL}** Column 1 hits, **{C2_TOTAL}** Column 2 hits, and **{C3_TOTAL}** Column 3 hits across 15 detection criteria. {ONE_SENTENCE_VERDICT}
+The evidence record produces **{C1_TOTAL}** Column 1 hits, **{C2_TOTAL}** Column 2 hits, and **{C3_TOTAL}** Column 3 hits across 16 detection criteria. {ONE_SENTENCE_VERDICT}
 
 ---
 
@@ -549,7 +563,7 @@ For each criterion, the C2 baseline and C3 signal are stated first, then evidenc
 
 ---
 
-{Repeat the same structure for criteria 2 through 15. Each criterion section has the same five elements: C2 baseline, C3 signal, Why paragraph, evidence table, tally line.}
+{Repeat the same structure for criteria 2 through 16. Each criterion section has the same five elements: C2 baseline, C3 signal, Why paragraph, evidence table, tally line.}
 
 ---
 
@@ -560,18 +574,19 @@ For each criterion, the C2 baseline and C3 signal are stated first, then evidenc
 | 1. Response to architectural objections | {n} | {n} | {n} |
 | 2. Treatment of competing designs | {n} | {n} | {n} |
 | 3. Pursuit of early directional polls | {n} | {n} | {n} |
-| 4. Written record behavior | {n} | {n} | {n} |
-| 5. Burden of proof management | {n} | {n} | {n} |
-| 6. Use of procedural moves | {n} | {n} | {n} |
-| 7. Moralization of opposition | {n} | {n} | {n} |
-| 8. Coalition building | {n} | {n} | {n} |
-| 9. Relationship with chair | {n} | {n} | {n} |
-| 10. Transparency about tradeoffs | {n} | {n} | {n} |
-| 11. Response to "investigate thoroughly" | {n} | {n} | {n} |
-| 12. Behavior between meetings | {n} | {n} | {n} |
-| 13. Reaction when pulled back | {n} | {n} | {n} |
-| 14. Observable cost structure | {n} | {n} | {n} |
-| 15. Predicted outcome if they win | {n} | {n} | {n} |
+| 4. Treatment of minority objections | {n} | {n} | {n} |
+| 5. Written record behavior | {n} | {n} | {n} |
+| 6. Relationship with chair | {n} | {n} | {n} |
+| 7. Coalition building | {n} | {n} | {n} |
+| 8. Moralization of opposition | {n} | {n} | {n} |
+| 9. Reaction when pulled back | {n} | {n} | {n} |
+| 10. Burden of proof management | {n} | {n} | {n} |
+| 11. Use of procedural moves | {n} | {n} | {n} |
+| 12. Transparency about tradeoffs | {n} | {n} | {n} |
+| 13. Response to "investigate thoroughly" | {n} | {n} | {n} |
+| 14. Behavior between meetings | {n} | {n} | {n} |
+| 15. Observable cost structure | {n} | {n} | {n} |
+| 16. What happens if they win | {n} | {n} | {n} |
 | **TOTAL** | **{C1_TOTAL}** | **{C2_TOTAL}** | **{C3_TOTAL}** |
 
 ---
@@ -581,7 +596,7 @@ For each criterion, the C2 baseline and C3 signal are stated first, then evidenc
 {Narrative integrating the results. Address:
 - Which C2 items are genuinely ambiguous between profiles, and why the C2 reading was accepted.
 - Which C3 items survive their falsification tests, and through what specific mechanism.
-- Whether the combination signal is present (criteria 1, 2, 7 all showing C3 simultaneously across multiple meetings).
+- Whether the combination signal is present (criteria 1, 2, 8 all showing C3 simultaneously across multiple meetings).
 - If prior assessments of other proposals exist, include a comparison table.
 - State confidence level and the basis for it.}
 
@@ -617,13 +632,13 @@ You are a review agent. Cross-reference a draft report against its source eviden
 
 **Check five axes:**
 
-1. **Completeness.** All 15 criterion sections present and filled. Grand tally row counts match per-criterion tally lines. Executive summary totals match grand tally totals. If any criterion has zero evidence items, flag it.
+1. **Completeness.** All 16 criterion sections present and filled. Grand tally row counts match per-criterion tally lines. Executive summary totals match grand tally totals. If any criterion has zero evidence items, flag it.
 
 2. **Accuracy.** Every C1/C2/C3 assignment in the report matches the evidence packet. No evidence items dropped (present in packet but missing from report). No evidence items invented (present in report but missing from packet). Quoted text matches the evidence details file.
 
 3. **Falsification fidelity.** For each C3 item: the "why C2 does not explain" paragraph names a specific falsifier from `<criteria-reference>` that is met. For each C2 item: the justification states the falsifier is not met. Spot-check at least 3 C3 items and 3 C2 items against the actual falsifier text.
 
-4. **Template compliance.** Sections appear in correct order (Executive Summary, The Proposal, Authors and Structural Position, Scoring Method, Criteria 1-15, Grand Tally, Assessment, What This Describes, Footer). No duplicated front matter (no full detection criteria table, no full profile descriptions). Footer present with date and model name.
+4. **Template compliance.** Sections appear in correct order (Executive Summary, The Proposal, Authors and Structural Position, Scoring Method, Criteria 1-16, Grand Tally, Assessment, What This Describes, Footer). No duplicated front matter (no full detection criteria table, no full profile descriptions). Footer present with date and model name.
 
 5. **Prose.** No em-dashes (U+2014). No double-dashes (--). No hedging phrases ("it could be argued," "perhaps," "it is possible that"). No forward references in the assessment (every concept grounded before use).
 
