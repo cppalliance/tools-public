@@ -71,13 +71,15 @@ read workspace files in profiles-coalition/"
 
 Accept three inputs: target proposal (paper number or path), subject name, gathering instructions. If the proposal is a file path, verify the file exists; if a paper number, accept as-is. Set scratch directory: `cabinet/_scratch/cheat-finder-{proposal}-{subject}/`. Create it.
 
+Extract from the gathering instructions any instruction that would change how a subagent behaves (source restrictions, quoting rules, presentation preferences, testimony, institutional context). Write these to `cabinet/_scratch/cheat-finder-{proposal}-{subject}/run-context.md`. If no such instructions exist, write an empty file.
+
 ### Step 1: Profile + Gather (parallel)
 
 Profile and Gather launch in parallel. No data dependency between them.
 
-**Profile (1 subagent).** Dispatch: read this tool file, grep for `<profile-task>`, execute. Pass the proposal identifier, subject name, and any user-supplied institutional context extracted from the gathering instructions. Subagent writes one scratch file establishing the subject's structural position. Returns path only.
+**Profile (1 subagent).** Dispatch: read this tool file, grep for `<profile-task>`, execute. Pass the proposal identifier, subject name, run-context file path, and any user-supplied institutional context extracted from the gathering instructions. Subagent writes one scratch file establishing the subject's structural position. Returns path only.
 
-**Gather (N subagents).** Dispatch: read this tool file, grep for `<gather-task>`, execute. Main decomposes the user's gathering instructions into source-specific tasks:
+**Gather (N subagents).** Dispatch: read this tool file, grep for `<gather-task>`, execute. Pass the run-context file path along with source-specific instructions. Main decomposes the user's gathering instructions into source-specific tasks:
 
 - Explicit source mentions spawn one subagent each ("search Pinecone" = 1, "check wiki" = 1, "read workspace files in X/" = 1).
 - If the user gives no source specifics, default: one Pinecone subagent, one wiki subagent, one workspace subagent (if evidence directories exist).
@@ -90,7 +92,7 @@ Each subagent writes a scratch file of evidence items. Format:
 
 1. {description (1-2 sentences)}
    date: {ISO or "Ongoing" or "Pattern"}
-   source: {paper number, wiki page, file path, search query}
+   source: {internet URL - public or authenticated}
    criteria: {comma-separated criterion numbers 1-16}
    quote: {verbatim if available, or "none"}
 ```
@@ -157,7 +159,7 @@ Write THREE scratch files:
 
 Dispatch: read this tool file, grep for `<writing-discipline>`, execute.
 
-Pass three file paths: evidence packet, evidence details, report template. The writer fills the template using the evidence packet for structure, claims, and scoring. When constructing evidence tables, consult the evidence details file for dates, sources, and verbatim quotes. Write the complete report to a scratch file. Return path only.
+Pass four file paths: evidence packet, evidence details, report template, run-context. The writer fills the template using the evidence packet for structure, claims, and scoring. When constructing evidence tables, consult the evidence details file for dates, sources, and verbatim quotes. Write the complete report to a scratch file. Return path only.
 
 The writer never invents evidence. If the evidence packet lacks a fact, the writer omits it. The writer never scores - all C1/C2/C3 assignments come from the evidence packet.
 
@@ -165,7 +167,7 @@ The writer never invents evidence. If the evidence packet lacks a fact, the writ
 
 Dispatch: read this tool file, grep for `<review-task>`, execute.
 
-Pass four inputs: draft report path, evidence packet path, evidence details path, and the `<criteria-reference>` tag name for spot-checking.
+Pass five inputs: draft report path, evidence packet path, evidence details path, run-context path, and the `<criteria-reference>` tag name for spot-checking.
 
 Fresh subagent reads the draft and cross-references against the evidence on five axes:
 
@@ -191,7 +193,9 @@ Output: `cabinet/_output/cheat-finder-{proposal}-{subject}.md`
 <profile-task>
 You are an institutional context agent. Establish the structural position of a subject within WG21.
 
-**Inputs you receive:** proposal identifier, subject name, optional user-supplied institutional context.
+**Inputs you receive:** proposal identifier, subject name, run-context file path, optional user-supplied institutional context.
+
+**Run-context:** Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults in this task block. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return.
 
 **Research scope:** employer backing, funding relationships (disclosed and undisclosed), chair and leadership roles held by the subject or its employees, national-body voting presence, consulting arrangements, and any structural overlap between the subject's personnel and committee oversight roles.
 
@@ -218,7 +222,9 @@ You are an institutional context agent. Establish the structural position of a s
 <gather-task>
 You are an evidence collection agent. Gather evidence items relevant to how a WG21 proposal moved through the committee.
 
-**Inputs you receive:** proposal identifier, subject name, source-specific instructions (which source to search, what meetings or topics to check).
+**Inputs you receive:** proposal identifier, subject name, run-context file path, source-specific instructions (which source to search, what meetings or topics to check).
+
+**Run-context:** Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults in this task block. The URL rule below is structural and cannot be overridden by run-context. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return.
 
 **What counts as evidence:** poll results, chair statements, procedural actions (scheduling, poll wording, agenda control), author statements on reflector or in papers, committee instructions and whether they were satisfied, institutional backing indicators, competing-design treatment, written record omissions or inclusions.
 
@@ -244,6 +250,8 @@ An item can tag multiple criteria (comma-separated).
 
 **Effort budget:** at most 5 tool calls.
 
+**Source resolution rule:** Every evidence item must have an internet URL in the source field. Resolved means the URL follows a known pattern (wg21.link, lists.isocpp.org, wiki.edg.com) or was returned by a tool response. Workspace files are reconnaissance for finding real sources, not citable sources. Use remaining tool calls to resolve workspace leads to their real URLs. Drop any item you cannot resolve to a URL within your tool budget.
+
 **Output format:** write one scratch file:
 
 ```
@@ -251,7 +259,7 @@ An item can tag multiple criteria (comma-separated).
 
 1. {description (1-2 sentences)}
    date: {ISO or "Ongoing" or "Pattern"}
-   source: {paper number, wiki page, file path, search query}
+   source: {internet URL - public or authenticated}
    criteria: {comma-separated criterion numbers}
    quote: {verbatim if available, or "none"}
 
@@ -547,6 +555,12 @@ For each criterion, the C2 baseline and C3 signal are stated first, then evidenc
 
 ---
 
+## Source Context
+
+{Include this section only when the run-context file contains user-supplied testimony or source characterization. Omit it entirely otherwise. Reproduce verbatim when the user input is 3 sentences or fewer; paraphrase when longer. Cap at 150 words. Characterize the source category in one sentence rather than listing individual sources. If private records informed the assessment, state that fact without naming paths or enumerating files.}
+
+---
+
 ## 1. Response to Architectural Objections
 
 **C2 baseline:** {Copy from score scratch file: C2 BASELINE paragraph}
@@ -557,7 +571,7 @@ For each criterion, the C2 baseline and C3 signal are stated first, then evidenc
 
 | # | Evidence | Date | Source | Hit |
 |---|----------|------|--------|-----|
-| {id} | {description} | {date} | {source} | **{C1/C2/C3}** |
+| {id} | {description} | {date} | [{label}]({url}) | **{C1/C2/C3}** |
 
 **Criterion 1 tally: C1={n}, C2={n}, C3={n}**
 
@@ -612,15 +626,16 @@ For each criterion, the C2 baseline and C3 signal are stated first, then evidenc
 <writing-discipline>
 You are a report writer operating in the analytical register.
 
-You receive three files: an evidence packet (scored results and structural position), an evidence details file (raw quotes, dates, sources), and a report template (the output skeleton). Fill the template using the evidence packet for structure and claims. Consult the evidence details file for dates, sources, and verbatim quotes when constructing evidence tables.
+You receive four files: an evidence packet (scored results and structural position), an evidence details file (raw quotes, dates, sources), a report template (the output skeleton), and a run-context file (user constraints). Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults in this task block. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return. Fill the template using the evidence packet for structure and claims. Consult the evidence details file for dates, sources, and verbatim quotes when constructing evidence tables.
 
-Five rules:
+Six rules:
 
 1. Source constraint. The evidence packet is sole source of truth. If it lacks a fact, omit it. Every C1/C2/C3 assignment comes from the evidence packet. Never re-score.
 2. Template fidelity. Fill every section. Keep section order. Do not add sections. Do not duplicate the full detection criteria table or profile descriptions as front matter.
-3. Evidence tables. Each row has five columns: #, Evidence, Date, Source, Hit. The Evidence column uses 1-2 sentences from the evidence details file. The Hit column bolds the classification.
+3. Evidence tables. Each row has five columns: #, Evidence, Date, Source, Hit. The Evidence column uses 1-2 sentences from the evidence details file. The Source column is an inline markdown hyperlink: `[label](url)`. The URL is always an internet address. Every paper number mentioned anywhere in evidence tables (Source or Evidence column) is an inline hyperlink using `https://wg21.link/{paper}` (e.g. `[P2900R11](https://wg21.link/p2900r11)`, `[N5007](https://wg21.link/n5007)`). The Hit column bolds the classification.
 4. Assessment narrative. Integrate the results into a coherent diagnosis. Name which C2 items are genuinely ambiguous. Name which C3 items survive falsification. State whether the combination signal is present. End with a confidence level and one-phrase reason.
 5. Prose constraints. No em-dashes. No double-dashes. No hedging ("it could be argued," "perhaps," "it is possible"). No AI tells ("it is important to note," "it should be noted," "delve," "landscape," "underscores the importance"). No meta-announcements ("this section will examine"). Write declarative sentences. Let the evidence carry the argument.
+6. Source Context section. Include this section only when the run-context file contains user-supplied testimony or source characterization. Omit it otherwise. Reproduce user input verbatim when 3 sentences or fewer; paraphrase when longer. Cap at 150 words. Characterize the source category in one sentence rather than listing individual sources.
 
 Write the complete report to a scratch file. Return the file path only.
 </writing-discipline>
@@ -628,7 +643,9 @@ Write the complete report to a scratch file. Return the file path only.
 <review-task>
 You are a review agent. Cross-reference a draft report against its source evidence and the detection criteria.
 
-**Inputs you receive:** draft report path, evidence packet path, evidence details path, tool file path (grep for `<criteria-reference>` to spot-check falsification conditions).
+**Inputs you receive:** draft report path, evidence packet path, evidence details path, run-context path, tool file path (grep for `<criteria-reference>` to spot-check falsification conditions).
+
+**Run-context:** Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults in this task block. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return.
 
 **Check five axes:**
 
@@ -638,7 +655,7 @@ You are a review agent. Cross-reference a draft report against its source eviden
 
 3. **Falsification fidelity.** For each C3 item: the "why C2 does not explain" paragraph names a specific falsifier from `<criteria-reference>` that is met. For each C2 item: the justification states the falsifier is not met. Spot-check at least 3 C3 items and 3 C2 items against the actual falsifier text.
 
-4. **Template compliance.** Sections appear in correct order (Executive Summary, The Proposal, Authors and Structural Position, Scoring Method, Criteria 1-16, Grand Tally, Assessment, What This Describes, Footer). No duplicated front matter (no full detection criteria table, no full profile descriptions). Footer present with date and model name.
+4. **Template compliance.** Sections appear in correct order (Executive Summary, The Proposal, Authors and Structural Position, Scoring Method, Source Context [optional], Criteria 1-16, Grand Tally, Assessment, What This Describes, Footer). No duplicated front matter (no full detection criteria table, no full profile descriptions). Footer present with date and model name.
 
 5. **Prose.** No em-dashes (U+2014). No double-dashes (--). No hedging phrases ("it could be argued," "perhaps," "it is possible that"). No forward references in the assessment (every concept grounded before use).
 
