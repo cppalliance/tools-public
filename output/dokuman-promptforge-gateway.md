@@ -1,299 +1,428 @@
-# promptforge-gateway
+# PromptForge Gateway
 
-promptforge-gateway is an OpenAI-compatible API gateway that routes chat completion requests to any combination of cloud providers and locally-run GGUF models - all from a single TOML config. Point your existing OpenAI SDK client at it, swap backends without changing a line of client code, and run local inference on your own GPU with zero external dependencies. This guide walks you through every feature, from a one-endpoint proxy to multi-profile, multi-GPU deployments with managed llama-server processes and built-in web search.
+PromptForge Gateway is a standalone Rust binary that sits between your callers and any LLM backend. Point any OpenAI SDK or curl command at it by changing one base URL, and the gateway handles routing, concurrency, local model hosting, and web search - all from a single TOML file. Models are named by capability (`reasoning-large`, not `gpt-4o`), so the same prompt works across deployments while the backing vendor changes in one config line. This guide walks you through every feature, from first request to full production config.
 
-## What the Gateway Does
+## Drop-In Compatibility
 
-The gateway accepts `POST /v1/chat/completions` requests in the standard OpenAI format and forwards them to a configured backend. Unknown fields like `temperature` and `top_p` pass through verbatim. Model names are aliased: the caller asks for `reasoning-large`, the gateway maps it to the right upstream model, and the response echoes back `reasoning-large` - not the provider's internal name. Every error comes back in an OpenAI-compatible envelope, so existing SDK error handling works unchanged.
+Send a chat completion to the gateway exactly the way you would send one to OpenAI:
 
-## Getting Started
-
-A minimal config needs one endpoint and one model. Create `gateway.toml`:
-
-```toml
-[gateway]
-bearer_token = "${GATEWAY_TOKEN}"
-listen = "127.0.0.1:8080"
-
-[endpoints.openai]
-base_url = "https://api.openai.com/v1"
-api_key = "${OPENAI_API_KEY}"
-
-[models.gpt4]
-name = "gpt-4o"
-endpoint = "openai"
-upstream_model = "gpt-4o"
+```bash
+curl http://127.0.0.1:8080/v1/chat/completions \
+  -H "Authorization: Bearer $GATEWAY_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "reasoning-large",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "temperature": 0.7,
+    "max_tokens": 256
+  }'
 ```
 
-Start the gateway:
+Change only the base URL. Every sampling parameter - `temperature`, `max_tokens`, and any future parameter the gateway has never seen - passes through to the backend untouched. No gateway release is needed when a provider adds new parameters.
+
+List every model in the active profile:
+
+```bash
+curl http://127.0.0.1:8080/v1/models \
+  -H "Authorization: Bearer $GATEWAY_KEY"
+```
+
+All data-bearing routes require a bearer token. Credentials are compared in constant time to prevent timing attacks. A separate health endpoint needs no credentials:
+
+```bash
+curl http://127.0.0.1:8080/health
+```
+
+Load balancers and monitors use `/health` to verify the gateway is running.
+
+## Configuration
+
+### Minimal working config
+
+```toml
+[server]
+bind = "127.0.0.1:8080"
+key = "${GATEWAY_KEY}"
+
+[[endpoint]]
+id = "openai-prod"
+protocol = "openai"
+base_url = "https://api.openai.com"
+api_key = "${OPENAI_API_KEY}"
+
+[[model]]
+name = "reasoning-large"
+description = "GPT-4o for reasoning tasks"
+context = 128000
+thinking = "switchable"
+upstream = "gpt-4o"
+endpoints = ["openai-prod"]
+default_max_tokens = 4096
+```
+
+Start the gateway with a direct path:
 
 ```bash
 promptforge-gateway serve gateway.toml
 ```
 
-Test with curl:
+Or with a named profile from a profiles directory:
 
 ```bash
-curl http://127.0.0.1:8080/v1/chat/completions \
-  -H "Authorization: Bearer $GATEWAY_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-4o",
-    "messages": [{"role": "user", "content": "Hello"}]
-  }'
+promptforge-gateway serve --profiles-dir ./profiles --profile analytical
 ```
 
-The gateway validates the entire TOML at boot. A misspelled key is a startup failure, not a silent misconfiguration.
+### Environment variables
 
-## Configuration
+Any TOML string value can reference environment variables with `${VAR}` syntax. The gateway fails at boot if a referenced variable is missing. For a literal dollar sign, write `$$`. Interpolation runs after TOML parsing, so it cannot corrupt TOML structure.
 
-The gateway is configured entirely from TOML with eager validation. Every key is checked at load time - there are no "unknown field ignored" surprises.
+### Profile inheritance
 
-Environment variable interpolation works in any string value using `${VAR}` syntax. Use `$$` to produce a literal dollar sign. Any unresolved variable fails at startup, so you know immediately when an environment is misconfigured.
+Profiles support `include` directives for composable configs. A child profile inherits everything from its parents, with depth-first merge:
 
 ```toml
-[endpoints.anthropic]
-base_url = "https://api.anthropic.com/v1"
-api_key = "${ANTHROPIC_API_KEY}"
-```
+include = ["base.toml"]
 
-Secrets are redacted throughout the system. API keys and bearer tokens use a `Secret` type that has no `Serialize` implementation and redacts through both `Debug` and `Display`, so credentials never leak into logs or debug output.
+[server]
+key = "${STAGING_KEY}"
 
-## Models and the Catalog
-
-Model names are capability aliases. Name them by what they do - `reasoning-large`, `fast-draft` - so the same client prompt works unchanged when you swap the underlying provider between development and production.
-
-The gateway exposes a model catalog at `GET /v1/models`, authenticated with the same bearer token as completions. Each entry advertises:
-
-- **name** and **description**
-- **context size**
-- **thinking mode** - `never`, `always`, or `switchable`
-- **tool-calling dialect** and **tools mode**
-
-Clients can query this catalog to discover available models and adapt their behavior. Set `default_max_tokens` on a model so the gateway supplies `max_tokens` when the caller omits one.
-
-```bash
-curl http://127.0.0.1:8080/v1/models \
-  -H "Authorization: Bearer $GATEWAY_TOKEN"
-```
-
-## Multiple Backends
-
-Each endpoint has its own base URL, API key, and concurrency setting. Route different models through different providers under a single gateway:
-
-```toml
-[endpoints.openai]
-base_url = "https://api.openai.com/v1"
-api_key = "${OPENAI_API_KEY}"
-
-[endpoints.anthropic]
-base_url = "https://api.anthropic.com/v1"
-api_key = "${ANTHROPIC_API_KEY}"
-
-[models.reasoning]
+[[model]]
 name = "reasoning-large"
-endpoint = "anthropic"
-upstream_model = "claude-sonnet-4-20250514"
-
-[models.fast]
-name = "fast-draft"
-endpoint = "openai"
-upstream_model = "gpt-4o-mini"
+upstream = "gpt-4o-mini"
+description = "Budget reasoning for staging"
+context = 128000
+endpoints = ["openai-prod"]
 ```
 
-Callers see `reasoning-large` and `fast-draft`. They never know which provider sits behind each name.
+Arrays append; entries with the same `id` or `name` replace the inherited version. Device lane entries in a child attach to an inherited device without redeclaring the whole device. Scalar values like the server key override cleanly.
 
-## Concurrency and Queuing
+Include chains are limited to 16 levels deep. Circular includes are detected and rejected. Profile names are validated against path traversal - names like `../secrets` or `a/b` are rejected. Dotted names like `analysis.v2` are fine as long as they are a single path component.
 
-Each endpoint can have a concurrency limit that caps in-flight requests. When the limit is reached, additional requests enter a bounded waiting queue. If the queue overflows, the gateway returns `503`.
+### Validation
 
-Fair round-robin scheduling distributes queue slots across callers. Identify your caller by sending the `X-PromptForge-Client` header (bounded to 64 characters, at most 32 distinct labels).
+Unknown fields in any config section cause an immediate error, catching typos before the gateway starts. All validation runs at load time, so every error surfaces before the gateway accepts traffic. Merge errors produce file:line diagnostics showing exactly where the conflict is.
 
-Set a whole-request timeout so a stalled backend times out as a transport error rather than hanging the caller.
+## Routing and Models
+
+### Endpoints
+
+Each backend gets an endpoint declaration with its own URL, credentials, and optional concurrency limit:
 
 ```toml
-[endpoints.openai]
-base_url = "https://api.openai.com/v1"
+[[endpoint]]
+id = "openai-prod"
+protocol = "openai"
+base_url = "https://api.openai.com"
 api_key = "${OPENAI_API_KEY}"
 concurrency = 10
 ```
 
-## Profiles
+### Model aliases
 
-Profiles let you organize configurations into named TOML files under `~/.promptforge/profiles/`. Start the gateway with a profile name instead of a config path:
-
-```bash
-promptforge-gateway serve --profile production
-```
-
-This loads `~/.promptforge/profiles/production.toml`. The `--profile` flag and a positional config path are mutually exclusive.
-
-Profiles compose through `include` chains. A leaf profile includes a base profile, and values merge depth-first up to 16 levels, with cycle detection. Override individual endpoints, models, or local models by id/name across included profiles, and factor shared definitions into base profiles.
+Models map a caller-facing name to a backend endpoint. The `upstream` field sets the model identifier sent to the provider:
 
 ```toml
-# ~/.promptforge/profiles/base.toml
-[endpoints.openai]
-base_url = "https://api.openai.com/v1"
-api_key = "${OPENAI_API_KEY}"
-```
-
-```toml
-# ~/.promptforge/profiles/production.toml
-include = ["base.toml"]
-
-[models.reasoning]
+[[model]]
 name = "reasoning-large"
-endpoint = "openai"
-upstream_model = "o1"
+description = "GPT-4o for reasoning tasks"
+context = 128000
+thinking = "switchable"
+upstream = "gpt-4o"
+endpoints = ["openai-prod"]
+default_max_tokens = 4096
 ```
 
-Include paths resolve relative to the including file's directory, or as absolute paths.
+Callers always request `reasoning-large`. When you switch providers, change `upstream` and `endpoints` - callers never know. Multiple models can route to different endpoints, each with its own URL and credentials.
 
-## Runtime Profile Switching
+### Thinking mode
 
-Switch the active profile without restarting the gateway:
+Control whether a model uses thinking tokens with three settings:
 
-```bash
-curl -X POST http://127.0.0.1:8080/admin/switch-profile \
-  -H "Authorization: Bearer $GATEWAY_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"profile": "staging"}'
-```
+- `"never"` - thinking tokens are suppressed
+- `"always"` - thinking tokens are always used
+- `"switchable"` - the caller controls per request
 
-List available profiles:
+### Local and remote together
 
-```bash
-curl http://127.0.0.1:8080/admin/profiles \
-  -H "Authorization: Bearer $GATEWAY_TOKEN"
-```
+Local models merge into the same routing table as remote models. Callers address them through the same API. The gateway rejects duplicate model names across remote and local declarations - you get an error at config time, not at request time.
 
-Inspect the active profile:
+## Concurrency and Queuing
 
-```bash
-curl http://127.0.0.1:8080/admin/status \
-  -H "Authorization: Bearer $GATEWAY_TOKEN"
-```
-
-Profile switches are atomic and serialized. A failed switch leaves the previous profile fully operational - catalog, credentials, and routing are unchanged. When local models are involved, old llama-server children stop before new ones start, so the two never hold VRAM simultaneously.
-
-## Devices and Lanes
-
-Devices model your physical compute resources. Each device entry has a type - `local` for hardware on the machine, `remote` for cloud endpoints - and its own concurrency setting.
-
-Concurrency lanes let multiple local models share a GPU with per-lane admission control. Endpoints and local models bind to devices, inheriting concurrency from remote devices or using lane-level control on local devices.
+Set per-endpoint concurrency limits to prevent backend overload:
 
 ```toml
-[devices.gpu0]
-type = "local"
-
-[devices.cloud-anthropic]
-type = "remote"
+[[endpoint]]
+id = "openai-prod"
+protocol = "openai"
+base_url = "https://api.openai.com"
+api_key = "${OPENAI_API_KEY}"
+concurrency = 10
 ```
+
+Excess requests wait in a fair queue. Configure the queue globally:
+
+```toml
+[queue]
+max_depth = 100
+fair_scheduling = true
+```
+
+When the queue is full, callers receive a 503 with a machine-readable `queue_full` error code.
+
+### Fair scheduling
+
+Fair round-robin scheduling is on by default. Instead of pure FIFO, the gateway interleaves requests from different clients. Clients identify themselves with the `X-PromptForge-Client` header:
+
+```bash
+curl http://127.0.0.1:8080/v1/chat/completions \
+  -H "Authorization: Bearer $GATEWAY_KEY" \
+  -H "X-PromptForge-Client: batch-pipeline" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "reasoning-large", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+The label is alphanumeric plus `-`, `_`, `.`, `:` (max 64 bytes). The gateway tracks up to 32 distinct client labels; excess labels fold into a shared default bucket. Cancelled requests automatically free their queue slot.
+
+To run without concurrency limits, omit the `concurrency` setting on the endpoint.
 
 ## Local Models
 
-Run GGUF models locally via managed llama-server subprocesses with no external provider needed. Point a local model source at a Hugging Face HTTPS URL or a local file path:
+### Simplest local model
+
+Declare a local GGUF model and the gateway handles everything else:
 
 ```toml
-[local_models.codegen]
-name = "local-codegen"
-source = "https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-7b.Q4_K_M.gguf"
+[[local_model]]
+name = "local-reasoning"
+description = "Local Qwen model"
+source = "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q4_k_m.gguf"
+sha256 = "abc123..."
+context = 4096
+gpu_layers = 99
 ```
 
-On first use, the gateway auto-provisions a pinned, GPU-capable llama-server binary - Vulkan on Windows and Linux, Metal on macOS - with deterministic tree-digest tamper detection. No manual llama.cpp installation required.
+On first use, the gateway downloads a pinned GPU-capable `llama-server` binary for your platform and downloads the GGUF file with SHA-256 verification. Six platform targets work out of the box: Windows x86_64 (Vulkan), Windows arm64 (CPU fallback), Linux x86_64 (Vulkan), Linux arm64 (Vulkan), macOS x86_64 (Metal), and macOS arm64 (Metal).
 
-For gated Hugging Face repos, set `HF_TOKEN` in the environment. Local paths work directly:
+The gateway starts with no downloads or child processes when no local models are declared.
 
-```toml
-[local_models.codegen]
-name = "local-codegen"
-source = "/models/codellama-7b.Q4_K_M.gguf"
-```
-
-You can run multiple `local_model` entries simultaneously, each backed by its own managed llama-server child registered as normal routes in the gateway.
-
-## Local Model Tuning
-
-Tune inference parameters per model:
+### Full local model config
 
 ```toml
-[local_models.codegen]
-name = "local-codegen"
-source = "https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-7b.Q4_K_M.gguf"
-context = 8192
-n_predict = 4096
-gpu_layers = 35
+[[local_model]]
+name = "local-reasoning"
+description = "Local Qwen model"
+source = "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q4_k_m.gguf"
+sha256 = "abc123..."
+context = 4096
+gpu_layers = 99
 flash_attention = true
-cache_type_k = "f16"
-cache_type_v = "f16"
+cache_type_k = "q8_0"
+cache_type_v = "q4_0"
+n_predict = 2048
+chat_template_file = "templates/tool-capable.jinja"
+lane = "default"
 ```
 
-If the GGUF's embedded Jinja chat template lacks tool-calling support, override it with `chat_template_file` pointing to a custom template. The gateway auto-detects the tool-calling dialect by probing the child's `/props` and `/v1/models` endpoints, falling back to a locally cached Hugging Face metadata sidecar.
+Per-model tuning knobs:
 
-## Local Model Operations
+- `context` - context window size
+- `gpu_layers` - number of layers offloaded to GPU
+- `flash_attention` - enable flash attention
+- `cache_type_k` / `cache_type_v` - KV-cache quantization (defaults: q8_0 for K, q4_0 for V)
+- `n_predict` - generation ceiling
+- `chat_template_file` - external Jinja chat template, useful for quants that need a tool-capable override
+- `lane` - assigns the model to a device lane for GPU concurrency control
 
-Managed llama-server children auto-respawn after a crash with cooldown. If a child dies between requests, the gateway detects it on the next request and respawns. On port bind collision, it retries on fresh ports up to 4 attempts.
+### Device lanes
 
-Downloads show interactive progress bars on TTY stderr, or structured tracing log lines in non-TTY environments. Pin remote artifacts by SHA-256 digest so downloads are integrity-verified and corrupted or tampered files are rejected.
+GPU concurrency for local models is managed through named lanes on device declarations:
 
-Cache management:
+```toml
+[[device]]
+id = "local-gpu"
+kind = "local"
 
-- Set `local.cache_dir` or `cache_dir` to relocate the artifact cache and llama.cpp install from the default `~/.promptforge`
-- Artifact cache permissions are owner-private (Unix 0700, Windows per-user DACL)
-- Archive path-traversal entries (`..`, symlinks, reparse points) are rejected
-- Concurrent provisioning of the same artifact is serialized via per-artifact file locks
-- Artifact downloads are bounded at 256 GiB
+[[device.lane]]
+id = "default"
+concurrency = 1
+```
 
-Ctrl-C during a slow local model startup triggers a clean abort rather than hanging on the readiness loop.
+Endpoint concurrency inherits from a shared device when the endpoint omits its own limit.
+
+### Resilience
+
+Each local model runs as a dedicated child process. If a child crashes, the gateway respawns it on the same port with one retry and a 3-second cooldown. When a port is already occupied, the gateway retries on a fresh port up to 4 times. Each child is authenticated with a per-attempt cryptographic bearer token so rogue localhost processes cannot impersonate it. The correct tool-calling dialect is detected automatically by probing the model after startup.
+
+### Model files from disk
+
+GGUF files can also be local filesystem paths with tilde expansion:
+
+```toml
+[[local_model]]
+name = "local-small"
+description = "Local model from disk"
+source = "~/models/small.gguf"
+sha256 = "def456..."
+context = 2048
+gpu_layers = 0
+```
+
+### Cache and Hugging Face
+
+A custom cache directory replaces the default `~/.promptforge`:
+
+```toml
+[local]
+cache_dir = "/mnt/fast-ssd/promptforge-cache"
+```
+
+Gated Hugging Face model downloads authenticate automatically using `HF_TOKEN` or `HUGGING_FACE_HUB_TOKEN` from the environment.
+
+A long startup sequence with multiple local models can be interrupted with Ctrl-C for a clean exit.
+
+## Artifact Security
+
+When you declare remote model sources, the gateway enforces several protections automatically:
+
+- **HTTPS required.** Remote sources must use HTTPS. HTTP URLs are rejected at config validation.
+- **SHA-256 pins mandatory.** Every remote source must carry a SHA-256 pin. The gateway streams the download through SHA-256 comparison and reports both expected and actual digests on mismatch.
+- **Cache lockdown.** The artifact cache directory is set to owner-only access on first use (chmod 0700 on Unix, icacls DACL restriction on Windows). World-readable cache directories trigger a privacy enforcement error with remediation instructions.
+- **Symlink rejection.** Symlink and reparse-point components in cache paths are detected and rejected to prevent write-redirection attacks.
+- **Atomic downloads.** Artifacts are staged then renamed, so a crash never leaves a half-written file. Stale staging files from interrupted downloads are cleaned up automatically.
+- **Concurrent safety.** Multiple threads provisioning the same model converge on a single correct cached artifact via per-artifact file locks.
+- **Archive safety.** Archive extraction rejects path traversal, symlinks, hardlinks, and device entries. Unix file permissions are preserved so `llama-server` retains its executable bit.
+- **Tamper detection.** Post-install tampering of the extracted `llama-server` tree is detectable via a whole-tree digest.
+
+Downloads are capped at 256 GiB and bounded by a 2-hour timeout. A live progress bar shows percentage, throughput, and ETA on TTY; structured log lines appear in non-interactive mode.
 
 ## Web Search
 
-The gateway includes a Brave-backed web search tool, configured independently of the chat completion pipeline:
+Web search is optional. Enable it by adding a `[tools.web_search]` section:
 
 ```toml
 [tools.web_search]
-api_key = "${BRAVE_SEARCH_API_KEY}"
-default_count = 5
-max_count = 20
-max_per_host = 3
-strip_tracking = true
-safesearch = "moderate"
+provider = "brave"
+api_key = "${BRAVE_API_KEY}"
 ```
 
-Query it directly:
+Call the endpoint:
 
 ```bash
 curl -X POST http://127.0.0.1:8080/v1/tools/web_search \
-  -H "Authorization: Bearer $GATEWAY_TOKEN" \
+  -H "Authorization: Bearer $GATEWAY_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
-    "query": "rust async runtime comparison",
-    "count": 5
-  }'
+  -d '{"query": "Rust async runtime comparison"}'
 ```
 
-Per-request filtering supports `include_domains`, `exclude_domains`, `freshness`, `country`, `search_lang`, and `safesearch`. The gateway clamps requested result count to the configured maximum while over-fetching from Brave and trimming to the requested count. Host diversity is enforced via `max_per_host`, and tracking query parameters are stripped from result URLs by default.
+Results come back in a structured format with `title`, `url`, `description`, `site_name`, and `extra_snippets` fields. The gateway proxies to Brave without exposing your search API key to callers. When web search is not configured, the endpoint returns 404.
 
-All inputs are validated at the boundary. Output is bounded and sanitized: titles, descriptions, URLs, snippets, and age strings are length-capped and control-character-stripped. Non-HTTPS URLs are dropped.
+### Filtering and defaults
 
-## Authentication and Security
+Set server-wide defaults and per-request overrides:
 
-Every `/v1/*` and `/admin/*` request requires a bearer token, compared in constant time. The caller's token is never forwarded to upstream backends.
+```toml
+[tools.web_search]
+provider = "brave"
+api_key = "${BRAVE_API_KEY}"
+base_url = "https://api.search.brave.com"
+default_count = 5
+max_count = 20
+max_per_host = 2
+default_freshness = "pw"
+default_safesearch = "moderate"
+strip_tracking = true
+```
 
-The gateway holds provider API keys and the Brave Search credential server-side, so clients never need direct access to upstream credentials.
+Per-request fields override server defaults:
 
-Additional security measures for local model operations:
+- `count` - number of results (clamped to `max_count`)
+- `freshness` - `pd` (past day), `pw` (past week), `pm` (past month), `py` (past year), or `YYYY-MM-DDtoYYYY-MM-DD`
+- `safesearch` - `off`, `moderate`, or `strict`
+- `include_domains` / `exclude_domains` - domain filtering with subdomain matching (filtering on `example.com` also catches `sub.example.com`)
+- `country` - 2-character country code
+- `search_lang` - 2-3 character language code
 
-- Each llama-server child gets a cryptographically random per-attempt bearer token, preventing adjacent host processes from hijacking the local endpoint
-- Artifact cache directories enforce owner-private permissions
-- Archive extraction rejects path-traversal entries
+The gateway over-fetches from Brave (up to 3x) to ensure enough candidates survive domain filtering and per-host caps. Text fields are sanitized by stripping control characters, collapsing whitespace, and decoding HTML entities. Non-navigable and over-length URLs cause the whole result to be dropped. Extra snippets are capped at 8 per result, 1024 characters each.
 
-## Health and Observability
+## Administration
 
-An unauthenticated `GET /health` endpoint returns 200 whenever the gateway is serving - suitable for load balancer liveness probes. The gateway emits structured tracing output, with interactive progress bars on TTY stderr and structured log lines in non-TTY environments.
+### List profiles
 
-## Library API
+```bash
+curl http://127.0.0.1:8080/admin/profiles \
+  -H "Authorization: Bearer $GATEWAY_KEY"
+```
 
-The `promptforge-gateway` crate exposes a library API for programmatic assembly. Build a `Gateway` from a `Config` and `ProfilesContext`, then serve on a caller-owned `TcpListener` with a custom shutdown signal. This is the integration-testing seam: bind to port 0, get the assigned address, run your test client, then signal shutdown.
+### Check status
 
-*2026-08-10 21:24 - claude-opus-4-6-medium-thinking*
+```bash
+curl http://127.0.0.1:8080/admin/status \
+  -H "Authorization: Bearer $GATEWAY_KEY"
+```
+
+Returns the current profile name and active model list.
+
+### Switch profiles at runtime
+
+```bash
+curl -X POST http://127.0.0.1:8080/admin/switch-profile \
+  -H "Authorization: Bearer $GATEWAY_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"profile": "beta"}'
+```
+
+A profile switch rebuilds the routing table, stops old local model children (freeing VRAM), starts new ones, and atomically swaps all state. If the switch fails - for example, the profile does not exist - the current profile and catalog remain intact.
+
+Admin routes use the same bearer token as the data routes.
+
+### Graceful shutdown
+
+The gateway shuts down gracefully on Ctrl-C, completing in-flight requests before exiting. Local model children are terminated within a 5-second deadline.
+
+## Error Handling
+
+Every error from the gateway uses the OpenAI error envelope format:
+
+```json
+{
+  "error": {
+    "message": "model 'nonexistent' not found",
+    "type": "invalid_request_error",
+    "code": "model_not_found"
+  }
+}
+```
+
+Unmodified SDKs surface gateway errors as their own error types. Common error codes:
+
+| Situation | HTTP Status | `code` |
+|---|---|---|
+| Model not found | 404 | `model_not_found` |
+| Bad or missing token | 401 | `unauthorized` |
+| Queue full | 503 | `queue_full` |
+| Profile not found | 404 | `profile_not_found` |
+
+The gateway validates request boundaries at the wire level: empty model names, empty message arrays, unsupported roles, and malformed choice structures are rejected before reaching the backend.
+
+API keys are protected from accidental logging by a redacting type that displays `redacted` in both debug and display output. Caller credentials are stripped before forwarding, so your bearer token never leaks to upstream providers.
+
+Outbound calls have a 10-second connect timeout and a 120-second request timeout, so stalled backends cannot pin concurrency slots forever. Upstream response bodies are capped at 4 MB for success and 64 KB for error diagnostics.
+
+## Constraints Reference
+
+| Constraint | Limit |
+|---|---|
+| Include chain depth | 16 levels |
+| Default queue depth | 100 per endpoint |
+| Distinct client labels (fair scheduling) | 32 |
+| Upstream response body (success) | 4 MB |
+| Upstream response body (error) | 64 KB |
+| Connect timeout | 10 seconds |
+| Request timeout | 120 seconds |
+| Artifact download size | 256 GiB |
+| Artifact download timeout | 2 hours |
+| Extra snippets per search result | 8 (1024 chars each) |
+| Respawn cooldown | 3 seconds |
+| Child termination deadline | 5 seconds |
+| Port collision retries | 4 attempts |
+| KV-cache defaults | K: q8_0, V: q4_0 |
