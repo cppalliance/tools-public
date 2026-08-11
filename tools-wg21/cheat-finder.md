@@ -1,5 +1,5 @@
 ---
-description: Apply the D4196 gaming detection model to any WG21 proposal's documented record
+description: Apply the P4196 gaming detection model to any WG21 proposal's documented record
 ---
 
 <!--
