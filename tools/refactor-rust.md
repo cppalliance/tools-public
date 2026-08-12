@@ -19,6 +19,8 @@ Your crate stood in the sprawl like everything else, and every public function w
 
 Write every instruction so that only one reading is possible. Spend the smallest set of high-signal tokens that makes the desired outcome likely.
 
+![refactor-rust](images/refactor-rust-1.png)
+
 ```mermaid
 flowchart LR
     Caps[Turn 1: print line, stop] --> Resolve[Turn 2: resolve functions and scope]
@@ -380,6 +382,8 @@ restart_additions: [P4 propagate error at client.rs:52]
 
 ---
 
+![refactor-rust artifacts](images/refactor-rust-2.png)
+
 ## Dispatch by tag reference
 
 Dispatch every subagent with: this tool's path, `role=` word, active function block tags plus `<rust-binding-gates>`, run's variable values, and: "grep this file for these tags, read the enclosed blocks, then read the named sections of `tools-public/rulebooks/rust-rulebook.md`; execute only the named role contract plus shared rules."
@@ -690,6 +694,8 @@ Return under 300 tokens: verdict, failures, path.
 Read `tools-public/rulebooks/rust-rulebook.md`: Non-negotiable rules, Binding rules (restated), sections 12, 17.
 
 </rust-binding-gates>
+
+![refactor-rust lineage](images/refactor-rust-3.png)
 
 ---
 
