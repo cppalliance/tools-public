@@ -751,12 +751,48 @@ Repository documentation carries what rustdoc cannot:
 | `ARCHITECTURE.md` | the bird's eye view, a codemap naming files and types, the invariants, the cross-cutting concerns |
 | `LICENSE-APACHE`, `LICENSE-MIT` | the dual license the ecosystem expects |
 
+User guides:
+
+Write a user guide when the crate needs tutorials, walkthroughs, or conceptual explanations that exceed what doc comments and `ARCHITECTURE.md` carry. Keep API reference on docs.rs and the narrative guide separate.
+
+- Use mdBook, which is the ecosystem standard: the Rust Book, Cargo, Tokio, and Serde all use it.
+- Place the book in a `guide/` directory at the workspace root, with `book.toml` at its root and chapters under `guide/src/`.
+- Write `SUMMARY.md` as the table of contents; mdBook generates navigation from it.
+- Write CommonMark; do not rely on GitHub-flavored extensions such as task lists or alerts.
+- Pull source into prose with `{{#include path/to/file.rs}}`; never paste code that is not compiled elsewhere, because it rots silently.
+- Hide setup lines with a leading `# ` inside a fence so they compile but do not render.
+- Use `{{#playground}}` for examples meant to run on play.rust-lang.org.
+- Tag every non-Rust fence explicitly; mdBook compiles untagged fences as Rust.
+- Add admonitions only through a community preprocessor; mdBook has no native admonition syntax.
+- Deploy with `mdbook build` in CI to GitHub Pages, and set `documentation` in `Cargo.toml` to the published guide URL.
+- Link the guide from `README.md` rather than duplicating its content there.
+
+```
+guide/
+  book.toml
+  src/
+    SUMMARY.md
+    introduction.md
+    getting-started.md
+    advanced/
+      custom-backends.md
+```
+
+| Kind | Host | Tool |
+|---|---|---|
+| API reference | docs.rs, automatic on publish | rustdoc |
+| User guide | GitHub Pages or a custom domain | mdBook |
+
 Detect in existing code:
 
 - a `pub` item with no `///`, or a module or `lib.rs` with no `//!` - `missing_docs` flags these.
 - a `Result`-returning `pub fn` with no `# Errors`, or an `unsafe fn` with no `# Safety` - a required heading is missing.
 - ` ```ignore ` on a doc fence, or `.unwrap()` in a doc example - hidden rot and habits readers copy.
 - a hand-written `https://doc.rust-lang.org/...` link where an intra-doc link would resolve - it rots on the next layout change.
+- a `guide/` directory with no CI deploy step - add an `mdbook build` job that publishes to GitHub Pages.
+- a guide with pasted code instead of `{{#include}}` directives - replace with includes pointing to tested source files.
+- a `README.md` that duplicates the guide - link to the published guide and keep the README to a pitch plus one example.
+- a `documentation` field missing from `Cargo.toml` when a published guide exists - set it to the guide URL.
 
 Corrections:
 
