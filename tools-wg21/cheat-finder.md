@@ -19,23 +19,26 @@ Point Cheat Finder at any proposal's documented record and it runs the detection
 ```mermaid
 flowchart TD
     S0["0 Receive (main)"] --> S1["1 Profile + Gather (parallel)"]
-    S1 --> S2["2 Score (parallel x16)"]
-    S2 --> S3["3 Tally (main)"]
-    S3 --> S4["4 Prepare (main + shell)"]
-    S4 --> S5["5 Write (isolated subagent)"]
-    S5 --> S6["6 Review (fresh subagent)"]
-    S6 --> S7["7 Deliver (main)"]
+    S1 --> S2["2 Verify (parallel subagents)"]
+    S2 --> S3["3 Score (parallel x16)"]
+    S3 --> S4["4 Tally (main)"]
+    S4 --> S5["5 Prepare (main + shell)"]
+    S5 --> S6["6 Write (isolated subagent)"]
+    S6 --> S7["7 Review (fresh subagent)"]
+    S7 --> S8["8 Deliver (main)"]
 ```
 
 ---
 
 ## Token Economy
 
-**In main:** user inputs, file paths, step completion status, tally line reads (grep output), review corrections (cap 2000 tokens).
+**In main:** user inputs, file paths, step completion status, tally line reads (grep output), verification corrections (bounded at 2 lines per evidence item), review corrections (cap 2000 tokens).
 
-**Never in main:** raw source material, profile prose body, master evidence body, score scratch file bodies, evidence packet body, evidence details body, writer's draft body. All consumed by path from subagents or read from file by the review subagent only.
+**In verify subagents:** master evidence file (read), fetched source content (transient). Corrections file (write).
 
-The only large read in main: Step 7 (Deliver) when corrections exist. Bounded by report size (~500 lines).
+**Never in main:** raw source material, profile prose body, master evidence body (except grep for `source:` and `date:` lines during Step 2 classification), score scratch file bodies, evidence packet body, evidence details body, writer's draft body. All consumed by path from subagents or read from file by the review subagent only.
+
+The only large reads in main: Step 2 (Verify) source-line grep of master evidence, and Step 8 (Deliver) when corrections exist. Both bounded: the grep by line count, the report by ~500 lines.
 
 ---
 
@@ -101,7 +104,27 @@ Each subagent makes at most 5 tool calls. Returns count + path only.
 
 After all Gather subagents return, shell-concatenate their scratch files into one master evidence file. Assign global IDs by prepending `G{n}.` to each item, sequential across all sources. These IDs are the stable references for Score subagents and the writer.
 
-### Step 2: Score (parallel-capable, 16 subagents)
+### Step 2: Verify (parallel subagents)
+
+Check each gathered evidence item against its original source before scoring begins. Errors caught here (misattribution, wrong date, fabricated quote, incorrect count) do not propagate into scoring, writing, or review.
+
+Grep the master evidence file for `source:` and `date:` lines. Classify each item:
+
+- **Verifiable:** the `source:` field contains a fetchable URL (lists.isocpp.org, wiki.edg.com, wiki.isocpp.org, open-std.org, isocpp.org, or any other internet URL).
+- **Skippable:** the `date:` field is "Pattern" or "Ongoing" AND the item's description contains no named author, no quoted text, and no specific numbers (poll tallies, page counts, NB counts). Items with specific quotes or attributions are verifiable even with "Pattern" dates.
+- **Testimony-based:** the `source:` field points to a generic paper link (wg21.link) AND the item's description attributes its content to user-supplied testimony. Skip these.
+
+Partition verifiable items by source type:
+
+- Reflector: URLs matching `lists.isocpp.org`
+- Wiki: URLs matching `wiki.edg.com` or `wiki.isocpp.org`
+- Web/papers: all other URLs
+
+Dispatch 3 verify subagents. Pass each: tool file path, `<verify-task>` tag name, master evidence file path, source-type assignment (one of: reflector, wiki, web). If a source-type partition is empty, skip that subagent.
+
+After all verify subagents return, read the corrections files. For each CORRECTED item, apply the field fix to the master evidence file via StrReplace. For each DROPPED item (fabricated content confirmed absent from source), remove the item from the master evidence file and renumber subsequent G-IDs sequentially. Renumbering is safe because Step 3 (Score) has not yet read the file. If all items are VERIFIED or UNFETCHABLE with no CORRECTED or DROPPED verdicts, skip the correction pass. Write a verification-log scratch file listing all verdicts.
+
+### Step 3: Score (parallel-capable, 16 subagents)
 
 Dispatch: read this tool file, grep for `<score-task>`, execute. The task directs the subagent to also grep for `<criteria-reference>` and read its own criterion's entry.
 
@@ -132,7 +155,7 @@ TALLY: C1={n} C2={n} C3={n}
 
 Returns path only.
 
-### Step 3: Tally (main)
+### Step 4: Tally (main)
 
 Shell-grep the `TALLY:` line from each of the 16 score scratch files. Mechanical aggregation:
 
@@ -141,7 +164,7 @@ Shell-grep the `TALLY:` line from each of the 16 score scratch files. Mechanical
 - Write one-sentence verdict for the Executive Summary.
 - Write to a tally scratch file.
 
-### Step 4: Prepare (main + shell)
+### Step 5: Prepare (main + shell)
 
 The analytical firewall. All analysis is complete. This step assembles what the writer needs.
 
@@ -155,7 +178,7 @@ Write THREE scratch files:
 
 <img src="images/cheat-finder-2.png" alt="Cheat Finder Firewall" width="100%">
 
-### Step 5: Write (1 isolated subagent)
+### Step 6: Write (1 isolated subagent)
 
 Dispatch: read this tool file, grep for `<writing-discipline>`, execute.
 
@@ -163,7 +186,9 @@ Pass four file paths: evidence packet, evidence details, report template, run-co
 
 The writer never invents evidence. If the evidence packet lacks a fact, the writer omits it. The writer never scores - all C1/C2/C3 assignments come from the evidence packet.
 
-### Step 6: Review (1 fresh subagent)
+### Step 7: Review (1 fresh subagent)
+
+Step 2 (Verify) checks external accuracy - whether gathered evidence matches its original sources. This step checks internal consistency - whether the written report matches the evidence packet. Both exist because they operate on different artifacts at different pipeline stages: Verify corrects the master evidence before scoring, Review corrects the report after writing.
 
 Dispatch: read this tool file, grep for `<review-task>`, execute.
 
@@ -181,7 +206,7 @@ Returns one of:
 - `APPROVED`
 - A numbered correction list: `{section}: {issue} -> {fix}` (cap 2000 tokens)
 
-### Step 7: Deliver (main)
+### Step 8: Deliver (main)
 
 If Review returned corrections: read the draft from file, apply corrections, write the final report.
 If Review returned APPROVED: copy the draft to the output location.
@@ -268,6 +293,50 @@ An item can tag multiple criteria (comma-separated).
 
 **Return:** item count and path to the scratch file only.
 </gather-task>
+
+<verify-task>
+You are a source-verification agent. Check gathered evidence items against their original sources before scoring begins.
+
+**Inputs you receive:** tool file path, master evidence file path, source-type assignment (one of: reflector, wiki, web).
+
+**Read the master evidence file.** Filter to items whose `source:` URL matches your assigned source type:
+- reflector: URLs containing `lists.isocpp.org`
+- wiki: URLs containing `wiki.edg.com` or `wiki.isocpp.org`
+- web: all other URLs
+
+Group your filtered items by unique URL. Fetch each unique URL once.
+
+**Fetch strategy by source type:**
+- Reflector: use Pinecone keyword_search on the wg21-reflector namespace, querying by the post URL or by distinctive content from the item's quote field. Reflector URLs return 401 to direct fetch.
+- Wiki: use WG21 wiki MCP get_page or search_wiki.
+- Web: use WebFetch. If WebFetch fails on a PDF URL, try WG21 papers MCP get_paper_markdown with the paper number extracted from the URL. If both fail, mark all items citing that URL as UNFETCHABLE.
+
+**For each item citing a fetched URL, check 4 fields:**
+
+1. **Author attribution:** does the fetched content attribute the statement to the person named in the evidence item's description? For reflector posts, check the Author header and signature. For wiki minutes, check the speaker tag preceding the quoted text.
+2. **Quoted text:** if the item has a `quote:` field other than "none", does the fetched content contain that text verbatim or near-verbatim (minor whitespace and formatting differences are acceptable)?
+3. **Date:** does the source's date match the item's `date:` field? Tolerance: within 1 day for reflector posts (threading and timezone artifacts), exact match for papers and wiki pages.
+4. **Description accuracy:** does the fetched content support the 1-2 sentence description in the evidence item?
+
+**Per-item verdicts:**
+- **VERIFIED:** all 4 checked fields match the source.
+- **CORRECTED:** 1-2 fields are wrong but the correct value is determinable from the source. Write the field name and corrected value. Examples: wrong author name, wrong date, wrong paper number in a quote, wrong count.
+- **DROPPED:** the described event is absent from the fetched source (fabrication). Apply this verdict only with high confidence. If unsure whether the content supports the description, mark VERIFIED with a note.
+- **UNFETCHABLE:** source could not be retrieved by any available tool. Do not guess at the content.
+
+**Effort budget:** 24 tool calls. Stop after every unique URL in your batch has been fetched once, or the budget is exhausted. If the budget runs out before all URLs are fetched, mark remaining items UNFETCHABLE with reason "budget exhausted".
+
+**Output:** write one corrections scratch file. Format:
+
+```
+{G-ID} | {VERDICT} | {field: corrected_value or "ok"}
+{G-ID} | CORRECTED | {field}: {old_value} -> {new_value}
+```
+
+One line per VERIFIED or UNFETCHABLE item. Two lines per CORRECTED item (verdict + correction detail). One line per DROPPED item with the reason.
+
+**Return:** verdict counts (VERIFIED: n, CORRECTED: n, DROPPED: n, UNFETCHABLE: n) + path to corrections file. Cap return at 200 tokens.
+</verify-task>
 
 <score-task>
 You are a scoring agent. Score evidence items for one detection criterion from the P4196 behavioral detection model.
