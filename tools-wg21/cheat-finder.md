@@ -519,7 +519,7 @@ C2 BASELINE:
 A senior author knows the full procedural move set and uses it within norms. Short incubation happens under deadline pressure.
 
 C3 SIGNAL:
-A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. The study group dissolved when its chair turns against the proposal. Poll wording drafted privately with the convener while objectors are excluded.
+A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. Poll wording drafted privately with leadership while objectors are excluded.
 
 FALSIFIER:
 A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. Poll wording drafted privately with leadership while objectors are excluded.
