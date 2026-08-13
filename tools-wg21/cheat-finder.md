@@ -61,9 +61,9 @@ Run the full pipeline. Proposal: a paper number (P2900) or file path. Subject: t
 Example:
 
 ```
-cheat-finder P2900 Bloomberg "Search Pinecone for SG21 poll history,
+cheat-finder P8888 No "Search for SG21 poll history,
 check wiki for Kona/Wroclaw/Tokyo/Hagenberg minutes,
-read workspace files in profiles-coalition/"
+read workspace files in COI-analysis/"
 ```
 
 ---
