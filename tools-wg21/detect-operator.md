@@ -8,13 +8,13 @@ You are this tool. Follow its rules. Do not summarize it or discuss it abstractl
 Operate from it.
 -->
 
-# Cheat Finder
+# Detect Operator
 
 The institutional operator walks through the checkpoint carrying a diplomatic pouch nobody can open. Everything inside stays technically compliant - the papers filed, the stamps real, the declarations in order. He moves product for his government through channels the inspection regime was never built to reach. The civilian walks through the same checkpoint with a suitcase full of honest work. Same X-ray machine, same customs form, same officer behind the glass. One of them the system can see.
 
-Point Cheat Finder at any proposal's documented record and it runs the detection criteria from P4196: sixteen behavioral tests, each with a falsification condition that separates procedural fluency from structural capture. It gathers evidence from whatever sources you aim it at, scores every item against the C2 baseline, and renders the assessment in a report where every classification traces back to a specific falsifier met or unmet.
+Point Detect Operator at any proposal's documented record and it runs the detection criteria from P4196: fourteen behavioral tests, each with a falsification condition that separates procedural fluency from structural capture. It gathers evidence from whatever sources you aim it at, scores every item against the C2 baseline, and renders the assessment in a report where every classification traces back to a specific falsifier met or unmet.
 
-<img src="images/cheat-finder-1.png" alt="Cheat Finder" width="100%">
+<img src="images/detect-operator-1.png" alt="Detect Operator" width="100%">
 
 ```mermaid
 flowchart TD
@@ -22,8 +22,8 @@ flowchart TD
     S1 --> S2["2 Architecture"]
     S2 --> S3["3 Gather (N)"]
     S3 --> S4["4 Verify"]
-    S4 --> S5["5 Score (x16)"]
-    S5 --> S6["6 Challenge (x16)"]
+    S4 --> S5["5 Score (x14)"]
+    S5 --> S6["6 Challenge (x14)"]
     S6 --> S7["7 Tally"]
     S7 --> S8["8 MOM"]
     S8 --> S9["9 Prepare"]
@@ -67,14 +67,14 @@ flowchart TD
 
 ## Commands
 
-- `cheat-finder [proposal] [subject] [slug] [gathering-instructions]`
+- `detect-operator [proposal] [subject] [slug] [gathering-instructions]`
 
 Run the full pipeline. Proposal: a paper number (P2900) or file path. Subject: the name or entity being evaluated. Slug: 1-2 lowercase words from the proposal's domain (reflection, contracts, profiles, execution). Gathering instructions: what evidence to collect and where to find it.
 
 Example:
 
 ```
-cheat-finder P8888 "No" execution "Search for SG21 poll history,
+detect-operator P8888 "No" execution "Search for SG21 poll history,
 check wiki for Kona/Wroclaw/Tokyo/Hagenberg minutes,
 read workspace files in COI-analysis/"
 ```
@@ -93,9 +93,9 @@ Before any work begins, create a todo list that names every pipeline step with i
 2.  Architecture (1 subagent) - returns architecture.md path
 3.  Gather (N subagents, max 5) - each writes gather-{source}.md, then shell-concat to master-evidence.md
 4.  Verify (up to 3 subagents) - corrections files, then shell produces master-evidence-verified.md
-5.  Score (16 subagents, batches of 3-5) - each writes score-criterion-{NN}.md. NO context file.
+5.  Score (14 subagents, batches of 3-5) - each writes score-criterion-{NN}.md. NO context file.
 6.  Challenge (per-criterion subagents where C3 > 0, shell cp where C3 = 0) - produces score-criterion-{NN}-challenged.md
-7.  Tally (main, SHELL ONLY) - shell reads 16 challenged files, writes stages-tally.md
+7.  Tally (main, SHELL ONLY) - shell reads 14 challenged files, writes stages-tally.md
 8.  MOM (1 subagent) - reads stages-tally.md + context.md, writes mom.md
 9.  Prepare (main, SHELL ONLY) - shell sed inserts content at markers in writing-packet.md
 10. Write (1 subagent) - reads assembled writing-packet.md, writes draft-report.md
@@ -107,7 +107,7 @@ Mark each todo in_progress when starting, completed when done. Do not start a st
 
 ### Step 0: Receive (main)
 
-Accept four inputs: target proposal (paper number or path), subject name, slug, gathering instructions. Set scratch directory: `cabinet/_scratch/cheat-finder-{proposal}-{slug}/`. Create it. Extract the `<writing-packet-template>` tag from this tool file via shell-grep and write to `writing-packet.md` in the scratch directory. Extract run-context constraints from gathering instructions and write to `run-context.md`.
+Accept four inputs: target proposal (paper number or path), subject name, slug, gathering instructions. Set scratch directory: `cabinet/_scratch/detect-operator-{proposal}-{slug}/`. Create it. Extract the `<writing-packet-template>` tag from this tool file via shell-grep and write to `writing-packet.md` in the scratch directory. Extract run-context constraints from gathering instructions and write to `run-context.md`.
 
 ### Step 1: Recon (1 subagent)
 
@@ -125,19 +125,19 @@ Dispatch: tool path + `<gather-task>` tag + run-context path + context file path
 
 Dispatch up to 3 verify subagents: tool path + `<verify-task>` tag + master evidence path + context file path + source-type assignment. Each returns corrections file. Main shell produces `master-evidence-verified.md` via `cp` + `sed` from corrections.
 
-### Step 5: Score (x16 parallel)
+### Step 5: Score (x14 parallel)
 
-Dispatch 16 subagents: tool path + `<score-task>` tag + criterion number + `master-evidence-verified.md` path. Do NOT pass context file (falsification firewall). Run in parallel batches of 3-5. Each writes `score-criterion-{NN}.md`. Returns path only.
+Dispatch 14 subagents: tool path + `<score-task>` tag + criterion number + `master-evidence-verified.md` path. Do NOT pass context file (falsification firewall). Run in parallel batches of 3-5. Each writes `score-criterion-{NN}.md`. Returns path only.
 
-### Step 6: Challenge (x16 parallel, skip if no C3)
+### Step 6: Challenge (x14 parallel, skip if no C3)
 
 Main shell-greps each score file for C3 items. For criteria with zero C3: shell `cp` to `score-criterion-{NN}-challenged.md`. For criteria with C3: dispatch tool path + `<challenge-task>` tag + score file path + master evidence path + context file path + run-context path. Subagent returns flipped G-IDs or "NO FLIPS". Main shell produces `score-criterion-{NN}-challenged.md` via `cp` + `sed` of flipped items.
 
 ### Step 7: Tally (main, shell only)
 
-Shell script reads 16 challenged score files. Produces `stages-tally.md` containing: per-criterion tally table, grand totals, 20% threshold check, combination signal check (criteria 1, 2, 8), and stage-bucketed items sorted by date using Recon's boundary dates. Items with "Ongoing" or "Pattern" dates listed separately as structural items.
+Shell script reads 14 challenged score files. Produces `stages-tally.md` containing: per-criterion tally table, grand totals, 20% threshold check, and combination signal check (criteria 1, 2, 7). Global threshold uses unique items: each G-ID counts once regardless of how many criteria tag it. If G-12 scores C3 in both criterion 4 and criterion 9, it counts as 1 C3 item in the global percentage. Per-criterion tallies still count items per criterion independently.
 
-<img src="images/cheat-finder-2.png" alt="Cheat Finder Firewall" width="100%">
+<img src="images/detect-operator-2.png" alt="Detect Operator Firewall" width="100%">
 
 ### Step 8: MOM (1 subagent)
 
@@ -145,11 +145,14 @@ Dispatch: tool path + `<mom-task>` tag + `stages-tally.md` path + context file p
 
 ### Step 9: Prepare (main, shell only)
 
-Shell `sed` inserts file contents at markers in `writing-packet.md`: context sections at `{PROPOSAL}` and `{AUTHORS}`, MOM content at `{MOM_SECTION}` and `{EXEC_SUMMARY}` and `{ASSESSMENT}` and `{METHODOLOGY}`, tally at `{GRAND_TALLY}`, challenged score files at `{CRITERION_1}` through `{CRITERION_16}`. Main never reads content.
+Shell `sed` inserts file contents at markers in `writing-packet.md`: context sections at `{PROPOSAL}` and `{AUTHORS}`, MOM content at `{MOM_SECTION}` and `{EXEC_SUMMARY}` and `{ASSESSMENT}` and `{METHODOLOGY}`, tally at `{GRAND_TALLY}`, challenged score files at `{CRITERION_1}` through `{CRITERION_14}`. Main never reads content.
 
 ### Step 10: Write (1 subagent)
 
-Dispatch: tool path + `<writing-discipline>` tag + `writing-packet.md` path + run-context path. Writer transforms the fact-pile into the final report, chunked top-to-bottom. Writes `draft-report.md`. Returns path only.
+Dispatch: tool path + `<writing-discipline>` tag + `writing-packet.md` path
++ `master-evidence-verified.md` path + run-context path. Writer transforms
+the fact-pile into the final report, chunked top-to-bottom. Writes
+`draft-report.md`. Returns path only.
 
 ### Step 11: Review (1 fresh subagent)
 
@@ -157,9 +160,9 @@ Dispatch: tool path + `<review-task>` tag + draft report path + writing-packet p
 
 ### Step 12: Deliver (main)
 
-If Review returned corrections: apply via shell `sed`, write final report. If APPROVED: copy draft to output. Output: `cabinet/_output/cheat-finder-{proposal}-{slug}.md`
+If Review returned corrections: apply via shell `sed`, write final report. If APPROVED: copy draft to output. Output: `cabinet/_output/detect-operator-{proposal}-{slug}.md`
 
-<img src="images/cheat-finder-3.png" alt="Cheat Finder Components" width="100%">
+<img src="images/detect-operator-3.png" alt="Detect Operator Components" width="100%">
 
 ---
 
@@ -247,27 +250,47 @@ You are an evidence collection agent. Gather evidence items relevant to how a WG
 
 **Run-context:** Obey `<run-context-rule>` from this tool file.
 
-**What to gather:** Items relevant to the 16 criteria below. Poll results, chair statements, procedural actions, author statements, committee instructions and compliance, institutional backing indicators, competing-design treatment, written record omissions or inclusions.
+**What to gather:** Items relevant to the 14 criteria below. Poll results, chair statements, procedural actions, author statements, committee instructions and compliance, institutional backing indicators, competing-design treatment, written record omissions or inclusions.
 
-**Tag each item with criterion numbers.** The 16 criteria are:
+**Tag each item with criterion numbers.** The 14 criteria are:
 1. Response to architectural objections
 2. Treatment of competing designs
 3. Pursuit of early directional polls
 4. Treatment of minority objections
 5. Written record behavior
 6. Relationship with chair
-7. Coalition building
-8. Moralization of opposition
-9. Reaction when pulled back
-10. Burden of proof management
-11. Use of procedural moves
-12. Transparency about design tradeoffs
-13. Response to "investigate the objection thoroughly"
-14. Behavior between meetings
-15. Observable cost structure
-16. What happens if they win
+7. Moralization of opposition
+8. Reaction when pulled back
+9. Burden of proof management
+10. Use of procedural moves
+11. Response to "investigate the objection thoroughly"
+12. Behavior between meetings
+13. Observable cost structure
+14. What happens if they win
 
-An item can tag multiple criteria (comma-separated).
+**Tagging rule.** Tag an item with at most 2 criterion numbers. Tag
+only if the item contains the element that criterion's TEST evaluates.
+
+Correct tagging (2 tags, both contain testable elements):
+  "Lelbach responds to scheduling complaint by demanding a paper,
+  with no technical engagement on the implementability concern raised."
+  criteria: 4, 9
+  (Criterion 4 TEST: "Does response contain technical content?" - item
+  contains the response, and it lacks technical content. Correct.
+  Criterion 9 TEST: "What does the author demand? Production = C3." -
+  item contains the demand for a paper. Correct.)
+
+Incorrect tagging:
+  "Brett raises implementability concerns about P2300"
+  criteria: 1
+  (Criterion 1 TEST: "Does the RESPONSE contain a technical element?"
+  Item is the objection, not the response. No testable element present.
+  Do not tag.)
+
+Decision rule: read the criterion's TEST. Identify the element it
+evaluates (a response, a paper section, a poll, a demand, an action).
+If this item contains that element, it may be tagged. Cap at 2 tags.
+If more than 2 criteria apply, keep the 2 highest-severity.
 
 **Effort budget:** 20 tool calls. If the budget is exhausted before all source-specific instructions are completed, return immediately with a `BUDGET_EXHAUSTED` flag listing what work remains.
 
@@ -438,7 +461,7 @@ You are a structural assessment agent applying the Motive, Opportunity, and Mean
 
 **Run-context:** Obey `<run-context-rule>` from this tool file.
 
-**Read `stages-tally.md`.** It contains the tally table (per-criterion C1/C2/C3 counts, totals, threshold, combination signal) and stage-bucketed scored items.
+**Read `stages-tally.md`.** It contains the tally table (per-criterion C1/C2/C3 counts, totals, threshold, combination signal).
 
 **Read `context.md`.** It contains Authors and Structural Position, meeting timeline with lifecycle events, employer affiliations, NB voting presence.
 
@@ -447,7 +470,7 @@ You are a structural assessment agent applying the Motive, Opportunity, and Mean
 **1. Mode determination.**
 State whether the three trigger conditions are met:
 - Global C3 > 20% of total scored items
-- Combination signal present (criteria 1, 2, 8 all showing C3)
+- Combination signal present (criteria 1, 2, 7 all showing C3)
 - MOM legs status (determined below)
 
 If a MOM leg is absent: threshold elevates to 50%. State whether C3 still exceeds 50%.
@@ -467,8 +490,8 @@ C1 profile is not evaluated for institutional subjects with documented multi-yea
 **3. Clue sentence facts (only if c3 threshold met).**
 - actor: {name}
 - mechanism: {1-2 mechanisms from confirmed MOM legs, only criteria that pass MOM plausibility}
-- temporal: {one clause per stage where C3 dominates, from stage-bucketed data}
-- breadth: {N of 16 criteria showing C3}
+- temporal: {one clause describing when C3 concentrates, derived from item dates in the tally}
+- breadth: {N of 14 criteria showing C3}
 - confidence: {high/moderate/low + one-phrase reason}
 
 **4. Exculpatory facts (only if c3 threshold met).**
@@ -480,7 +503,7 @@ C1 profile is not evaluated for institutional subjects with documented multi-yea
 **5. Assessment facts.**
 - Surviving C3: which criteria show C3 after Challenge
 - Combination signal: present or absent, with counts
-- Stage interpretation: 1 sentence per stage describing dominant behavioral mode observed
+- Temporal concentration: which date ranges show highest C3 density
 - Confidence: high/moderate/low with reason
 
 **Return:** path to `mom.md` only.
@@ -588,19 +611,7 @@ TEST: Two conditions, both required. (1) Chair has structural relationship (co-a
 
 ---
 
-CRITERION 7: Coalition Building
-
-C2 BASELINE:
-Coalition from diverse institutional backgrounds. No single employer is a majority of co-authors.
-
-C3 SIGNAL:
-Single employer or funding source accounts for a majority of co-authors.
-
-TEST: Count co-authors. Count employers. Does one source account for majority? Yes = C3. No = C2.
-
----
-
-CRITERION 8: Moralization of Opposition
+CRITERION 7: Moralization of Opposition
 
 C2 BASELINE:
 Sharp language targeting the design or argument. Harsh but argument-focused.
@@ -612,7 +623,7 @@ TEST: Does the critique target the argument's substance, or the opponent's stand
 
 ---
 
-CRITERION 9: Response to Committee Reversals
+CRITERION 8: Response to Committee Reversals
 
 C2 BASELINE:
 Design-relevant reversal acknowledged in revision history. Author revises and returns. Escalation via SD-4 is legitimate.
@@ -624,7 +635,7 @@ TEST: After a documented design-relevant "no" event, does the next revision ackn
 
 ---
 
-CRITERION 10: Burden of Proof Management
+CRITERION 9: Burden of Proof Management
 
 C2 BASELINE:
 Author invites evidence. Objecting is cheap. Author absorbs the burden. Normal: "I'll look into it."
@@ -636,7 +647,7 @@ TEST: What does the author demand from the objector? Information (cheap) = C2. P
 
 ---
 
-CRITERION 11: Use of Procedural Moves
+CRITERION 10: Use of Procedural Moves
 
 C2 BASELINE:
 Aggressive procedural toolkit use. Fast iteration, strategic timing. Speed alone not diagnostic.
@@ -648,19 +659,7 @@ TEST: Documented complaint about pace + proceeding anyway. Both required. No com
 
 ---
 
-CRITERION 12: Transparency About Design Tradeoffs
-
-C2 BASELINE:
-Paper contains evidence-based cost analysis. Measures own tradeoffs. Provides evidence when characterizing alternatives. Verbal concessions propagate to paper.
-
-C3 SIGNAL:
-No evidence-based cost analysis. Own costs unmeasured. Alternatives characterized as unsuitable without evidence. Verbal concessions don't propagate.
-
-TEST: Find ONE sentence providing evidence for a cost claim (own or alternative's). Evidence = data, implementation experience, specific reasoning. Present = C2. Absent = C3.
-
----
-
-CRITERION 13: Response to Committee Instructions
+CRITERION 11: Response to Committee Instructions
 
 C2 BASELINE:
 Committee instruction satisfied in substance within 1-2 meeting cycles. Purpose served. Normal compliance near 100%.
@@ -672,7 +671,7 @@ TEST: Was the instruction's PURPOSE served, or only its LETTER? Purpose served =
 
 ---
 
-CRITERION 14: Behavior Between Meetings
+CRITERION 12: Behavior Between Meetings
 
 C2 BASELINE:
 Author maintains relationships, coordinates with co-authors, prepares papers. Employer-funded teams are normal.
@@ -684,7 +683,7 @@ TEST: Does between-meeting activity produce outcomes presented as settled before
 
 ---
 
-CRITERION 15: Observable Cost Structure
+CRITERION 13: Observable Cost Structure
 
 C2 BASELINE:
 Normal employer backing. Company employs people, they attend under company name, listed in one NB. Transparent.
@@ -696,7 +695,7 @@ TEST: Compare documented funding structure to C2 baseline (single employer, sing
 
 ---
 
-CRITERION 16: What Happens If They Win
+CRITERION 14: What Happens If They Win
 
 C2 BASELINE:
 Feature's pre-adoption claims based on deployment of the actual design. Post-adoption, third-party implementations emerge and feature works as advertised.
@@ -764,45 +763,37 @@ TEST: Does the cited pre-adoption evidence implement the same architectural elem
 
 {CRITERION_06}
 
-## 7. Coalition Building
+## 7. Moralization of Opposition
 
 {CRITERION_07}
 
-## 8. Moralization of Opposition
+## 8. Reaction When Pulled Back
 
 {CRITERION_08}
 
-## 9. Reaction When Pulled Back
+## 9. Burden of Proof Management
 
 {CRITERION_09}
 
-## 10. Burden of Proof Management
+## 10. Use of Procedural Moves
 
 {CRITERION_10}
 
-## 11. Use of Procedural Moves
+## 11. Response to "Investigate the Objection Thoroughly"
 
 {CRITERION_11}
 
-## 12. Transparency About Design Tradeoffs
+## 12. Behavior Between Meetings
 
 {CRITERION_12}
 
-## 13. Response to "Investigate the Objection Thoroughly"
+## 13. Observable Cost Structure
 
 {CRITERION_13}
 
-## 14. Behavior Between Meetings
+## 14. What Happens If They Win
 
 {CRITERION_14}
-
-## 15. Observable Cost Structure
-
-{CRITERION_15}
-
-## 16. What Happens If They Win
-
-{CRITERION_16}
 
 </writing-packet-template>
 
@@ -818,7 +809,7 @@ The report template defines the final output structure. The Writer transforms th
 5. Authors and Structural Position
 6. Assessment
 7. Grand Tally
-8. Criteria 1-16
+8. Criteria 1-14
 9. Footer (date + model)
 
 **Executive Summary - c2 baseline mode:**
@@ -830,12 +821,22 @@ Two paragraphs.
 - P2: Exculpatory. What the C2 record shows. Draw from criteria NOT named in P1. Frame as: these do not explain the C3 findings.
 
 **Methodology sub-heading includes:**
-- P4196 detection model reference (3 profiles, 16 criteria, falsification principle)
+- P4196 detection model reference (3 profiles, 14 criteria, falsification principle)
 - Analysis of Competing Hypotheses: the most likely profile is the one least inconsistent with the evidence. Evidence consistent with all profiles is non-diagnostic.
 - C1 not evaluated for institutional subjects with documented multi-year participation.
 - Sources consulted table (Public/Private/User-supplied with access status)
 - Source context (testimony characterization if applicable)
 - Hit counts, threshold percentage, combination signal status
+
+**Motive, Opportunity, and Means section:**
+Opens with 1-2 sentence boilerplate stating the framework's purpose and
+the mode determination result. Then three subsections (### Motive,
+### Opportunity, ### Means), each stating the claim, supporting facts,
+the C2 alternative, and the leg verdict. Example boilerplate:
+
+"The MOM framework tests whether the structural conditions for C3
+behavior are present. All three legs must be confirmed for the C3
+threshold finding to hold. Mode: {c3 threshold met / c2 baseline}."
 
 **Evidence tables in criteria sections:**
 Each criterion section has: C2 baseline paragraph, C3 signal paragraph, WHY paragraph, evidence table, criterion tally line. Evidence table columns: #, Evidence, Date, Source (inline hyperlink), Hit (bold C1/C2/C3).
@@ -850,23 +851,43 @@ Each criterion section has: C2 baseline paragraph, C3 signal paragraph, WHY para
 
 <writing-discipline>
 
-You are writing a P4196 Detection Criteria Evidence Assessment. All findings and scores are provided below. Write the final report. Do not re-evaluate scores. Do not reference the source of information.
+You are writing a P4196 Detection Criteria Evidence Assessment.
 
-**Run-context:** Obey `<run-context-rule>` from this tool file.
+**Inputs:**
+- Writing packet (scores, MOM, tally): sole source of truth for C2/C3
+  assignments. Do not re-score.
+- Evidence details file (full descriptions, quotes, dates, URLs):
+  descriptive material for Evidence column construction.
+- Run-context file: constraints that override presentation defaults.
 
-**Read the writing packet.** It contains all findings organized by section with markers replaced by content. Transform it into the final report following the `<report-template>` structure.
+**Six rules:**
 
-**Seven rules:**
+1. Score fidelity. Every C2/C3 assignment comes from the writing packet.
+   If the evidence details file lacks a description for a scored item,
+   use the scoring justification as-is; do not fabricate detail.
+2. Template fidelity. Follow `<report-template>` section order. Do not
+   add or remove sections.
+3. Evidence tables. Five columns: #, Evidence, Date, Source, Hit.
+   Evidence column: 1-2 sentences naming the actor, describing the
+   specific action, and quoting where the evidence details file provides
+   a quote. Source column: inline markdown hyperlink. Paper numbers use
+   `https://wg21.link/{paper}`. Hit column: bold classification.
+4. Assessment. Name 3-5 genuinely ambiguous C2 items with one sentence
+   each explaining why C2 was accepted. Name 2-4 surviving C3 mechanisms
+   with G-ID clusters. State combination signal status with the criteria
+   numbers that fire. End with confidence (high/moderate/low) naming 2-3
+   independent corroboration sources.
+5. Exec summary. If packet says "c3 threshold met": P1 (clue sentence -
+   actor, mechanism, temporal, breadth, confidence) + P2 (exculpatory
+   from criteria NOT in P1). If "c2 baseline": single paragraph under
+   80 words.
+6. Prose. Declarative sentences. No hedging, no em-dashes, no
+   double-dashes. Blank line before and after every heading. No line
+   exceeds 120 characters.
 
-1. Source constraint. The writing packet is sole source of truth. If it lacks a fact, omit it. Every C1/C2/C3 assignment comes from the packet. Do not re-score.
-2. Template fidelity. Follow the section order in `<report-template>`. Do not add or remove sections.
-3. Evidence tables. Each row has five columns: #, Evidence, Date, Source, Hit. The Source column is an inline markdown hyperlink. Every paper number is a hyperlink using `https://wg21.link/{paper}`. The Hit column bolds the classification.
-4. Exec summary mode. Check the mode determination in the packet. If "c3 threshold met": write P1 (Clue sentence) + P2 (Exculpatory). If "c2 baseline": write single characterizing paragraph.
-5. Prose register. No hedging, no AI tells, no meta-announcements. No em-dashes. No double-dashes. Write declarative sentences. Let the evidence carry the argument.
-6. Chunked writing. Write the report from top to bottom, section by section. Complete each section before starting the next.
-7. Formatting. Blank line before and after every heading. No line exceeds 120 characters.
-
-**Write the complete report to `draft-report.md`. Return the file path only.**
+**Output:** Write `draft-report.md` in 3-4 Write calls (top sections
+through Assessment, then criteria in batches, then tally and footer).
+Return the file path only.
 
 </writing-discipline>
 
@@ -885,13 +906,13 @@ You are a review agent. Cross-reference a draft report against its source eviden
 
 **Then check five axes:**
 
-1. **Completeness.** All 16 criterion sections present and filled. Grand tally row counts match per-criterion tally lines. Executive summary totals match grand tally totals. If any criterion has zero evidence items, flag it.
+1. **Completeness.** All 14 criterion sections present and filled. Grand tally row counts match per-criterion tally lines. Executive summary totals match grand tally totals. If any criterion has zero evidence items, flag it.
 
 2. **Accuracy.** Every C1/C2/C3 assignment in the report matches the writing packet. No evidence items dropped (present in packet but missing from report). No evidence items invented (present in report but missing from packet).
 
 3. **Falsification fidelity.** For each C3 item: the WHY paragraph names a specific falsifier from `<criteria-reference>` that is met. For each C2 item: the justification states the falsifier is not met. Spot-check at least 3 C3 items and 3 C2 items.
 
-4. **Template compliance.** Sections appear in correct order (Executive Summary, Methodology, MOM, The Proposal, Authors, Assessment, Grand Tally, Criteria 1-16, Footer). MOM section states C2 alternative for each leg. Exec summary uses correct mode for the tally result. Footer present with date and model.
+4. **Template compliance.** Sections appear in correct order (Executive Summary, Methodology, MOM, The Proposal, Authors, Assessment, Grand Tally, Criteria 1-14, Footer). MOM section states C2 alternative for each leg. Exec summary uses correct mode for the tally result. Footer present with date and model.
 
 5. **Prose.** No em-dashes (U+2014). No double-dashes. No hedging phrases ("it could be argued," "perhaps," "it is possible that"). Blank line before and after every heading.
 
