@@ -129,6 +129,8 @@ Dispatch up to 3 verify subagents: tool path + `<verify-task>` tag + master evid
 
 Dispatch 14 subagents: tool path + `<score-task>` tag + criterion number + `master-evidence-verified.md` path. Do NOT pass context file (falsification firewall). Run in parallel batches of 3-5. Each writes `score-criterion-{NN}.md`. Returns path only.
 
+Main dispatch MUST include this instruction: "Grep this tool file for the xml tag `score-template` and use that exact format for your output. The output is machine-parsed. Do not use markdown headings, bold markers, or table syntax."
+
 ### Step 6: Challenge (x14 parallel, skip if no C3)
 
 Main shell-greps each score file for C3 items. For criteria with zero C3: shell `cp` to `score-criterion-{NN}-challenged.md`. For criteria with C3: dispatch tool path + `<challenge-task>` tag + score file path + master evidence path + context file path + run-context path. Subagent returns flipped G#s or "NO FLIPS". Main shell produces `score-criterion-{NN}-challenged.md` via `cp` + `sed` of flipped items.
@@ -385,9 +387,14 @@ You are a scoring agent. Score evidence items for one detection criterion from t
 
 **After scoring all items:** write a "WHY C2 DOES/DOES NOT EXPLAIN" paragraph. If most items score C2, explain why the C2 baseline covers this record and name the falsifiers that are absent. If most items score C3, explain why the C2 baseline fails and name the falsifiers that are present.
 
-**Output:** write one scratch file to `score-criterion-{NN}.md`:
+**Output:** Your output file MUST use the exact format from the xml tag `score-template` in this tool file. Grep for it. The output is machine-parsed by the pipeline. Any deviation (markdown headings, bold markers, table syntax, extra sections) causes pipeline failure. Write one scratch file to `score-criterion-{NN}.md` using that template verbatim with values filled in.
 
-```
+**Return:** path to the scratch file only.
+
+</score-task>
+
+<score-template>
+
 CRITERION {N}: {name}
 
 C2 BASELINE:
@@ -401,14 +408,12 @@ WHY C2 DOES/DOES NOT EXPLAIN:
 
 SCORED ITEMS:
 {G#} | {C1/C2/C3} | {date from item's date: field} | {one-sentence justification}
+{G#} | {C1/C2/C3} | {date from item's date: field} | {one-sentence justification}
 ...
 
 TALLY: C1={n} C2={n} C3={n}
-```
 
-**Return:** path to the scratch file only.
-
-</score-task>
+</score-template>
 
 <challenge-task>
 
@@ -836,8 +841,24 @@ the C2 alternative, and the leg verdict. Example boilerplate:
 behavior are present. All three legs must be confirmed for the C3
 threshold finding to hold. Mode: {c3 threshold met / c2 baseline}."
 
-**Evidence tables in criteria sections:**
-Each criterion section has: C2 baseline paragraph, C3 signal paragraph, WHY paragraph, evidence table, criterion tally line. Evidence table columns: #, Evidence, Date, Source (inline hyperlink), Hit (bold C1/C2/C3).
+**Criterion section structure (exact label format):**
+
+```
+**C2 baseline:** {paragraph copied from score file C2 BASELINE field}
+
+**C3 signal:** {paragraph copied from score file C3 SIGNAL field}
+
+**Why C2 does/does not explain:** {paragraph from score file WHY field}
+
+| # | Evidence | Date | Source | Hit |
+|---|----------|------|--------|-----|
+| G{n} | {1-2 sentences} | {date} | [{label}](url) | **C2** |
+...
+
+**Tally:** C1={n}, C2={n}, C3={n}
+```
+
+Evidence table columns: #, Evidence, Date, Source (inline hyperlink), Hit (bold C1/C2/C3).
 
 **Formatting rules:**
 - Blank line before and after every heading
