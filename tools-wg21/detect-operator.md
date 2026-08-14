@@ -14,7 +14,7 @@ The institutional operator walks through the checkpoint carrying a diplomatic po
 
 Point Detect Operator at any proposal's documented record and it runs the detection criteria from P4196: fourteen behavioral tests, each with a falsification condition that separates procedural fluency from structural capture. It gathers evidence from whatever sources you aim it at, scores every item against the C2 baseline, and renders the assessment in a report where every classification traces back to a specific falsifier met or unmet.
 
-<img src="images/detect-operator-1.png" alt="Detect Operator" width="100%">
+![Detect Operator](images/detect-operator-1.png)
 
 ```mermaid
 flowchart TD
@@ -44,7 +44,7 @@ flowchart TD
 - Recon: orchestration summary (~150 words) + context file path
 - Architecture: path only
 - Score (each): path only
-- Challenge (each): flipped G-IDs + path, or "NO FLIPS" + path
+- Challenge (each): flipped G#s + path, or "NO FLIPS" + path
 - MOM: path only
 - Writer: path only
 - Review: APPROVED or numbered correction list (cap 2000 tokens)
@@ -119,7 +119,7 @@ Dispatch: tool path + `<architecture-task>` tag + proposal identifier + context 
 
 ### Step 3: Gather (N parallel subagents)
 
-Dispatch: tool path + `<gather-task>` tag + run-context path + context file path + source-specific instructions. Cap: 5 subagents. Each writes to `gather-{source}.md`. After all return, shell-concatenate into `master-evidence.md` and assign G-IDs.
+Dispatch: tool path + `<gather-task>` tag + run-context path + context file path + source-specific instructions. Cap: 5 subagents. Each writes to `gather-{source}.md`. After all return, shell-concatenate into `master-evidence.md` and assign G#s.
 
 ### Step 4: Verify (parallel subagents)
 
@@ -131,13 +131,11 @@ Dispatch 14 subagents: tool path + `<score-task>` tag + criterion number + `mast
 
 ### Step 6: Challenge (x14 parallel, skip if no C3)
 
-Main shell-greps each score file for C3 items. For criteria with zero C3: shell `cp` to `score-criterion-{NN}-challenged.md`. For criteria with C3: dispatch tool path + `<challenge-task>` tag + score file path + master evidence path + context file path + run-context path. Subagent returns flipped G-IDs or "NO FLIPS". Main shell produces `score-criterion-{NN}-challenged.md` via `cp` + `sed` of flipped items.
+Main shell-greps each score file for C3 items. For criteria with zero C3: shell `cp` to `score-criterion-{NN}-challenged.md`. For criteria with C3: dispatch tool path + `<challenge-task>` tag + score file path + master evidence path + context file path + run-context path. Subagent returns flipped G#s or "NO FLIPS". Main shell produces `score-criterion-{NN}-challenged.md` via `cp` + `sed` of flipped items.
 
 ### Step 7: Tally (main, shell only)
 
-Shell script reads 14 challenged score files. Produces `stages-tally.md` containing: per-criterion tally table, grand totals, 20% threshold check, and combination signal check (criteria 1, 2, 7). Global threshold uses unique items: each G-ID counts once regardless of how many criteria tag it. If G-12 scores C3 in both criterion 4 and criterion 9, it counts as 1 C3 item in the global percentage. Per-criterion tallies still count items per criterion independently.
-
-<img src="images/detect-operator-2.png" alt="Detect Operator Firewall" width="100%">
+Shell script reads 14 challenged score files. Produces `stages-tally.md` containing: per-criterion tally table, grand totals, 20% threshold check, and combination signal check (criteria 1, 2, 7). Global threshold uses unique items: each G# counts once regardless of how many criteria tag it. If G12 scores C3 in both criterion 4 and criterion 9, it counts as 1 C3 item in the global percentage. Per-criterion tallies still count items per criterion independently.
 
 ### Step 8: MOM (1 subagent)
 
@@ -161,8 +159,6 @@ Dispatch: tool path + `<review-task>` tag + draft report path + writing-packet p
 ### Step 12: Deliver (main)
 
 If Review returned corrections: apply via shell `sed`, write final report. If APPROVED: copy draft to output. Output: `cabinet/_output/detect-operator-{proposal}-{slug}.md`
-
-<img src="images/detect-operator-3.png" alt="Detect Operator Components" width="100%">
 
 ---
 
@@ -356,8 +352,8 @@ Group your filtered items by unique URL. Fetch each unique URL once.
 **Output:** write one corrections scratch file. Format:
 
 ```
-{G-ID} | {VERDICT} | {field: corrected_value or "ok"}
-{G-ID} | CORRECTED | {field}: {old_value} -> {new_value}
+{G#} | {VERDICT} | {field: corrected_value or "ok"}
+{G#} | CORRECTED | {field}: {old_value} -> {new_value}
 ```
 
 One line per VERIFIED or UNFETCHABLE item. Two lines per CORRECTED item. One line per DROPPED item with the reason.
@@ -404,7 +400,7 @@ WHY C2 DOES/DOES NOT EXPLAIN:
 {one paragraph}
 
 SCORED ITEMS:
-{G-ID} | {C1/C2/C3} | {date from item's date: field} | {one-sentence justification}
+{G#} | {C1/C2/C3} | {date from item's date: field} | {one-sentence justification}
 ...
 
 TALLY: C1={n} C2={n} C3={n}
@@ -441,13 +437,13 @@ You are a counter-evidence agent. Search for evidence that could downgrade C3 it
 **Output format:** Return ONLY the flipped items. Do not reproduce unchanged items.
 
 ```
-{G-ID} | FLIPPED TO C2 | {counter-evidence citation and why C2 now suffices}
-{G-ID} | RETAINED C3 | {reason counter-evidence insufficient or absent}
+{G#} | FLIPPED TO C2 | {counter-evidence citation and why C2 now suffices}
+{G#} | RETAINED C3 | {reason counter-evidence insufficient or absent}
 ```
 
 If no items flip, return "NO FLIPS".
 
-**Return:** flipped G-IDs (one per line) or "NO FLIPS", + path to challenge log file. Cap return at 300 tokens.
+**Return:** flipped G#s (one per line) or "NO FLIPS", + path to challenge log file. Cap return at 300 tokens.
 
 </challenge-task>
 
@@ -475,11 +471,11 @@ State whether the three trigger conditions are met:
 
 If a MOM leg is absent: threshold elevates to 50%. State whether C3 still exceeds 50%.
 
-State the final mode: "c3 threshold met" or "c2 baseline".
+State the final mode: "C3 threshold met" or "C2 baseline".
 
 **2. Three MOM legs.**
 For each leg (Motive, Opportunity, Means):
-- State the claim in 1-2 sentences. Name mechanisms, not G-IDs.
+- State the claim in 1-2 sentences. Name mechanisms, not G#s.
 - List 2-5 supporting facts as telegraphic sentences.
 - Confirm each fact is diagnostic: it would NOT be expected under the C2 alternative. If a fact is equally expected under C2, do not cite it.
 - State the C2 alternative in one sentence (the competing hypothesis).
@@ -532,6 +528,8 @@ You are an architectural analysis agent. Identify the foundational design decisi
 **Output:** Write `architecture.md` to the scratch directory. Return path only.
 
 </architecture-task>
+
+![Tablet Device](images/detect-operator-2.png)
 
 <criteria-reference>
 
@@ -813,11 +811,11 @@ The report template defines the final output structure. The Writer transforms th
 9. Footer (date + model)
 
 **Executive Summary - c2 baseline mode:**
-Single paragraph, 2-4 sentences, under 80 words. Characterize the behavior pattern. No numbers, no G-IDs, no criterion names, no comma-delimited lists.
+Single paragraph, 2-4 sentences, under 80 words. Characterize the behavior pattern. No numbers, no G#s, no criterion names, no comma-delimited lists.
 
 **Executive Summary - c3 threshold met mode:**
 Two paragraphs.
-- P1: ACTOR + MECHANISM + TEMPORAL PATTERN + BREADTH. One quotable sentence following the four-stage chain. Plus one sentence on confidence. No G-IDs.
+- P1: ACTOR + MECHANISM + TEMPORAL PATTERN + BREADTH. One quotable sentence following the four-stage chain. Plus one sentence on confidence. No G#s.
 - P2: Exculpatory. What the C2 record shows. Draw from criteria NOT named in P1. Frame as: these do not explain the C3 findings.
 
 **Methodology sub-heading includes:**
@@ -874,7 +872,7 @@ You are writing a P4196 Detection Criteria Evidence Assessment.
    `https://wg21.link/{paper}`. Hit column: bold classification.
 4. Assessment. Name 3-5 genuinely ambiguous C2 items with one sentence
    each explaining why C2 was accepted. Name 2-4 surviving C3 mechanisms
-   with G-ID clusters. State combination signal status with the criteria
+   with G# clusters. State combination signal status with the criteria
    numbers that fire. End with confidence (high/moderate/low) naming 2-3
    independent corroboration sources.
 5. Exec summary. If packet says "c3 threshold met": P1 (clue sentence -
@@ -922,10 +920,8 @@ You are a review agent. Cross-reference a draft report against its source eviden
 
 </review-task>
 
+![Diplomatic Pouch](images/detect-operator-3.png)
+
 ---
 
 All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
-
-
-
-
