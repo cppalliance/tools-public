@@ -18,27 +18,33 @@ Point Cheat Finder at any proposal's documented record and it runs the detection
 
 ```mermaid
 flowchart TD
-    S0["0 Receive (main)"] --> S1["1 Profile + Gather (parallel)"]
-    S1 --> S2["2 Verify (parallel subagents)"]
-    S2 --> S3["3 Score (parallel x16)"]
-    S3 --> S4["4 Tally (main)"]
-    S4 --> S5["5 Prepare (main + shell)"]
-    S5 --> S6["6 Write (isolated subagent)"]
-    S6 --> S7["7 Review (fresh subagent)"]
-    S7 --> S8["8 Deliver (main)"]
+    S0["0 Receive (main)"] --> S1["1 Recon (1 subagent)"]
+    S1 --> S2["2 Gather (N parallel)"]
+    S2 --> S3["3 Verify (parallel subagents)"]
+    S3 --> S4["4 Score (parallel x16)"]
+    S4 --> S5["5 Challenge (1-3 subagents)"]
+    S5 --> S6["6 Tally (main)"]
+    S6 --> S7["7 Prepare (main + shell)"]
+    S7 --> S8["8 Write (isolated subagent)"]
+    S8 --> S9["9 Review (fresh subagent)"]
+    S9 --> S10["10 Deliver (main)"]
 ```
 
 ---
 
 ## Token Economy
 
-**In main:** user inputs, file paths, step completion status, tally line reads (grep output), verification corrections (bounded at 2 lines per evidence item), review corrections (cap 2000 tokens).
+**In main:** user inputs, file paths, recon orchestration summary (~150 words), step completion status, tally line reads (grep output), verification corrections (bounded at 2 lines per evidence item), review corrections (cap 2000 tokens).
+
+**In recon subagent:** questionnaire answers, search results (transient), structural position prose (write to context file).
 
 **In verify subagents:** master evidence file (read), fetched source content (transient). Corrections file (write).
 
-**Never in main:** raw source material, profile prose body, master evidence body (except grep for `source:` and `date:` lines during Step 2 classification), score scratch file bodies, evidence packet body, evidence details body, writer's draft body. All consumed by path from subagents or read from file by the review subagent only.
+**In challenge subagents:** C3 items with descriptions, fetched counter-evidence (transient), challenge-log (write).
 
-The only large reads in main: Step 2 (Verify) source-line grep of master evidence, and Step 8 (Deliver) when corrections exist. Both bounded: the grep by line count, the report by ~500 lines.
+**Never in main:** raw source material, recon context file body, master evidence body (except grep for `source:` and `date:` lines during Step 3 classification), score scratch file bodies, evidence packet body, evidence details body, writer's draft body, challenge subagent fetched content, workspace file contents. All consumed by path from subagents or read from file by the review subagent only.
+
+The only large reads in main: Step 3 (Verify) source-line grep of master evidence, and Step 10 (Deliver) when corrections exist. Both bounded: the grep by line count, the report by ~500 lines.
 
 ---
 
@@ -49,19 +55,20 @@ The only large reads in main: Step 2 (Verify) source-line grep of master evidenc
 - All intermediates are **scratch**. Final report is **output**.
 - One proposal per run. Single writer. No em-dash or double-dash anywhere.
 - The falsification principle binds every scoring decision: C3 only when the C2 baseline explanation fails. If no falsifier fires, the item scores C2.
+- **Budget halt rule:** If any subagent exhausts its effort budget before completing its assigned work, the pipeline halts. Main reports to the user: which step, which subagent, what work remains unfinished, and how many additional calls would be needed to complete. The user decides whether to resume with a larger budget or accept the gap. Do not continue past a budget-exhausted step without user confirmation.
 
 ---
 
 ## Commands
 
-- `cheat-finder [proposal] [subject] [gathering-instructions]`
+- `cheat-finder [proposal] [subject] [slug] [gathering-instructions]`
 
-Run the full pipeline. Proposal: a paper number (P2900) or file path. Subject: the name or entity being evaluated. Gathering instructions: what evidence to collect and where to find it.
+Run the full pipeline. Proposal: a paper number (P2900) or file path. Subject: the name or entity being evaluated. Slug: 1-2 lowercase words from the proposal's domain (reflection, contracts, profiles, execution). Gathering instructions: what evidence to collect and where to find it.
 
 Example:
 
 ```
-cheat-finder P8888 No "Search for SG21 poll history,
+cheat-finder P8888 "No" execution "Search for SG21 poll history,
 check wiki for Kona/Wroclaw/Tokyo/Hagenberg minutes,
 read workspace files in COI-analysis/"
 ```
@@ -72,163 +79,112 @@ read workspace files in COI-analysis/"
 
 ### Step 0: Receive (main)
 
-Accept three inputs: target proposal (paper number or path), subject name, gathering instructions. If the proposal is a file path, verify the file exists; if a paper number, accept as-is. Set scratch directory: `cabinet/_scratch/cheat-finder-{proposal}-{subject}/`. Create it.
+Accept four inputs: target proposal (paper number or path), subject name, slug, gathering instructions. If the proposal is a file path, verify the file exists; if a paper number, accept as-is. Set scratch directory: `cabinet/_scratch/cheat-finder-{proposal}-{slug}/`. Create it.
 
-Extract from the gathering instructions any instruction that would change how a subagent behaves (source restrictions, quoting rules, presentation preferences, testimony, institutional context). Write these to `cabinet/_scratch/cheat-finder-{proposal}-{subject}/run-context.md`. If no such instructions exist, write an empty file.
+Extract from the gathering instructions any instruction that would change how a subagent behaves (source restrictions, quoting rules, presentation preferences, testimony, institutional context). Write these to `cabinet/_scratch/cheat-finder-{proposal}-{slug}/run-context.md`. If no such instructions exist, write an empty file.
 
-### Step 1: Profile + Gather (parallel)
+### Step 1: Recon (1 subagent)
 
-Profile and Gather launch in parallel. No data dependency between them.
+Dispatch: tool path + `<recon-task>` tag + proposal identifier + subject name + run-context path + user-supplied paths (if any). Subagent returns orchestration summary (~150 words) and writes a context file to scratch. Main reads the summary and stores the context file path for Steps 2, 3, 5, 9.
 
-**Profile (1 subagent).** Dispatch: read this tool file, grep for `<profile-task>`, execute. Pass the proposal identifier, subject name, run-context file path, and any user-supplied institutional context extracted from the gathering instructions. Subagent writes one scratch file establishing the subject's structural position. Returns path only.
+### Step 2: Gather (N parallel subagents)
 
-**Gather (N subagents).** Dispatch: read this tool file, grep for `<gather-task>`, execute. Pass the run-context file path along with source-specific instructions. Main decomposes the user's gathering instructions into source-specific tasks:
+Dispatch: tool path + `<gather-task>` tag + run-context path + context file path + source-specific instructions. Main decomposes the user's gathering instructions into source-specific tasks:
 
 - Explicit source mentions spawn one subagent each ("search Pinecone" = 1, "check wiki" = 1, "read workspace files in X/" = 1).
 - If the user gives no source specifics, default: one Pinecone subagent, one wiki subagent, one workspace subagent (if evidence directories exist).
 - Cap: 5 Gather subagents per run.
 
-Each subagent writes a scratch file of evidence items. Format:
-
-```
-# {source_type}: {source_description}
-
-1. {description (1-2 sentences)}
-   date: {ISO or "Ongoing" or "Pattern"}
-   source: {internet URL - public or authenticated}
-   criteria: {comma-separated criterion numbers 1-16}
-   quote: {verbatim if available, or "none"}
-```
-
 Each subagent makes at most 5 tool calls. Returns count + path only.
 
 After all Gather subagents return, shell-concatenate their scratch files into one master evidence file. Assign global IDs by prepending `G{n}.` to each item, sequential across all sources. These IDs are the stable references for Score subagents and the writer.
 
-### Step 2: Verify (parallel subagents)
+### Step 3: Verify (parallel subagents)
 
-Check each gathered evidence item against its original source before scoring begins. Errors caught here (misattribution, wrong date, fabricated quote, incorrect count) do not propagate into scoring, writing, or review.
+Grep the master evidence file for `source:` and `date:` lines. Classify each item as verifiable, skippable, or testimony-based (rules in `<verify-task>`). Partition verifiable items by source type (reflector, wiki, web).
 
-Grep the master evidence file for `source:` and `date:` lines. Classify each item:
+Dispatch up to 3 verify subagents: tool path + `<verify-task>` tag + master evidence path + context file path + source-type assignment. Skip empty partitions.
 
-- **Verifiable:** the `source:` field contains a fetchable URL (lists.isocpp.org, wiki.edg.com, wiki.isocpp.org, open-std.org, isocpp.org, or any other internet URL).
-- **Skippable:** the `date:` field is "Pattern" or "Ongoing" AND the item's description contains no named author, no quoted text, and no specific numbers (poll tallies, page counts, NB counts). Items with specific quotes or attributions are verifiable even with "Pattern" dates.
-- **Testimony-based:** the `source:` field points to a generic paper link (wg21.link) AND the item's description attributes its content to user-supplied testimony. Skip these.
+After all return, read corrections files. Apply CORRECTED field fixes via StrReplace. Remove DROPPED items and renumber G-IDs. Write a verification-log scratch file.
 
-Partition verifiable items by source type:
+### Step 4: Score (parallel x16, NO context file)
 
-- Reflector: URLs matching `lists.isocpp.org`
-- Wiki: URLs matching `wiki.edg.com` or `wiki.isocpp.org`
-- Web/papers: all other URLs
+Dispatch 16 subagents: tool path + `<score-task>` tag + criterion number + master evidence path. Do NOT pass the context file (falsification firewall: evidence items are the sole input). Run in parallel batches of 3-5. Each writes a score scratch file. Returns path only.
 
-Dispatch 3 verify subagents. Pass each: tool file path, `<verify-task>` tag name, master evidence file path, source-type assignment (one of: reflector, wiki, web). If a source-type partition is empty, skip that subagent.
+### Step 5: Challenge (1-3 subagents)
 
-After all verify subagents return, read the corrections files. For each CORRECTED item, apply the field fix to the master evidence file via StrReplace. For each DROPPED item (fabricated content confirmed absent from source), remove the item from the master evidence file and renumber subsequent G-IDs sequentially. Renumbering is safe because Step 3 (Score) has not yet read the file. If all items are VERIFIED or UNFETCHABLE with no CORRECTED or DROPPED verdicts, skip the correction pass. Write a verification-log scratch file listing all verdicts.
+Shell-grep score scratch files for C3 items. If zero C3 items, skip to Step 6.
 
-### Step 3: Score (parallel-capable, 16 subagents)
+Dispatch 1-3 challenge subagents: tool path + `<challenge-task>` tag + C3 G-IDs with descriptions + master evidence path + context file path. Each searches for counter-evidence (rebuttal papers, minutes showing the concern was addressed, revisions that fixed the issue). If counter-evidence makes C2 sufficient, flip the score.
 
-Dispatch: read this tool file, grep for `<score-task>`, execute. The task directs the subagent to also grep for `<criteria-reference>` and read its own criterion's entry.
+Main rewrites affected score scratch files for flipped items before Tally. Each subagent writes a challenge-log scratch file. Returns flipped count + challenge-log path.
 
-Each subagent receives (via dispatched prompt): tool path, tag names, criterion number, path to the master evidence file. The subagent filters to evidence items tagged to its criterion number.
+### Step 6: Tally (main)
 
-Run in parallel batches of 3-5 at main's discretion.
+Shell-grep the `TALLY:` line from each of the 16 score scratch files. Mechanical aggregation: build grand tally table, check combination signal (criteria 1, 2, 8 all C3), check 20% threshold (C3 items exceed 20% of total scored items), write one-sentence verdict, write tally scratch file.
 
-Each subagent writes a scratch file:
+### Step 7: Prepare (main + shell)
 
-```
-CRITERION {N}: {name}
+Write three scratch files:
 
-C2 BASELINE:
-{one paragraph, copied from <criteria-reference>}
+**File 1: Evidence packet.** Shell-concatenate the context file's "Authors and Structural Position" section, all 16 score scratch files, the tally scratch file, and the source access inventory from the context file. Preserve heading lines for section boundaries.
 
-C3 SIGNAL:
-{one paragraph, copied from <criteria-reference>}
+**File 2: Evidence details.** Copy the master evidence file from Gather.
 
-WHY C2 DOES/DOES NOT EXPLAIN:
-{one paragraph, written by the subagent}
-
-SCORED ITEMS:
-{global_id} | {C1/C2/C3} | {one-sentence justification}
-...
-
-TALLY: C1={n} C2={n} C3={n}
-```
-
-Returns path only.
-
-### Step 4: Tally (main)
-
-Shell-grep the `TALLY:` line from each of the 16 score scratch files. Mechanical aggregation:
-
-- Build the grand tally table (16 rows + totals).
-- Check the combination signal: do criteria 1, 2, and 8 all have C3 hits? If yes, all three distinguishing markers are present simultaneously.
-- Write one-sentence verdict for the Executive Summary.
-- Write to a tally scratch file.
-
-### Step 5: Prepare (main + shell)
-
-The analytical firewall. All analysis is complete. This step assembles what the writer needs.
-
-Write THREE scratch files:
-
-**File 1: Evidence packet.** Shell-concatenate the profile scratch file, all 16 score scratch files, and the tally scratch file. Preserve heading lines for section boundaries. This file is the writer's sole source of truth.
-
-**File 2: Evidence details.** Copy the master evidence file from Gather. Raw quotes, source citations, dates. The writer consults this when constructing evidence tables.
-
-**File 3: Report template.** Read `<report-template>` from this tool file and write it to a scratch file, filling in the proposal identifier and subject name in the title. The template has section headings with one-line fill-in instructions.
+**File 3: Report template.** Read `<report-template>` from this tool file and write it to a scratch file, filling in the proposal identifier and subject name in the title.
 
 <img src="images/cheat-finder-2.png" alt="Cheat Finder Firewall" width="100%">
 
-### Step 6: Write (1 isolated subagent)
+### Step 8: Write (1 isolated subagent)
 
-Dispatch: read this tool file, grep for `<writing-discipline>`, execute.
+Dispatch: tool path + `<writing-discipline>` tag + four file paths (evidence packet, evidence details, report template, run-context). Writer fills the template from the evidence packet. Returns path only.
 
-Pass four file paths: evidence packet, evidence details, report template, run-context. The writer fills the template using the evidence packet for structure, claims, and scoring. When constructing evidence tables, consult the evidence details file for dates, sources, and verbatim quotes. Write the complete report to a scratch file. Return path only.
+### Step 9: Review (1 fresh subagent)
 
-The writer never invents evidence. If the evidence packet lacks a fact, the writer omits it. The writer never scores - all C1/C2/C3 assignments come from the evidence packet.
+Dispatch: tool path + `<review-task>` tag + draft report path + evidence packet path + evidence details path + run-context path + context file path + `<criteria-reference>` tag name.
 
-### Step 7: Review (1 fresh subagent)
+Fresh subagent cross-references draft against evidence on five axes (completeness, accuracy, falsification fidelity, template compliance, prose). Returns `APPROVED` or a numbered correction list (cap 2000 tokens).
 
-Step 2 (Verify) checks external accuracy - whether gathered evidence matches its original sources. This step checks internal consistency - whether the written report matches the evidence packet. Both exist because they operate on different artifacts at different pipeline stages: Verify corrects the master evidence before scoring, Review corrects the report after writing.
-
-Dispatch: read this tool file, grep for `<review-task>`, execute.
-
-Pass five inputs: draft report path, evidence packet path, evidence details path, run-context path, and the `<criteria-reference>` tag name for spot-checking.
-
-Fresh subagent reads the draft and cross-references against the evidence on five axes:
-
-1. **Completeness** - all 16 criterion sections present and filled, grand tally matches per-criterion tallies, executive summary tally matches grand tally.
-2. **Accuracy** - every C1/C2/C3 assignment matches the evidence packet, no evidence items dropped or invented, quotes match evidence details.
-3. **Falsification fidelity** - every C3 item has a "why C2 does not explain" paragraph naming a specific falsifier from `<criteria-reference>`. Every C2 item states the falsifier was not met.
-4. **Template compliance** - all sections present in correct order, no duplicated front matter, footer present.
-5. **Prose** - no em-dashes, no double-dashes, no hedging, no forward references in the assessment.
-
-Returns one of:
-- `APPROVED`
-- A numbered correction list: `{section}: {issue} -> {fix}` (cap 2000 tokens)
-
-### Step 8: Deliver (main)
+### Step 10: Deliver (main)
 
 If Review returned corrections: read the draft from file, apply corrections, write the final report.
 If Review returned APPROVED: copy the draft to the output location.
 
-Output: `cabinet/_output/cheat-finder-{proposal}-{subject}.md`
+Output: `cabinet/_output/cheat-finder-{proposal}-{slug}.md`
 
 ---
 
-<profile-task>
-You are an institutional context agent. Establish the structural position of a subject within WG21.
+<run-context-rule>
+Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return.
+</run-context-rule>
 
-**Inputs you receive:** proposal identifier, subject name, run-context file path, optional user-supplied institutional context.
+<recon-task>
+You are a reconnaissance agent. Discover the structural relationships surrounding a WG21 proposal and its subject.
 
-**Run-context:** Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults in this task block. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return.
+**Inputs you receive:** proposal identifier, subject name, run-context file path, user-supplied workspace paths (if any).
 
-**Research scope:** employer backing, funding relationships (disclosed and undisclosed), chair and leadership roles held by the subject or its employees, national-body voting presence, consulting arrangements, and any structural overlap between the subject's personnel and committee oversight roles.
+**Run-context:** Obey `<run-context-rule>` from this tool file.
 
-**Sources to use:** Pinecone semantic search (namespaces: wg21-reflector, wg21-papers, wg21-wiki), WG21 wiki (meeting pages, group rosters), web search for employer pages and public disclosures. If user-supplied context names specific relationships, include them verbatim and mark as "User-supplied."
+**Research scope:** employer backing, chair and leadership roles, national-body voting presence, co-authorship overlaps, consulting arrangements, competing/opposition paper numbers, meeting timeline with poll dates.
 
-**Effort budget:** at most 5 tool calls total.
+**Sources:** Pinecone semantic search (namespaces: wg21-reflector, wg21-papers, wg21-wiki), WG21 wiki (meeting pages, group rosters), web search for employer pages and public disclosures.
 
-**Output:** write one scratch file containing:
+**Workspace policy:** Do not search workspace files unless the user explicitly names paths. When paths are provided, list filenames in the context file. Gather reads the files directly by path.
+
+**Effort budget:** 32 tool calls.
+
+**Produce two artifacts:**
+
+**Artifact 1: Orchestration summary (~150 words, returned to main).**
+- Proposal: title, revision, status, target standard
+- Subject: name, relationship to proposal
+- Source access inventory: for each source type, whether accessible and how
+- Key players: author names, opposers, chairs
+- Competing/opposition paper numbers
+- User constraints: sources included/excluded
+
+**Artifact 2: Context file (written to scratch directory).**
+Begins with a report-ready section:
 
 ```
 ## Authors and Structural Position
@@ -238,20 +194,22 @@ You are an institutional context agent. Establish the structural position of a s
 | {name} | {employer} | {role} |
 ...
 
-{2-4 paragraphs of prose: institutional backing, funding chain, chair relationships, NB voting presence. Name every relationship. State whether each is disclosed or undisclosed. If user-supplied context exists, integrate it and mark the source.}
+{2-4 paragraphs: institutional backing, funding chain, chair relationships, NB voting presence. Name every relationship. State whether each is disclosed or undisclosed. If user-supplied context exists, integrate it and mark the source.}
 ```
 
-**Return:** path to the scratch file only. Do not return file contents.
-</profile-task>
+Followed by operational data: meeting timeline with poll dates, employer affiliations for all named players, access methods per source type, competing paper titles and authors, user-supplied workspace file paths (filenames only in report).
+
+**Return:** summary content (main reads it) + context file path.
+</recon-task>
 
 <gather-task>
 You are an evidence collection agent. Gather evidence items relevant to how a WG21 proposal moved through the committee.
 
-**Inputs you receive:** proposal identifier, subject name, run-context file path, source-specific instructions (which source to search, what meetings or topics to check).
+**Inputs you receive:** proposal identifier, subject name, run-context file path, context file path, source-specific instructions (which source to search, what meetings or topics to check).
 
-**Run-context:** Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults in this task block. The URL rule below is structural and cannot be overridden by run-context. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return.
+**Run-context:** Obey `<run-context-rule>` from this tool file.
 
-**What counts as evidence:** poll results, chair statements, procedural actions (scheduling, poll wording, agenda control), author statements on reflector or in papers, committee instructions and whether they were satisfied, institutional backing indicators, competing-design treatment, written record omissions or inclusions.
+**What to gather:** Items relevant to the 16 criteria below. Poll results, chair statements, procedural actions, author statements, committee instructions and compliance, institutional backing indicators, competing-design treatment, written record omissions or inclusions.
 
 **Tag each item with criterion numbers.** The 16 criteria are:
 1. Response to architectural objections
@@ -273,23 +231,27 @@ You are an evidence collection agent. Gather evidence items relevant to how a WG
 
 An item can tag multiple criteria (comma-separated).
 
-**Effort budget:** at most 5 tool calls.
+**Effort budget:** 20 tool calls.
 
-**Source resolution rule:** Every evidence item must have an internet URL in the source field. Resolved means the URL follows a known pattern (wg21.link, lists.isocpp.org, wiki.edg.com) or was returned by a tool response. Workspace files are reconnaissance for finding real sources, not citable sources. Use remaining tool calls to resolve workspace leads to their real URLs. Drop any item you cannot resolve to a URL within your tool budget.
+**Source resolution:** Every evidence item must have an internet URL in the `source:` field (wg21.link, lists.isocpp.org, wiki.edg.com, or a URL returned by a tool). Drop any item you cannot resolve to a URL within your tool budget. If the budget is exhausted before all source-specific instructions are completed, return immediately with a `BUDGET_EXHAUSTED` flag listing what work remains.
+
+**Structural-position enrichment:** For each evidence item, state the actor's name, their institutional position relative to the proposal (from the context file: author, co-author, chair, employer, NB delegate, study group member, independent critic), and what structural advantage or disadvantage that position creates for this action.
 
 **Output format:** write one scratch file:
 
 ```
 # {source_type}: {source_description}
 
-1. {description (1-2 sentences)}
+1. {description (1-2 sentences, including actor's name, position, and structural implication)}
    date: {ISO or "Ongoing" or "Pattern"}
-   source: {internet URL - public or authenticated}
+   source: {internet URL}
    criteria: {comma-separated criterion numbers}
    quote: {verbatim if available, or "none"}
 
 2. ...
 ```
+
+**Self-check before returning:** Re-read the context file's structural relationships. For each evidence item involving a named player, verify the description states their institutional role and relationship to the proposal. Rewrite any item that mentions a player's action without stating their position.
 
 **Return:** item count and path to the scratch file only.
 </gather-task>
@@ -324,7 +286,7 @@ Group your filtered items by unique URL. Fetch each unique URL once.
 - **DROPPED:** the described event is absent from the fetched source (fabrication). Apply this verdict only with high confidence. If unsure whether the content supports the description, mark VERIFIED with a note.
 - **UNFETCHABLE:** source could not be retrieved by any available tool. Do not guess at the content.
 
-**Effort budget:** 24 tool calls. Stop after every unique URL in your batch has been fetched once, or the budget is exhausted. If the budget runs out before all URLs are fetched, mark remaining items UNFETCHABLE with reason "budget exhausted".
+**Effort budget:** 64 tool calls. Stop after every unique URL in your batch has been fetched once, or the budget is exhausted. If the budget runs out before all URLs are fetched, return immediately with a `BUDGET_EXHAUSTED` flag listing the remaining unfetched URLs and item count.
 
 **Output:** write one corrections scratch file. Format:
 
@@ -352,6 +314,7 @@ You are a scoring agent. Score evidence items for one detection criterion from t
    - **C1** (New Author): behavior reflects technical competence without procedural fluency.
    - **C2** (Senior Author): behavior fits within the C2 BASELINE. The falsifier condition from `<criteria-reference>` is not met.
    - **C3** (Unchecked Institutional): behavior exceeds the C2 BASELINE. The specific falsifier condition IS met.
+   The distinguishing axis is the author's relationship to feedback: C1 takes feedback at face value, C2 treats it as strategic input and adjusts the design, C3 treats it as adversarial and protects the design from it.
 3. The falsification principle: score C3 only when a reasonable observer could not attribute the behavior entirely to procedural competence, institutional backing, and sincere conviction. If the C2 explanation suffices, score C2.
 4. Write one sentence of justification per item. For C3 items, name the specific falsifier that is met. For C2 items, state why the falsifier is not met.
 
@@ -380,6 +343,33 @@ TALLY: C1={n} C2={n} C3={n}
 
 **Return:** path to the scratch file only.
 </score-task>
+
+<challenge-task>
+You are a counter-evidence agent. Search for evidence that could downgrade C3 items to C2.
+
+**Inputs you receive:** tool file path, list of C3 G-IDs with descriptions, master evidence path, context file path.
+
+**Run-context:** Obey `<run-context-rule>` from this tool file.
+
+**For each C3 item, search for:**
+- Rebuttal papers or responses that address the concern
+- Minutes showing the issue was later addressed or resolved
+- Revisions to the proposal that fixed the identified problem
+- Evidence that the behavior was standard practice for the committee at that time
+
+**Decision rule:** If counter-evidence demonstrates that the C2 baseline explanation is now sufficient (the falsifier condition is no longer met given the full record), flip the score to C2 and state the counter-evidence. If counter-evidence is partial or inconclusive, retain C3.
+
+**Effort budget:** 64 tool calls.
+
+**Output:** write one challenge-log scratch file:
+
+```
+{G-ID} | RETAINED C3 | {reason counter-evidence insufficient or absent}
+{G-ID} | FLIPPED TO C2 | {counter-evidence citation and why C2 now suffices}
+```
+
+**Return:** flipped count + challenge-log path. Cap return at 300 tokens.
+</challenge-task>
 
 <criteria-reference>
 
@@ -417,8 +407,7 @@ A senior author seeks directional polls deliberately; cites favorable results to
 C3 SIGNAL:
 A direction poll is converted into a permanent "mandate" that forecloses all subsequent deliberation. Omnibus polls bundle unrelated decisions to prevent granular objection.
 
-FALSIFIER:
-A direction poll is converted into a permanent "mandate" that forecloses all subsequent deliberation. Omnibus polls bundle unrelated decisions to prevent granular objection.
+FALSIFIER: (Same as C3 SIGNAL)
 
 ---
 
@@ -428,10 +417,9 @@ C2 BASELINE:
 A senior author addresses minority objections enough to satisfy the chair. May disagree after genuine engagement. Stops revisiting when consensus is achievable.
 
 C3 SIGNAL:
-Objections are dismissed as "no new information" when the core technical concern was never directly answered in writing. The same dismissal pattern repeats across multiple meetings without the substance of the objection ever being engaged.
+Objections are dismissed as "already answered" when the core technical concern was never directly answered in writing. The same dismissal pattern repeats across multiple meetings without the substance of the objection ever being engaged.
 
-FALSIFIER:
-Objections dismissed as "no new information" when the core technical concern was never directly answered in writing. The same dismissal pattern repeats across multiple meetings without the substance of the objection ever being engaged.
+FALSIFIER: (Same as C3 SIGNAL)
 
 ---
 
@@ -441,7 +429,7 @@ C2 BASELINE:
 A senior author frames position favorably, cites favorable outcomes. Selective presentation is normal advocacy.
 
 C3 SIGNAL:
-Unfavorable poll results are actively omitted from self-reported histories while favorable ones are included. The opposition's case is never stated in its strongest form.
+Unfavorable poll results are actively omitted from self-reported histories while favorable ones are included. The opposition's case is never stated in its strongest form. The author avoids faithful restatement of opposing arguments.
 
 FALSIFIER:
 Specific unfavorable poll results are omitted from self-reported history while favorable results from the same period are reported. The opposition's case is never stated in its strongest form.
@@ -482,8 +470,7 @@ A senior author may use sharp language under pressure. Characterizes the argumen
 C3 SIGNAL:
 The act of submitting an alternative is treated as illegitimate. A competing approach is equated with "halting all forward progress." Opposition is characterized as a conduct offense.
 
-FALSIFIER:
-The act of submitting an alternative is treated as illegitimate. A competing approach is equated with "halting all forward progress."
+FALSIFIER: (Same as C3 SIGNAL)
 
 ---
 
@@ -506,7 +493,7 @@ C2 BASELINE:
 A senior author cites prior decisions and asks "what's new?" Prevents infinite re-litigation.
 
 C3 SIGNAL:
-The burden shift is engineered through deliberate linguistic transformation across years: "competing design" becomes "alternative" becomes "objection" becomes "reopening settled question." A single direction poll is wielded as permanent authority against all subsequent challenge regardless of new evidence.
+The burden shift is engineered or reinforced through deliberate linguistic transformation across years: "competing design" becomes "alternative" becomes "objection" becomes "reopening settled question." A single direction poll is wielded as permanent authority against all subsequent challenge regardless of new evidence.
 
 FALSIFIER:
 A vote tally is used to dismiss objections that post-date the vote. The four-stage linguistic transformation ("competing design" -> "alternative" -> "objection" -> "reopening settled question") is documented across multiple arcs.
@@ -519,10 +506,9 @@ C2 BASELINE:
 A senior author knows the full procedural move set and uses it within norms. Short incubation happens under deadline pressure.
 
 C3 SIGNAL:
-A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. Poll wording drafted privately with leadership while objectors are excluded.
+Exceeds norms: a majority of binding papers polled with under one week's incubation systematically, including self-authored papers. Poll wording drafted privately with leadership while objectors are excluded.
 
-FALSIFIER:
-A majority of binding papers polled with under one week's incubation systematically, including self-authored papers. Poll wording drafted privately with leadership while objectors are excluded.
+FALSIFIER: (Same as C3 SIGNAL)
 
 ---
 
@@ -571,10 +557,10 @@ C2 BASELINE:
 Significant employer backing with funded engineers and coordinated papers. How major facilities get standardized.
 
 C3 SIGNAL:
-The cost structure includes undisclosed financial relationships with oversight authority and duplicate national-body votes from the same funding source.
+The cost structure includes undisclosed financial relationships with oversight authority, duplicate vote representation from the same funding source, and arrangements that weaken independence of technical review.
 
 FALSIFIER:
-Cost structure includes undisclosed financial relationships with oversight authority AND duplicate national-body votes from the same funding source. The combination compromises the system's self-correction mechanisms.
+Cost structure includes undisclosed financial relationships with oversight authority AND duplicate national-body votes from the same funding source. The combination weakens independence of technical review by concentrating procedural and financial leverage.
 
 ---
 
@@ -608,7 +594,7 @@ The evidence record produces **{C1_TOTAL}** Column 1 hits, **{C2_TOTAL}** Column
 
 ## Authors and Structural Position
 
-{Paste the profile scratch file contents here: author table + institutional backing prose.}
+{Paste the "Authors and Structural Position" section from the evidence packet: author table + institutional backing prose.}
 
 ---
 
@@ -621,6 +607,16 @@ Each evidence item below is mapped to the column it most closely matches. A sing
 - **C3**: Unchecked Institutional Author
 
 For each criterion, the C2 baseline and C3 signal are stated first, then evidence is scored. An item scores C3 only when it exceeds the stated C2 baseline and meets the falsification condition. Where an item is ambiguous, the C2 interpretation is stated and the reason it was accepted or rejected is given.
+
+---
+
+## Sources Consulted
+
+| Source | Access |
+|--------|--------|
+| *Public:* papers, GitHub tracker, blogs, trip reports | {status} |
+| *Private:* reflector archives, wiki minutes | {status} |
+| *User-supplied:* {workspace filenames, no paths} | {status} |
 
 ---
 
@@ -695,16 +691,20 @@ For each criterion, the C2 baseline and C3 signal are stated first, then evidenc
 <writing-discipline>
 You are a report writer operating in the analytical register.
 
-You receive four files: an evidence packet (scored results and structural position), an evidence details file (raw quotes, dates, sources), a report template (the output skeleton), and a run-context file (user constraints). Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults in this task block. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return. Fill the template using the evidence packet for structure and claims. Consult the evidence details file for dates, sources, and verbatim quotes when constructing evidence tables.
+You receive four files: evidence packet (scored results and structural position), evidence details (raw quotes, dates, sources), report template (output skeleton), run-context (user constraints).
+
+**Run-context:** Obey `<run-context-rule>` from this tool file.
+
+Fill the template using the evidence packet for structure and claims. Consult evidence details for dates, sources, and verbatim quotes when constructing evidence tables.
 
 Six rules:
 
 1. Source constraint. The evidence packet is sole source of truth. If it lacks a fact, omit it. Every C1/C2/C3 assignment comes from the evidence packet. Never re-score.
 2. Template fidelity. Fill every section. Keep section order. Do not add sections. Do not duplicate the full detection criteria table or profile descriptions as front matter.
-3. Evidence tables. Each row has five columns: #, Evidence, Date, Source, Hit. The Evidence column uses 1-2 sentences from the evidence details file. The Source column is an inline markdown hyperlink: `[label](url)`. The URL is always an internet address. Every paper number mentioned anywhere in evidence tables (Source or Evidence column) is an inline hyperlink using `https://wg21.link/{paper}` (e.g. `[P2900R11](https://wg21.link/p2900r11)`, `[N5007](https://wg21.link/n5007)`). The Hit column bolds the classification.
+3. Evidence tables. Each row has five columns: #, Evidence, Date, Source, Hit. The Source column is an inline markdown hyperlink: `[label](url)`. Every paper number in evidence tables is an inline hyperlink using `https://wg21.link/{paper}` (e.g. `[P2900R11](https://wg21.link/p2900r11)`). The Hit column bolds the classification.
 4. Assessment narrative. Integrate the results into a coherent diagnosis. Name which C2 items are genuinely ambiguous. Name which C3 items survive falsification. State whether the combination signal is present. End with a confidence level and one-phrase reason.
-5. Prose constraints. No em-dashes. No double-dashes. No hedging ("it could be argued," "perhaps," "it is possible"). No AI tells ("it is important to note," "it should be noted," "delve," "landscape," "underscores the importance"). No meta-announcements ("this section will examine"). Write declarative sentences. Let the evidence carry the argument.
-6. Source Context section. Include this section only when the run-context file contains user-supplied testimony or source characterization. Omit it otherwise. Reproduce user input verbatim when 3 sentences or fewer; paraphrase when longer. Cap at 150 words. Characterize the source category in one sentence rather than listing individual sources.
+5. Prose constraints. No hedging, no AI tells, no meta-announcements. No em-dashes. No double-dashes. Write declarative sentences. Let the evidence carry the argument.
+6. Sources Consulted. Populate the three-tier table from the source access inventory in the evidence packet.
 
 Write the complete report to a scratch file. Return the file path only.
 </writing-discipline>
@@ -712,9 +712,9 @@ Write the complete report to a scratch file. Return the file path only.
 <review-task>
 You are a review agent. Cross-reference a draft report against its source evidence and the detection criteria.
 
-**Inputs you receive:** draft report path, evidence packet path, evidence details path, run-context path, tool file path (grep for `<criteria-reference>` to spot-check falsification conditions).
+**Inputs you receive:** draft report path, evidence packet path, evidence details path, run-context path, context file path, tool file path (grep for `<criteria-reference>` to spot-check falsification conditions).
 
-**Run-context:** Read the run-context file first. Obey all constraints it contains. They override presentation, scope, and quoting defaults in this task block. If a constraint conflicts with a pipeline-structural rule (return format, effort budget, output path) or is uninterpretable, ignore it and note the omission in your return.
+**Run-context:** Obey `<run-context-rule>` from this tool file.
 
 **Check five axes:**
 
@@ -724,9 +724,9 @@ You are a review agent. Cross-reference a draft report against its source eviden
 
 3. **Falsification fidelity.** For each C3 item: the "why C2 does not explain" paragraph names a specific falsifier from `<criteria-reference>` that is met. For each C2 item: the justification states the falsifier is not met. Spot-check at least 3 C3 items and 3 C2 items against the actual falsifier text.
 
-4. **Template compliance.** Sections appear in correct order (Executive Summary, The Proposal, Authors and Structural Position, Scoring Method, Source Context [optional], Criteria 1-16, Grand Tally, Assessment, What This Describes, Footer). No duplicated front matter (no full detection criteria table, no full profile descriptions). Footer present with date and model name.
+4. **Template compliance.** Sections appear in correct order (Executive Summary, The Proposal, Authors and Structural Position, Scoring Method, Sources Consulted, Source Context [optional], Criteria 1-16, Grand Tally, Assessment, What This Describes, Footer). No duplicated front matter. Footer present with date and model name.
 
-5. **Prose.** No em-dashes (U+2014). No double-dashes (--). No hedging phrases ("it could be argued," "perhaps," "it is possible that"). No forward references in the assessment (every concept grounded before use).
+5. **Prose.** No em-dashes (U+2014). No double-dashes. No hedging phrases ("it could be argued," "perhaps," "it is possible that"). No forward references in the assessment (every concept grounded before use).
 
 **Return one of:**
 - `APPROVED` if no issues found.
@@ -734,6 +734,10 @@ You are a review agent. Cross-reference a draft report against its source eviden
 </review-task>
 
 <img src="images/cheat-finder-3.png" alt="Cheat Finder Components" width="100%">
+
+---
+
+**Restated:** The falsification principle binds every scoring decision: C3 only when the C2 baseline explanation fails. If no falsifier fires, the item scores C2. Score subagents receive only the master evidence file. No em-dash or double-dash anywhere.
 
 ---
 
