@@ -1,35 +1,15 @@
 {
   "name": "tools-public",
   "description": "Prompt-based tools and skills from the C++ Alliance",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "C++ Alliance",
     "url": "https://github.com/cppalliance"
   },
   "repository": "https://github.com/cppalliance/tools-public",
   "commands": [
-    "./tools/btc-talk.md",
-    "./tools/normalize-prompt.md",
-    "./tools/refine-plan.md",
-    "./tools/research.md",
-    "./tools/code/boost-review.md",
-    "./tools/code/code-cleanup.md",
-    "./tools/code/code-review.md",
-    "./tools/code/lib-review.md",
-    "./tools-wg21/advocatus.md",
-    "./tools-wg21/auditor.md",
-    "./tools-wg21/herald.md",
-    "./tools-wg21/is-this-cpp.md",
-    "./tools-wg21/review-paper.md",
-    "./tools-wg21/tighten.md",
-    "./tools/voice.md",
-    "./tools/voice/",
-    "./tools/interview.md",
-    "./tools/interview/",
-    "./tools/tutor.md",
-    "./tools/tutor/"
-  ],
-  "skills": [
-    "./tools-wg21/pick-pr-review/"
+    "./tools/",
+    "./tools/code/",
+    "./tools-wg21/"
   ]
 }
