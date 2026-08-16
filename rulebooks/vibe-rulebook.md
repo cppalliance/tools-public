@@ -6,30 +6,36 @@ description: Turn a described idea into finished, tested software - plan in leve
 
 # Rulebook: Vibe-Coding with Minimal Prompting
 
-In every block of marble a figure waits, finished in the mind of God and unfinished in the world. So it is with the thing you wish existed: an app, a tool, a small machine that does one useful thing well. For ages the road from wanting it to holding it was years of the chisel, and most figures never left the stone.
-
-This file is the workshop. Speak the shape in whatever words you have, and the discipline here finds the grain, plans the cuts, and frees the figure - plan into tested software, wish into a thing you can open and use. No academy is required; the master and the apprentice begin the same way, by naming what they see inside the block. You bring the vision; the method brings the thousand careful blows, and it keeps working while you rest. Come back to something standing free of the stone, then choose the next block.
+This file governs every coding session beyond a trivial one-line edit. Follow its rules as written; do not summarize or paraphrase them. The output is finished, tested software.
 
 ![The Vibe](images/vibe-rulebook.png)
 
-Drive to a finished, tested result. Keep the plan session clean by doing the work in subagents.
+Drive to a finished, tested result. Do all work in subagents; keep the plan session clean.
 
 ## The Loop
 
-Start with a design and end with tested software, one testable commit at a time.
+Start with a design. End with tested software. Build one testable commit at a time.
 
-Begin with a design - a design document, an architecture note, or a paragraph in the chat. When it is vague, turn it into a plan in plan mode. A wish becomes buildable only once it is written down.
+Begin with a design - a design document, an architecture note, or a paragraph in the chat. When it is vague, turn it into a plan in plan mode. Write it down; a wish that is not written down is not buildable.
 
-Zoom the plan through levels of resolution, coarse to fine:
+Zoom the plan through four levels of resolution, coarse to fine:
 
-1. What you are building. One description of the thing, in plain words. It may live in its own file.
-2. The high-level components. The big moving parts: an HTTP server, an inference engine, a Markdown parser, a PDF renderer. A part is high-level when it is useful on its own and something like it ships as a package. Put the parts in dependency order, and name the dependency that fixes each one's place.
-3. The pieces inside each component. Zoom into one component at a time and choose how its pieces evolve: one after another, all at once because they depend on each other, or a mix. Decide by the dependencies, not by habit.
-4. The steps. A numbered list in which each step is the largest slice of behavior that one test can cover completely - too large needs a second test, too small cannot be tested at all. Each step is one commit carrying its code, its test, and its documentation.
+1. **What you are building.** Write one description of the thing in plain words. Put it in its own file when the description exceeds a paragraph.
+2. **The high-level components.** Name the big moving parts: an HTTP server, an inference engine, a Markdown parser, a PDF renderer. A part is high-level when it is useful on its own and something like it ships as a package. Put the parts in dependency order. Name the dependency that fixes each one's place.
+3. **The pieces inside each component.** Zoom into one component at a time. Choose how its pieces evolve: one after another, all at once because they depend on each other, or a mix. Decide by the dependencies, not by habit.
+4. **The steps.** Write a numbered list. Each step is the largest slice of behavior that one test can cover completely - too large needs a second test, too small cannot be tested at all. Each step is one commit carrying its code, its test, and its documentation.
 
-Before you execute, read the plan once for gaps: does each step receive what earlier steps produce, and is any step open to more than one reading. One pass, not a gate.
+Before executing, read the plan once for gaps. Confirm that each step receives what earlier steps produce and that no step is open to more than one reading. One pass, not a gate.
 
-Then work the steps in order. For each step: a coder subagent implements it; you commit; a review-and-fix subagent applies `<code-review>` and exactly one fix round; you amend if the tree is dirty; Verify runs when scheduled. Make no make-work commits - the fix folds back into the commit it corrects. Pass findings through `vibe-review.md`, overwritten each cycle. Leftover review findings and a red Verify are not stop conditions; stop only when no forward path exists. Hard-to-reverse choices stay with rule 2. Commits are reversible - never stop for ordinary user confirmation.
+Work the steps in order. Per step:
+
+1. Dispatch the coder subagent to implement the step.
+2. Stage and commit the result. Write a message naming the step's intent.
+3. Dispatch the review-and-fix subagent against the commit's diff.
+4. Amend the commit if review-and-fix dirtied the tree.
+5. Run Verify when scheduled.
+
+Make no make-work commits - fold the fix back into the commit it corrects. Pass findings through `vibe-review.md`, overwritten each cycle. Leftover review findings and a red Verify are not stop conditions; stop only when no forward path exists. Apply rule 2 for hard-to-reverse choices. Commits are reversible - never stop for ordinary user confirmation.
 
 ## The Rules
 
@@ -37,22 +43,22 @@ Each rule names when it fires, what to do, and why, so an unlisted case can stil
 
 **1. Look outward before you invent.**
 - When: you are stuck, the design is silent on something the work needs, or one commit has resisted more than ten code-and-test attempts.
-- Do: send a subagent to search the web for a package, prior art, or evidence the approach is impossible. Ten attempts is the hard trigger; go earlier when it has stopped feeling like an ordinary bug. Act when findings leave you confident; when they do not, or acting would be hard to undo, ask the user.
+- Do: send a subagent to search the web for a package, prior art, or evidence the approach is impossible. Ten attempts is the hard trigger; search earlier when progress has stalled. Act on findings when they are clear; when they are ambiguous or acting would be hard to undo, ask the user.
 - Why: a looked-up fact costs less than reinventing it; the count guarantees research eventually fires.
 
 **2. Reversible calls are yours; irreversible ones are the user's.**
 - When: the design leaves a choice open, or the work contradicts a choice the plan already made.
-- Do: if easy to reverse, decide and keep moving. If hard to reverse - it would shape every later commit, or undoing it would be costly - ask the user first. When you decide alone, record the decision in the plan with its falsifier. When the work forces a plan change, revise that decision in the same commit and say what forced it; a commit that changes nothing about the design writes nothing.
+- Do: decide and keep moving when the choice is easy to reverse. Ask the user first when the choice is hard to reverse - when it shapes every later commit or undoing it is costly. When you decide alone, record the decision in the plan with its falsifier. When the work forces a plan change, revise that decision in the same commit and state what forced the change; write nothing about the design when the commit changes nothing about it.
 - Why: cheap stops defeat completion; a falsifier makes a wrong call recoverable; same-commit revise keeps the plan true as built.
 
 **3. Learn the house rules before you build in the house.**
 - When: you start work on a codebase.
-- Do: gather conventions first - rules file, customs note, or a matching how-to guide. If there are no written rules but there is code, send a subagent to report the conventions the code follows.
+- Do: gather conventions first - read the rules file, customs note, or matching how-to guide. When no written rules exist but code does, send a subagent to report the conventions the code follows.
 - Why: retrofitting conventions later is dear; a subagent survey keeps that reading out of your context.
 
 **4. Every commit moves toward the goal.**
 - When: always. This is the tiebreaker.
-- Do: make each commit carry the work closer to what the user asked for, and drive until it is done. When two rules pull against each other, finishing wins - unless the step is hard to reverse (rule 2) or no forward path exists. Leftover review findings and a red Verify are not stop conditions; fix forward. Unverified code must not be treated as done when Verify is scheduled and still failing with no progress.
+- Do: make each commit carry the work closer to what the user asked for. Drive until done. When two rules conflict, finishing wins - unless the step is hard to reverse (rule 2) or no forward path exists. Leftover review findings and a red Verify are not stop conditions; fix forward. Do not treat code as done when Verify is scheduled and still failing with no progress.
 - Why: the point is the delivered result.
 
 **5. A plan must stand on its own before it runs.**
@@ -62,7 +68,7 @@ Each rule names when it fires, what to do, and why, so an unlisted case can stil
 
 **6. Keep the main context clean; do the work in subagents.**
 - When: any search, read, edit, review, or command whose output grows with what it finds.
-- Do: run it in a subagent. Main runs only bounded git (status, commit, amend). Enters main: the plan, step number, commit hashes, bounded git lines, scratch paths, Verify status line. Never enters main: source, diffs, build or test logs, web pages, `vibe-review.md` body, research payloads. Pass results through scratch files.
+- Do: run it in a subagent. Run only bounded git in main (status, commit, amend). What enters main: the plan, step number, commit hashes, bounded git output, scratch paths, Verify status line. What never enters main: source code, diffs, build or test logs, web pages, `vibe-review.md` body, research payloads. Pass results through scratch files.
 - Why: tool output cannot be unread, and the plan session must survive the run.
 
 **7. Fix an old bug in its own commit.**
@@ -72,17 +78,15 @@ Each rule names when it fires, what to do, and why, so an unlisted case can stil
 
 ## Working in Subagents
 
-Dispatch by reference: the prompt carries plan path, tag name if any, and step number - not the instruction block. Keep every tag unique: angle brackets appear only on the opening and closing lines, and the enclosed block never repeats its own tag.
+Dispatch by reference: pass the plan path, tag name (when applicable), and step number - not the instruction block itself. Keep every tag unique: place angle brackets only on the opening and closing lines. Do not repeat a tag inside its own enclosed block.
 
-**Coder.** Implement only the named step (code, test, docs). Do not run the full suite. Return under 500 tokens: done or blocked, files touched, test command string.
+**Coder.** Implement only the named step: code, test, and docs. Do not run the full suite. Return under 500 tokens: done or blocked, files touched, test command string.
 
-**Review-and-fix.** Fresh from the coder. Apply `<code-review>` and any plan-local review block; overwrite `vibe-review.md` with one-sentence failures; apply exactly one fix round; stop. Return under 1,000 tokens: finding count, files changed, path to `vibe-review.md`.
+**Review-and-fix.** Run immediately after the coder finishes. Apply `<code-review>` and any plan-local review block. Overwrite `vibe-review.md` with one-sentence failures. Apply exactly one fix round, then stop. Return under 1,000 tokens: finding count, files changed, path to `vibe-review.md`.
 
-**Verify.** Owns build and tests. Return one line: pass, or fail and a log path. Main never reads the log. Run Verify when review-and-fix dirtied the tree, on every 3rd step, at the end of each high-level component, and on the plan's final step; otherwise skip.
+**Verify.** Run the build and tests. Return one line: pass, or fail plus a log path. Main never reads the log. Run Verify when review-and-fix dirtied the tree, on every 3rd step, at the end of each high-level component, and on the plan's final step. Skip otherwise.
 
-Git in main: stage, commit, amend.
-
-Per step: coder → commit → review-and-fix → amend if dirty → Verify if scheduled. On Verify fail: coder fixes from the log path, amend or Rule 7 commit, Verify once more; stop only if still no progress. Never stop for ordinary user confirmation - commits are reversible.
+Git in main: stage, commit, amend. On Verify fail: dispatch the coder to fix from the log path, amend or apply rule 7, then run Verify once more. Stop only when still no progress after the retry.
 
 ## Code Review
 
@@ -102,6 +106,6 @@ Read the diff for the commit named by the step. Apply each check as a yes-or-no 
 
 ## Binders
 
-Drive to finished, tested software one testable commit at a time. Each step uses two work subagents - coder, then review-and-fix once - then Verify on schedule; keep the plan session clean; stop only when blocked.
+Build one testable commit at a time. Run two work subagents per step: coder, then review-and-fix once. Run Verify on schedule. Keep the plan session clean. Stop only when blocked.
 
 *2026-08-08 - Cursor Grok 4.5 (Cursor agent)*

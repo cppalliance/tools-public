@@ -134,6 +134,7 @@ Write code that reads as native Rust. Each rule below has a mechanical reason, a
 - Clone deliberately. Cloning an `Arc`, a `&str` you must own, or a small plain struct is correct; cloning inside a loop to quiet the borrow checker is a defect to restructure.
 - Prefer `std::sync::LazyLock` and `OnceLock` to the `lazy_static` and `once_cell` crates.
 - Leave `unwrap` out of library code; use `expect` with a message naming the invariant, or return the error.
+- Keep a trait to a small interface, one to three methods; a kitchen-sink trait with many unrelated methods resists implementation, testing, and dyn compatibility.
 
 Corrections:
 
@@ -189,6 +190,10 @@ Most borrow errors are design errors with a mechanical fix. Own data at the top 
 - Delete the type annotation on a closure parameter when you hit E0521; the annotation invents a fresh lifetime.
 - Write a lifetime annotation only when the compiler demands one; never restate what elision already infers.
 - When one branch returns a reference into a value and later code mutates that value, move the mutation off the returning path or repeat the lookup, rather than cloning or reaching for `unsafe`; the borrow checker rejects this shape even when the paths never overlap at runtime. When auditing, the tell is a clone or `unsafe` added around an `if let`, `match`, or early-`return` arm that hands back a borrow.
+- On every borrow error, name the two overlapping borrows in one sentence before attempting a fix; the diagnosis determines whether to reorder, split, or redesign.
+- Do not delete a later use that made the conflict visible; that changes logic to silence the compiler rather than fixing the ownership.
+- Do not widen a lifetime to `'static` to fix a scope error; return owned data or restructure the call instead. `'static` means "contains no borrowed data," and widening to it hides the real lifetime relationship.
+- Do not use `Arc` in single-threaded code or `Rc` across threads; the wrong wrapper adds cost or fails to compile when moved to a `spawn`.
 
 Diagnose from the error code:
 
@@ -207,6 +212,20 @@ Diagnose from the error code:
 | E0373 | closure may outlive the function | add `move`, or move a reference in instead |
 | E0623 | lifetime mismatch between elided lifetimes | name one lifetime and use it in both positions |
 | E0106 | missing lifetime specifier | link the output lifetime to an input, or return owned data |
+
+When the borrow checker rejects a design, try these fixes in order:
+
+1. Shrink or reorder borrows so the first ends before the second begins.
+2. Split field borrows: destructure `self` into field locals, or take only the fields the function touches.
+3. Use the API meant for this: `HashMap::entry`, `Vec::retain`, `Vec::drain`, `split_at_mut`.
+4. Phase separation: collect indices, keys, or owned snapshots in a read phase, then mutate in a write phase.
+5. Indices instead of references: store `usize` or a newtype index into a `Vec` or arena.
+6. Return owned data instead of a borrow when lifetimes tangle call sites.
+7. Deliberate clone with a comment naming why a second owner is needed.
+8. Interior mutability: `Cell`, `RefCell` (single-threaded), `Mutex`, `RwLock` (multi-threaded).
+9. `Arc` plus channels: true shared ownership across tasks, preferring messages over shared mutation.
+10. Control-flow restructure: when one arm returns a borrow and another would mutate, use check-then-mutate or a second lookup.
+11. `unsafe` - only with written `// SAFETY:` invariants and Miri coverage.
 
 A `&mut self` method loans all of `self`, which is what most E0499s reduce to. Inside a body the compiler tracks fields separately, so destructuring is the fix:
 
@@ -383,7 +402,7 @@ A public API is a promise about names, shapes, and what may change. Decide the f
 - Take `impl AsRef<Path>` or `impl Into<String>` at a widely used entry point, and concrete `&Path` or `&str` inside a crate. Behind any generic public function with a large body, forward at once to a private monomorphic function so only the shim is duplicated per instantiation.
 - Use generics on a hot path and `dyn Trait` at a crate boundary, for heterogeneous storage, and to cut code size.
 - Keep a trait dyn compatible when `dyn Trait` is plausible: no associated consts, no generic methods, no `Self` by value or in return position, and no `async fn`, unless gated behind `where Self: Sized`.
-- Replace `bool` and stringly-typed parameters with enums or newtypes, and use `bitflags` for a flag set.
+- Replace `bool` and stringly-typed parameters with enums, newtypes, or typestate, and use `bitflags` for a flag set.
 - Make destructors infallible and non-blocking; expose `close()` or `shutdown()` returning `Result` for anything that can fail.
 - Run `cargo semver-checks` before publishing, and deprecate with `#[deprecated(since = "...", note = "...")]` before removing in a major release.
 
@@ -607,12 +626,14 @@ The standard library deliberately omits an async runtime, HTTP, TLS, serializati
 
 - Add a dependency only when all four hold: it takes more than 100 lines to write correctly, you will keep using it, its own tree stays under about a dozen crates, and it has shipped a release within a year.
 - Check the last release date, open-issue triage, MSRV, license, `unsafe` count, and `cargo tree -d` depth before adding anything.
-- Confirm a crate is the specific, existing package you intend before adding it, and audit an existing `Cargo.toml` the same way, by matching each name against its docs.rs page and source repository; a near-miss or hallucinated name can resolve to an unrelated or squatted crate yet build like any other. When you cannot confirm identity, add nothing and reach for `std` or a crate already in the tree.
+- Confirm a crate is the specific, existing package you intend before adding it, including its features, at the version being added, and audit an existing `Cargo.toml` the same way, by matching each name against its docs.rs page and source repository; a near-miss or hallucinated name can resolve to an unrelated or squatted crate yet build like any other. When you cannot confirm identity, add nothing and reach for `std` or a crate already in the tree.
 - Run `cargo deny check` and `cargo audit` in CI, and add `cargo vet` when every dependency needs a human review.
 - Turn off default features you do not use, and gate anything heavy behind a feature of your own.
 - Reach for the standard library first: `LazyLock`, `OnceLock`, `core::error::Error`, and `const { assert!(...) }` all removed a common dependency.
 - Write a `no_std` library against `core` plus `alloc`, and layer `std` on top as an additive feature.
 - Pin nothing by exact version in a library; let Cargo's resolver and the caller's lockfile decide.
+- Audit every `use` declaration to confirm each external path resolves to a real crate, not a `std` module misidentified as an external crate; the most common hallucination class is treating `std` modules such as `thread`, `collections`, or `sync` as standalone packages.
+- When `E0599` reports no method named X on a type, open docs.rs for the concrete type at the locked version; do not invent methods or adapters from memory.
 
 | Need | Default | Alternative, and when to take it |
 |---|---|---|
@@ -896,6 +917,8 @@ Every guarantee that can be moved out of review and into a tool should be. Decla
 - Run `cargo semver-checks` before publishing a library, and read `cargo package --list` before a first publish.
 - Deprecate with `#[deprecated(since = "...", note = "...")]` and remove only in a major release.
 - Find unused dependencies with `cargo machete` rather than the `unused_crate_dependencies` lint, which reports one false positive per target.
+- Use `cargo check --message-format=json` for structured output when running in an automated or agent loop; the JSON stream is parseable without scraping human-readable diagnostics.
+- For a port or rewrite, build a reference oracle - the original implementation, golden files, or differential tests - and do not declare correctness from compilation alone; the compiler catches type and ownership errors but not logic bugs.
 
 The local loop before pushing:
 
@@ -1045,6 +1068,8 @@ Async buys concurrency over waiting, not speed over computing. Reach for it when
 - Keep a library runtime-agnostic: accept the async input and output traits, and never call `spawn` or `block_on` inside library code without an injected handle.
 - Shut down with a cancellation token to signal and a task tracker to await, then close the tracker and wait.
 - Instrument tasks with `tracing`, since a stack trace tells you almost nothing about a task that is parked.
+- Use `try_join!` or `join!` where multiple independent `.await`s are currently sequenced; serializing independent futures is correct but wastes concurrency.
+- Do not mix async runtimes or invent a custom executor; one runtime per process, chosen at the top.
 
 | Need | Tool |
 |---|---|
@@ -1080,7 +1105,8 @@ Detect in existing code:
 
 - a `std::sync::MutexGuard`, `Rc`, or `RefCell` held across an `.await` - the future stops being `Send` and can deadlock.
 - `std::fs`, `std::thread::sleep`, `reqwest::blocking`, or `block_on` inside an `async fn` - blocking the executor; use `spawn_blocking` or the async equivalent.
-- `tokio::spawn` without `move`, or a spawn in a loop with no bound - a borrow escapes, or tasks grow without limit.
+- `tokio::spawn` without `move`, a non-`Send` future passed to `spawn`, or a spawn in a loop with no bound - a borrow escapes, the task cannot schedule, or tasks grow without limit; bound with a semaphore or `JoinSet`.
+- sequential `.await` on independent futures where `try_join!` or `join!` would parallelize them - correct but wastes concurrency.
 - a `std::sync::Mutex` or channel shared by many tasks where an owner task would serialize access - contention the design can remove.
 
 Corrections:
@@ -1175,6 +1201,8 @@ Detect in existing code:
 
 These change with the toolchain. Check them against the current release before relying on one.
 
+- Use APIs from the project's existing modules and locked dependency versions; do not substitute remembered tutorial code from a different era.
+
 Edition 2024 changes behavior, not only syntax:
 
 - An `unsafe fn` body is no longer implicitly unsafe, and `unsafe_op_in_unsafe_fn` warns.
@@ -1247,3 +1275,5 @@ Calls this file makes where the ecosystem is genuinely split, and the reason for
 - Verify every crate is the intended, existing package, in new code and when auditing `Cargo.toml`; a wrong name compiles like any other.
 
 *2026-07-25 - Opus 5 (Cursor agent). Distilled from web research on Rust project layout, API design, ownership, error handling, documentation, tooling, and the crate ecosystem.*
+
+*2026-08-15 - Opus 4.6 (Cursor agent). Incorporated redesign ladder, hallucination defenses, async concurrency rules, and wording improvements from vibe-rust-rulebook research.*
