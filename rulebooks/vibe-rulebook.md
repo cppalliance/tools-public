@@ -27,13 +27,15 @@ Zoom the plan through four levels of resolution, coarse to fine:
 
 Before executing, read the plan once for gaps. Confirm that each step receives what earlier steps produce and that no step is open to more than one reading. One pass, not a gate.
 
-Work the steps in order. Per step:
+Work the steps in order. At the start of each step, call `TodoWrite` to create that step's checklist:
 
-1. Dispatch the coder subagent to implement the step.
-2. Stage and commit the result. Write a message naming the step's intent.
-3. Dispatch the review-and-fix subagent against the commit's diff.
-4. Amend the commit if review-and-fix dirtied the tree.
-5. Run Verify when scheduled.
+- **Code** - dispatch the coder subagent
+- **Commit** - stage and commit with a message naming the step's intent
+- **Review** - dispatch the review-and-fix subagent against the diff
+- **Amend** - amend the commit if review-and-fix dirtied the tree
+- **Verify** - run when scheduled (every 3rd step, end of component, final step); cancel otherwise
+
+Mark each todo as you complete it. Do not start the next step until every item is completed or cancelled.
 
 Make no make-work commits - fold the fix back into the commit it corrects. Pass findings through `vibe-review.md`, overwritten each cycle. Leftover review findings and a red Verify are not stop conditions; stop only when no forward path exists. Apply rule 2 for hard-to-reverse choices. Commits are reversible - never stop for ordinary user confirmation.
 
