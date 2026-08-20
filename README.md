@@ -102,6 +102,10 @@ Evaluate a paper's quality in three sequential passes, each with exit criteria, 
 _[rulebooks/reports-rulebook.md](rulebooks/reports-rulebook.md)_\
 Write or audit a report of any type for structure, evidence, uncertainty, sourcing, and format discipline.
 
+**Writing Python**\
+_[rulebooks/python-rulebook.md](rulebooks/python-rulebook.md)_\
+Reference for writing or maintaining Python - project layout, packaging, naming, idioms, typing, errors, API design, imports, dependencies, documentation, testing, tooling, performance, concurrency, and anti-patterns.
+
 **Writing Rust**\
 _[rulebooks/rust-rulebook.md](rulebooks/rust-rulebook.md)_\
 Reference for writing or maintaining Rust - project layout, naming, ownership, API design, errors, crates, documentation, testing, tooling, performance, async, and unsafe.
