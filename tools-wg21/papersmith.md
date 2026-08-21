@@ -14,7 +14,7 @@ A production system for WG21 committee papers. It writes papers through the seve
 
 The rules in this document are staged audit criteria, not simultaneous constraints. Each pipeline step names the rules that bind while writing it; every other rule applies at review time, one rule at a time. This is why the document's size does not collide with the constraint budget it observes.
 
-<img src="images/papersmith.png" alt="The Papersmith" width="100%">
+![The Papersmith](images/papersmith.png)
 
 ## Scope
 
