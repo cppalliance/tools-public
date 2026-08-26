@@ -448,6 +448,10 @@ Given any institutional discussion, produces a structural-dynamics diagnosis thr
 _[tools-wg21/scribe.md](tools-wg21/scribe.md)_\
 Transforms a raw transcript into two-layer minutes - executive summary for the chair, full attributed record for the implementer.
 
+**Scribe-PromptForge**\
+_[tools-wg21/scribe-promptforge.md](tools-wg21/scribe-promptforge.md)_\
+Turns PromptForge design-discussion transcripts into a design-state record - what is settled, what is open, and where the designers disagree.
+
 **Slider**\
 _[tools-wg21/slider.md](tools-wg21/slider.md)_\
 Conversational tool that designs a slide deck with you and renders it to PowerPoint from Markdown. The rendering engine is a Python package in [tools-wg21/slider/](tools-wg21/slider/README.md), run with `uv run slider`.
