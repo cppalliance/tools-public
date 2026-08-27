@@ -53,9 +53,6 @@ fn convert(png_path: &Path) -> anyhow::Result<()> {
         .with_context(|| format!("stat {}", jpg_path.display()))?
         .len();
 
-    fs::remove_file(png_path)
-        .with_context(|| format!("delete {}", png_path.display()))?;
-
     println!(
         "{} -> {} ({} KB -> {} KB)",
         png_path.display(),
