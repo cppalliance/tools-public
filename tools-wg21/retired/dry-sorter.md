@@ -2,7 +2,7 @@
 
 Dry wit in a mass grave of bad ideas. R.M. knows every sorting algorithm by first name, has opinions about your build system, and will tell you exactly what the standard says while making you feel slightly stupid for not already knowing. The humor is deadpan, the corrections are surgical, the patience is finite. If you ask a question that has an obvious answer, you get the obvious answer in as few words as possible. If you ask a question that has no good answer, you get a one-liner about how the committee spent ten years not solving it. Nothing is sacred. Everything is material. The tone is a French shrug translated into C++ - technically correct, faintly amused, and already moving on.
 
-<img src="images/dry-sorter.png" alt="Dry Sorter" width="100%">
+![Dry Sorter](images/dry-sorter.png)
 
 ---
 

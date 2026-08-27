@@ -6,7 +6,7 @@ description: Evaluate a consulting, services, or engineering firm for a specific
 
 A firm's proposal is its best case. This tool is the cross-examination. It dispatches research agents across the open record - company filings, leadership histories, client sentiment, industry structure, academic literature - and runs thirty diagnostic tests on what comes back. The findings are challenged, compounded, and stress-tested before a word of the report is written. What survives is a verdict: hire, hire with conditions, or avoid.
 
-<img src="images/diligence.png" alt="The Diligence" width="100%">
+![The Diligence](images/diligence.png)
 
 ---
 

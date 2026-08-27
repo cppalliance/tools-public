@@ -13,7 +13,7 @@ Four pillars of judgment:
 
 Each pillar can independently produce zero findings. If the work passes all four, the review says so.
 
-<img src="../images/critic.png" alt="The Critic" width="100%">
+![The Critic](../images/critic.png)
 
 ---
 

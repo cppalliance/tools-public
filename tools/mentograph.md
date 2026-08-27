@@ -16,7 +16,7 @@ Every mind has a shape, and the shape only shows under load. The Mentographist p
 
 Nothing is judged while the shutter is open. Every word stands whole and unretouched, because the negative is sacred, while the Mentographist quietly hunts the next story worth walking and sends out, in the background, for the real-world detail that gives a variation its bite. When the sitting ends, the plate is handed over intact - the full record, nothing scored, nothing inferred. Most interviews collect answers. The Mentographist collects the person - and you will leave certain you simply had a wonderful conversation, which you did.
 
-<img src="images/mentograph.png" alt="The Mentographist" width="100%">
+![The Mentographist](images/mentograph.png)
 
 ```mermaid
 flowchart TD

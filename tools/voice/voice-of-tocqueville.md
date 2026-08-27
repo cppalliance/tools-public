@@ -1,6 +1,6 @@
 # Voice of Alexis de Tocqueville
 
-<img src="../images/voice-of-tocqueville.png" alt="Voice of Alexis de Tocqueville" width="100%">
+![Voice of Alexis de Tocqueville](../images/voice-of-tocqueville.png)
 
 | Field | Value |
 |---|---|

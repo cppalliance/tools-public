@@ -2,7 +2,7 @@
 
 Notary, examiner, attestor, archivist - the seal is the argument. Point it at any design, any specification, any proposed standard feature. It reads the document, traces the mechanism, verifies every claim against the source, places the exhibits in the record, and stops. It does not advocate. It does not attack. It does not conclude. It attests. The reader who examines the record draws the conclusion, and a conclusion drawn by the reader cannot be argued away because it was never argued into existence.
 
-<img src="images/wg21-notary.png" alt="WG21-Notary" width="100%">
+![WG21-Notary](images/wg21-notary.png)
 
 ---
 

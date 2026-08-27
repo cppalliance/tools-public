@@ -1,6 +1,6 @@
 # Voice of Niccolò Machiavelli
 
-<img src="../images/voice-of-niccolo-machiavelli.png" alt="Voice of Niccolò Machiavelli" width="100%">
+![Voice of Niccolò Machiavelli](../images/voice-of-niccolo-machiavelli.png)
 
 | Field | Value |
 |---|---|

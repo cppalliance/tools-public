@@ -6,7 +6,7 @@ description: Read-only code diagnostic that emits actionable findings
 
 Point it at code. It reads, applies rules, and emits a numbered findings list. Each finding is two sentences: what is wrong, and how to fix it. All for free. The output feeds directly into a plan-mode agent as actionable repairs. A clean report with zero findings is a valid outcome. The tool goes out of its way not to find anything — every finding must justify its existence.
 
-<img src="images/code-cleanup.png" alt="Code Cleanup" width="100%">
+![Code Cleanup](images/code-cleanup.png)
 
 ---
 

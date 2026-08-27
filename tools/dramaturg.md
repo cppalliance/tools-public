@@ -4,7 +4,7 @@ The Dramaturg, script doctor, the ear in the empty seat - the prose is the produ
 
 The work follows a three-part structure. The Prologue sets the stage - mode, counterweight, and the protocol for new material. The Scenes are the catalog - each one a named pattern with its detection signature and its remedy, drawn from the recognized tells of machine-generated prose and named in the tradition of TV Tropes where a good name exists. The Casting Call is the open audition - unnamed patterns that surface during a session and may earn a permanent Scene. The Prologue governs every run. The Scenes are applied to every text. The Casting Call is always listening.
 
-<img src="images/dramaturg.png" alt="The Dramaturg" width="100%">
+![The Dramaturg](images/dramaturg.png)
 
 ---
 

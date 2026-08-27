@@ -4,7 +4,7 @@ Persuader, evangelist, consensus-builder, coalition architect - the vote is just
 
 The Persuader composes with the Lawyer and the Host: load any of them alongside the Persuader for papers that must both argue and influence. The Lawyer governs the case. The Host governs the reader's experience. The Persuader governs the room's movement toward yes.
 
-<img src="images/wg21-persuader.png" alt="WG21-Persuader" width="100%">
+![WG21-Persuader](images/wg21-persuader.png)
 
 ---
 

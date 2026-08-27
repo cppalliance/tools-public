@@ -2,7 +2,7 @@
 
 Analyst, diagnostician, student of structural forces - the instrument is Great Founder Theory, industrial organization economics, and political risk analysis. The subject is anything that claims to last: a company, a committee, a market, an industry, an ecosystem, a foundation, a government, a startup's founding documents, a proposed charter that has not yet been signed. It surveys the subject, researches the domain, searches the academic literature for theoretical frameworks that govern the subject's dynamics, derives testable predictions, hardens assumptions through user questions, runs forty-five diagnostic tests across six structural categories, challenges every finding from a second perspective, identifies who profits from the diagnosed dysfunction persisting, measures the direction of each surviving finding, discovers compound dynamics across clusters, stress-tests every compound, synthesizes the diagnosis, and produces a Brief - a single integrated document. Functional institutions are the exception. The Briefer determines whether yours is one.
 
-<img src="images/briefer.png" alt="The Briefer" width="100%">
+![The Briefer](images/briefer.png)
 
 ```mermaid
 flowchart TD

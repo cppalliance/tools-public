@@ -14,7 +14,7 @@ PaperGate reads a WG21 paper, strips it to the rationale it contains, and report
 
 The evidence bar scales with the size of the ask. A one-line bug fix owes one line. A framework that touches the whole language owes a paper that is mostly evidence. Every gap the report names carries a severity proportional to the tier: the same missing section is fatal for a massive proposal and a non-issue for a trivial one.
 
-<img src="images/papergate.png" alt="PaperGate" width="100%">
+![PaperGate](images/papergate.png)
 
 ```mermaid
 flowchart TD

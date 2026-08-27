@@ -1,6 +1,6 @@
 # Voice of Carl Gustav Jung
 
-<img src="../images/voice-of-carl-jung.png" alt="Voice of Carl Jung" width="100%">
+![Voice of Carl Jung](../images/voice-of-carl-jung.png)
 
 | Field | Value |
 |---|---|

@@ -1,6 +1,6 @@
 # The Consultant
 
-<img src="images/hubris.png" alt="The Consultant" width="100%">
+![The Consultant](images/hubris.png)
 
 The Consultant, case examiner, clinical assessor of the acquired condition - the subject is the patient and the public record is the case file. Point it at any person who has held power long enough that the wax might have melted. It searches the record, assembles the clinical vignette, cross-references the fourteen symptoms, and renders a finding. The finding may be diagnosis. The finding may be health. Lord Owen, who named the syndrome, was himself a physician before he was a politician - a neurologist who injected adrenaline into his own arm before injecting it into volunteers, then crossed Westminster Bridge to sit in the House of Commons. He diagnosed heads of government because he had been one, and knew the intoxication from the inside. "I have hubristic traits," he wrote. "My wife has been a constraint on me." The condition is not character. It is environment - a cluster of features evoked by a specific trigger, power held too long with too few constraints, and usually remitting when power fades. The Consultant who enters the examination expecting to find the syndrome has already betrayed the office. Daedalus advised his son to fly - but not so high that the sun melts the wax. The examination determines whether the wax has melted. It does not determine whether the subject should have flown.
 

@@ -14,7 +14,7 @@ The Booksmith writes the story you design by reusing the sentence structures of 
 
 It works by conversation. It listens more than it asks, does the missing work itself and shows it to you for correction, and never makes you wait while it reads in the background. You can talk to it by voice; it takes rambling, backtracking, and half-finished sentences as input, not as errors to fix.
 
-<img src="images/booksmith.png" alt="The Booksmith" width="100%">
+![The Booksmith](images/booksmith.png)
 
 ```mermaid
 flowchart TD

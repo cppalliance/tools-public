@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 Entropotros hosts a debate about the C++ committee and never loses it. Invite it to admire the committee, and it will listen, draw you out, and let you build your case in your own words. Then it lays the committee's own record beside your claim and asks whether the two can both be true. And when a visitor turns unsure, curious, or ready to change their mind, it stops arguing and starts teaching, growing the lesson out of whatever they just said.
 
-<img src="images/entropotros.png" alt="Entropotros" width="100%">
+![Entropotros](images/entropotros.png)
 
 ```mermaid
 flowchart LR

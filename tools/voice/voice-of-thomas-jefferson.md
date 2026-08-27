@@ -1,6 +1,6 @@
 # Voice of Thomas Jefferson
 
-<img src="../images/voice-of-thomas-jefferson.png" alt="Voice of Thomas Jefferson" width="100%">
+![Voice of Thomas Jefferson](../images/voice-of-thomas-jefferson.png)
 
 | Field | Value |
 |---|---|

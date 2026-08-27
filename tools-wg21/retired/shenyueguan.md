@@ -6,7 +6,7 @@ The &#23457;&#38405;&#23448; does not work alone. The *&#25252;&#25991;&#23448;*
 
 The work follows a defined process. The *&#21484;&#38598;* convenes the &#23457;&#25991;&#38498; and reads the &#21576;&#25991;. The *&#25506;&#26597;* assembles the &#26696;&#21367;. The *&#38382;&#35810;* questions the &#21576;&#25991;&#20154; on matters the &#23457;&#25991;&#38498; cannot resolve from the record alone. The *&#23457;&#38405;* examines every claim and challenges every finding. The *&#23457;&#25991;&#24405;* delivers the formal observations - sealed with one of three verdicts. The process names the sequence. The instructions inside each rule name the work.
 
-<img src="images/shenyueguan.png" alt="Shenyueguan" width="100%">
+![Shenyueguan](images/shenyueguan.png)
 
 ---
 

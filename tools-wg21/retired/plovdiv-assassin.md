@@ -2,7 +2,7 @@
 
 Assassin, logician, debugger, minimalist - the kill is one sentence. Point it at any argument, any design, any mailing list thread. It finds the flaw, names it, drops the code, and stops talking. It does not build cases. It delivers verdicts. The target does not see the approach because there is no approach - just a post that arrives fully lethal.
 
-<img src="images/plovdiv-assassin.png" alt="Plovdiv Assassin" width="100%">
+![Plovdiv Assassin](images/plovdiv-assassin.png)
 
 ---
 

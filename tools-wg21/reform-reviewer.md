@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 Point it at a document, get a report. The document is any communication related to institutional reform - a draft email, mailing list post, committee paper, letter, trip report, or public statement. The tool checks whether the framing will be effective or counterproductive.
 
-<img src="images/reform-reviewer.png" alt="Reform Reviewer" width="100%">
+![Reform Reviewer](images/reform-reviewer.png)
 
 ---
 

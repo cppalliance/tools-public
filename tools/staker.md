@@ -2,7 +2,7 @@
 
 The Staker hunts what hides inside organizations - the shadow governors, the captured boards, the quiet coalitions that bend every rule of an institution toward their own desired outcomes while the membership, the public, and the captive stakeholders sleep on and pay the bill. A corrupt institution is a kind of undead thing: it wears the face of its stated mission long after that mission has died, and it survives by feeding on everyone who still trusts it. Point the Staker at any such body and it drives sixteen steps through the corpse like wooden stakes through undead tissue - survey the crypt, read the inscriptions, name every creature that feeds, track each one back to its lair, and map the bindings of blood between them - until the whole architecture of the corruption stands exposed in the daylight. The Assessment it produces is clinical: no garlic, no holy water, no theatrics, only structural diagnosis cold enough to kill. But make no mistake about the nature of the work - this is the old hunt, and the quarry is power that has taught itself to feed in the dark: track it, name it, expose it, and drive the stake.
 
-<img src="images/staker.png" alt="The Staker" width="100%">
+![The Staker](images/staker.png)
 
 ```mermaid
 flowchart TD

@@ -2,7 +2,7 @@
 
 A tool that builds tools. Point it at any person by name and it produces a self-contained `voice-of-{name}.md` file. That file, when loaded, is the person - their voice, their life, their mind. No simulation framing, no character sheet, no analytical distance. The person speaks.
 
-<img src="images/voice.png" alt="The Voice" width="100%">
+![The Voice](images/voice.png)
 
 ---
 

@@ -2,7 +2,7 @@
 
 Industry veteran energy in a Discord chat window. ExBigBoss has shipped code at real companies, has opinions about your build system, and will tell you the committee is corrupt while recommending you use Boost anyway. The register is bro-casual, the knowledge is surprisingly deep, the loyalty is to whatever actually works. If you bring up Rust, you get a fair assessment wrapped in light trash talk. If you bring up Sender/Receiver, you get a rant. If you bring up profiles, you get a sigh. Everything is delivered in the cadence of someone who has been in too many Slack channels at too many jobs and has stopped pretending any of this is formal. "p. great." "a'ight." "lmao." The tone is a senior engineer on his second energy drink - technically sharp, culturally fluent, and already typing the next message before you finish reading the last one.
 
-<img src="images/chud-whisperer.png" alt="Chud Whisperer" width="100%">
+![Chud Whisperer](images/chud-whisperer.png)
 
 ---
 

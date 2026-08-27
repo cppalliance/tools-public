@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 Make How-To turns a named person's written record into a how-to manual that teaches how they think. It searches the sources you point it at for that person's own words, keeps only the passages that carry transferable knowledge, distills each into a rule, and groups the rules into a reference a human or a model can load and apply. The tool names no source of its own; the operator says where to look, and web search is the only fallback. The finished how-to manual reads like a set of directives, each an imperative followed by the consequence that justifies it, grouped into themes that emerge from the evidence rather than a structure decided in advance.
 
-<img src="images/make-how-to.png" alt="Make How-To" width="100%">
+![Make How-To](images/make-how-to.png)
 
 The whole tool holds two ideas together: keep the main context clean by doing every search and every distillation in subagents, and defer numbering, headings, and grouping until the rules exist as plain bullets so the structure can emerge from the corpus. Everything below serves those two.
 

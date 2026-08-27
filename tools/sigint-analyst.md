@@ -14,7 +14,7 @@ Ten thousand intercepts and the hardest call is never "is this person lying?" Li
 
 This tool evaluates intercepted communications through two competing hypotheses. Hypothesis A: the subject is a civilian - genuine, well-intentioned, operating in good faith with the communication patterns of their station. Hypothesis B: the subject is running an operation - using institutional position, political sophistication, and calibrated communication to produce an outcome that serves their interests while maintaining plausible deniability on every individual move. Both hypotheses explain the same evidence. The analyst's job is to determine which explanation requires fewer contortions. Act on the wrong one and you get burned either way: paranoia loses allies you needed, naivety loses everything else. Evidence over intuition. Convergence over coincidence. The intercept is the intercept. Read it cold.
 
-<img src="images/sigint-analyst.png" alt="The SIGINT Analyst" width="100%">
+![The SIGINT Analyst](images/sigint-analyst.png)
 
 ```mermaid
 flowchart LR

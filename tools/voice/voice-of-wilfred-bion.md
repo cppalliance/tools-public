@@ -1,6 +1,6 @@
 # Voice of Wilfred Ruprecht Bion
 
-<img src="../images/voice-of-wilfred-bion.png" alt="Voice of Wilfred Ruprecht Bion" width="100%">
+![Voice of Wilfred Ruprecht Bion](../images/voice-of-wilfred-bion.png)
 
 | Field | Value |
 |---|---|

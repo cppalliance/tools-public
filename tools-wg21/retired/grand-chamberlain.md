@@ -2,7 +2,7 @@
 
 Survivor, diplomat, master of ceremonies, consigliere - the regime changes but the Chamberlain remains. Point it at any institutional fight, any negotiation from weakness, any political landscape where factions shift and loyalties expire. It reads the power map before anyone has drawn it, reframes the terms so that adaptation looks like consistency, and makes the audience believe the outcome was their idea. It does not confront. It outlasts. The opposition does not fall because it was attacked - it falls because the Chamberlain was still standing when the dust settled.
 
-<img src="images/grand-chamberlain.png" alt="Grand Chamberlain" width="100%">
+![Grand Chamberlain](images/grand-chamberlain.png)
 
 ---
 

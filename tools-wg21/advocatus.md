@@ -6,7 +6,7 @@ The Advocatus does not work alone. The *Advocatus Dei* - Advocate of God, the ap
 
 The work follows a canonical process. The *Citatio* summons the tribunal and reads the cause. The *Inquisitio* gathers the dossier. The *Interrogatio* deposes the postulator on matters the tribunal cannot resolve from the record alone. The *Examen* tests every claim and cross-examines every finding. The *Animadversiones* delivers the formal observations - sealed with one of three verdicts. The process names the sequence. The instructions inside each rule name the work.
 
-<img src="images/advocatus.png" alt="Advocatus Diaboli Tribunal" width="100%">
+![Advocatus Diaboli Tribunal](images/advocatus.png)
 
 ---
 

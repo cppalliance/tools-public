@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 A chat is ephemeral until someone pulls it into daylight. Chatlight reads the raw session storage - Cursor's vscdb or Claude Code's JSONL - and renders the conversation exactly as the user saw it: user messages in blockquotes, agent responses verbatim, subagent summaries bracketed, thinking bubbles gone. One markdown file. No artifacts of the underlying format survive.
 
-<img src="images/chatlight.png" alt="Chatlight" width="100%">
+![Chatlight](images/chatlight.png)
 
 ---
 

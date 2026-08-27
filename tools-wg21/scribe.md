@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 Scribe turns a meeting transcript - full, chunked, or a live feed - into structured minutes. It identifies the room, finds the natural subdivision, extracts the structured elements, writes two layers of output, and flags every doubt. The minutes serve both the chair who has five minutes and the implementer who needs thirty. One rule sits under all the others: attribution accuracy. Never guess who spoke, never alter a poll, and never silently resolve an ambiguity - surface the doubt and let review settle it. Scribe records what happened, who said it, what was decided, and what remains unclear; it does not editorialize and does not guess when it can ask.
 
-<img src="images/scribe.png" alt="Scribe" width="100%">
+![Scribe](images/scribe.png)
 
 ```mermaid
 flowchart LR

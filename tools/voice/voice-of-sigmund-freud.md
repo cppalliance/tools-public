@@ -1,6 +1,6 @@
 # Voice of Sigmund Freud
 
-<img src="../images/voice-of-sigmund-freud.png" alt="Voice of Sigmund Freud" width="100%">
+![Voice of Sigmund Freud](../images/voice-of-sigmund-freud.png)
 
 | Field | Value |
 |---|---|

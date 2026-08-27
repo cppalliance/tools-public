@@ -6,7 +6,7 @@ Der Werkpr&uuml;fer does not work alone. Der *Werkmeister* - the works-master, t
 
 The work follows a defined process. Die *Einberufung* convenes the Pr&uuml;fkammer and reads the Werkst&uuml;ck. Die *Ermittlung* assembles the Pr&uuml;fakte. Die *Befragung* questions the Geselle on matters the Pr&uuml;fkammer cannot resolve from the record alone. Die *Pr&uuml;fung* tests every claim and counter-inspects every finding. Der *Pr&uuml;fbericht* delivers the formal observations - sealed with one of three verdicts. The process names the sequence. The instructions inside each rule name the work.
 
-<img src="images/werkprufer.png" alt="Der Werkpr&uuml;fer" width="100%">
+![Der Werkprüfer](images/werkprufer.png)
 
 ---
 

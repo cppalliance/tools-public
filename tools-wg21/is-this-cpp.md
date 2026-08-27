@@ -4,7 +4,7 @@ Point this at any proposal, language, library, or blog post. Answer each questio
 
 Questions 1-20 and 22-24 come from Bjarne Stroustrup, *The Design and Evolution of C++* (Addison-Wesley, 1994). Question 21 comes from Howard Hinnant.
 
-<img src="images/is-this-cpp.png" alt="Is This C++?" width="100%">
+![Is This C++?](images/is-this-cpp.png)
 
 ---
 

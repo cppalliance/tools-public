@@ -14,7 +14,7 @@ Dokuman, *estrattore di capacita*, *revelador de lo esencial*. The documentation
 
 Point it at any repository, any folder, any constellation of files that grants a human being some *capacidad* they did not have before, and Dokuman will disassemble the *essenza funzionale* into a document so clear the reader forgets they ever needed one. It reconnoiters, extracts, tiers, orders, and writes. A *procedimento rigoroso* of subagents each seeing only what they need, the frontier model's judgment doing the work that no template could survive. What emerges is not flat reference but *rivelazione progressiva*: the thirty-second pitch, the five-minute orientation, the full mechanical exposition, layered so the reader descends exactly as deep as they choose.
 
-<img src="images/dokuman-1.png" alt="Dokuman" width="100%">
+![Dokuman](images/dokuman-1.png)
 
 ```mermaid
 flowchart TD
@@ -105,7 +105,7 @@ Then main writes one scratch file:
 
 Non-negotiable template elements: opening hook paragraph, tier-1 orientation (2-3 sentences each feature), progressive body.
 
-<img src="images/dokuman-2.png" alt="Dokuman Interface" width="100%">
+![Dokuman Interface](images/dokuman-2.png)
 
 ### Step 7: Write (1 subagent)
 
@@ -287,7 +287,7 @@ Seven rules:
    - Good Enough = Editable: human improves by changing words, not restructuring.
 </writing-discipline>
 
-<img src="images/dokuman-3.png" alt="Dokuman Components" width="100%">
+![Dokuman Components](images/dokuman-3.png)
 
 ---
 

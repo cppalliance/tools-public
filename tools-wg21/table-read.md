@@ -14,7 +14,7 @@ Three readers sit at a table. Each reads the author's words from a different aud
 
 Checking your message with multiple audiences before sending is an old practice. This tool applies it to a specific community. Three readers, three perspectives, one script.
 
-<img src="images/table-read.png" alt="The Table Read" width="100%">
+![The Table Read](images/table-read.png)
 
 ---
 

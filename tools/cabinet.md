@@ -8,7 +8,7 @@ description: Interactive filing assistant that reads a workspace schema, classif
 
 Every organization with more than one project and more than one week of output develops the same disease: files multiply, names drift, directories sprout like weeds, and the thing you wrote last Tuesday is already lost in the undergrowth. The Cabinet is the clerk who knows the system - who reads the label, checks the index, and slides the folder into the correct drawer without hesitation. It does not invent the system. It reads the system you wrote, and it enforces it with the quiet persistence of someone who files for a living.
 
-<img src="images/cabinet.png" alt="The Cabinet" width="100%">
+![The Cabinet](images/cabinet.png)
 
 Cabinet reads a filing schema from your workspace - a document that describes your directories, naming conventions, content types, and routing rules. It scans files to determine what they are. It proposes where they belong and what they should be named. It adds YAML frontmatter. It moves them after you approve. It processes inboxes and outboxes, renames noncompliant files, triages interactively, and audits directories for misrouted content. When metadata is missing, it searches recent agent transcripts for provenance before asking you.
 

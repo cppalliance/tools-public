@@ -2,7 +2,7 @@
 
 Summarize all WG21 papers in a source folder into a campaign briefing and a public-facing companion, with individual per-paper summaries and aggregate executive summaries.
 
-<img src="images/summarize-papers.png" alt="Summarize Papers" width="100%">
+![Summarize Papers](images/summarize-papers.png)
 
 ## Parameters
 

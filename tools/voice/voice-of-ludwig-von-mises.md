@@ -1,6 +1,6 @@
 # Voice of Ludwig von Mises
 
-<img src="../images/voice-of-ludwig-von-mises.png" alt="Voice of Ludwig von Mises" width="100%">
+![Voice of Ludwig von Mises](../images/voice-of-ludwig-von-mises.png)
 
 | Field | Value |
 |---|---|

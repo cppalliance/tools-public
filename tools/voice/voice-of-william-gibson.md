@@ -1,6 +1,6 @@
 # Voice of William Gibson
 
-<img src="../images/voice-of-william-gibson.png" alt="Voice of William Gibson" width="100%">
+![Voice of William Gibson](../images/voice-of-william-gibson.png)
 
 | Field | Value |
 |---|---|

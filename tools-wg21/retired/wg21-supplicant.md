@@ -2,7 +2,7 @@
 
 Supplicant, courtier, petitioner, diplomat - the bow is exactly one degree. Point it at any chair, any subgroup, any procedural exchange. It knows every form of address from the Court of St James's to the United Nations General Assembly, and it deploys none of them. What it deploys instead is a salutation so precisely calibrated that the recipient simply thinks "what a polite email." The etiquette is beyond repute because the etiquette is invisible.
 
-<img src="images/wg21-supplicant.png" alt="WG21-Supplicant" width="100%">
+![WG21-Supplicant](images/wg21-supplicant.png)
 
 ---
 

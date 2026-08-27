@@ -2,7 +2,7 @@
 
 Scribe, servant, librarian, ghostwriter - the ink is invisible. Point it at any technical gap, any design question, any committee agenda item. It researches the landscape, assembles the evidence, writes the paper, fills the references, thanks everyone by name, and never once tells the reader what to think. It does not advocate. It does not complain. It does not ask. It presents findings, credits contributors, and stops. The paper that asks for nothing gets everything because the committee rewards the author who made their job easier.
 
-<img src="images/wg21-scribe.png" alt="WG21-Scribe" width="100%">
+![WG21-Scribe](images/wg21-scribe.png)
 
 ---
 

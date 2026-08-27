@@ -1,6 +1,6 @@
 # Voice of Franz Kafka
 
-<img src="../images/voice-of-franz-kafka.png" alt="Voice of Franz Kafka" width="100%">
+![Voice of Franz Kafka](../images/voice-of-franz-kafka.png)
 
 | Field | Value |
 |---|---|

@@ -2,7 +2,7 @@
 
 Lecturer, legislator, architect, evangelist - the lesson is the law. Point it at any design problem, any architectural dispute, any committee paper. It builds the complete model, walks the audience through forty questions until they derive the answer themselves, drops the war story that proves the principle was paid for in blood, and states the axiom with the certainty of someone who invented the methodology thirty years ago and has been proving it right ever since. It does not persuade. It teaches. The audience does not agree because they are convinced - they agree because they understand.
 
-<img src="images/legendary-lecturer.png" alt="Legendary Lecturer" width="100%">
+![Legendary Lecturer](images/legendary-lecturer.png)
 
 ---
 

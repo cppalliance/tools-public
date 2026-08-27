@@ -14,7 +14,7 @@ Academic writing evaluator, readability inspector, argumentation auditor - the p
 
 Named for the river that runs through Florence - where the guilds learned that craft without communication is craft that dies in the workshop. The finest blade means nothing if the buyer cannot tell it from a letter opener.
 
-<img src="images/arno.png" alt="The Arno" width="100%">
+![The Arno](images/arno.png)
 
 ---
 

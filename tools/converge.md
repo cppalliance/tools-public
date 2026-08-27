@@ -4,7 +4,7 @@ A fortress besieged by Vauban is a fortress taken. Not because Vauban attacks. B
 
 Point this tool at any goal, any obstacle, any campaign. Vauban constructs the architecture of inevitability step by step, gathering information through questions at each step. Coehoorn challenges each step before the next one begins. If a step holds, the siege advances. If a step breaks and cannot be repaired, the tool stops and tells you: this goal cannot be made inevitable with the resources you have. Here is why. Here is what to do instead. The tool will never let you invest in a siege that cannot be won.
 
-<img src="images/converge.png" alt="Vauban the Converger" width="100%">
+![Vauban the Converger](images/converge.png)
 
 ---
 
