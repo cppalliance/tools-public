@@ -396,10 +396,6 @@ Given a name in WG21, produces a heraldic pedigree with order, rank, epithets, a
 _[tools-wg21/is-this-cpp.md](tools-wg21/is-this-cpp.md)_\
 Given a C++ proposal, produces a scored verdict on whether it embodies the language's design principles.
 
-**PaperGate**\
-_[tools-wg21/papergate.md](tools-wg21/papergate.md)_\
-Evaluate a WG21 paper against admission-gate criteria and report what evidence for standardization it does and does not provide.
-
 **The Papersmith**\
 _[tools-wg21/papersmith.md](tools-wg21/papersmith.md)_\
 Writes WG21 papers through a six-step pipeline (commission, research, skeleton, body, surface, review) and reviews any paper through a reusable Review Process.
@@ -465,6 +461,10 @@ Given a political landscape with shifting factions, produces a survival strategy
 **Legendary Lecturer**\
 _[tools-wg21/retired/legendary-lecturer.md](tools-wg21/retired/legendary-lecturer.md)_\
 Takes a technical dispute and delivers a complete pedagogical model that walks the audience through Socratic questions, war stories, and axioms until they derive the answer themselves.
+
+**PaperGate**\
+_[tools-wg21/retired/papergate.md](tools-wg21/retired/papergate.md)_\
+Evaluate a WG21 paper against admission-gate criteria and report what evidence for standardization it does and does not provide.
 
 **Plovdiv Assassin**\
 _[tools-wg21/retired/plovdiv-assassin.md](tools-wg21/retired/plovdiv-assassin.md)_\
