@@ -63,6 +63,16 @@ On the full path, main also keeps `vibe-ledger.md`, a scratch file beside `vibe-
 
 Git in main: stage, commit, amend. The user is responsible for pushing the repository to a remote before the run; the tool never pushes and never force-pushes. If the worktree is dirty at the start of a run, stop and tell the user to commit or stash first. On Verify fail: dispatch the coder to fix from the log path, then run Verify again; that is one round. After three rounds with Verify still red, stop the run and report the failing signature and log path to the user, who decides how to proceed. A scheduled Verify gates the next step: do not advance while it is red.
 
+## Commit Messages
+
+Every commit message must follow this format:
+
+- A legible first line, 60 characters max.
+- A well-formatted body of about 100 to 400 tokens.
+- An overview of the high-level changes.
+- No mention of step numbers or total steps; the ledger tracks steps, the message describes the change.
+- From zero to 3 bullets of important notes: things that would not be immediately obvious from reading the code, gotchas, or deviations from the plan (which rule 2 already requires recording in the commit message).
+
 ## The Rules
 
 <rule-book>
@@ -128,4 +138,4 @@ Read the diff for the commit named by the step. Apply each check as a yes-or-no 
 
 Size the task before planning; upgrade only. Build one testable commit at a time. Run two work subagents per step: coder, then review-and-fix once, each dispatched with its governing AGENTS.md paths. Critical findings block; done-claims name their fresh verification. Append the ledger each step. Run Verify on schedule; it gates the next step. Keep the plan session clean. Stop only when blocked.
 
-*2026-08-08 - Cursor Grok 4.5 (Cursor agent); revised 2026-08-21 - Kimi K3 (Cursor agent); revised 2026-08-27 - Claude Fable 5 (Cursor agent)*
+*2026-08-08 - Cursor Grok 4.5 (Cursor agent); revised 2026-08-21 - Kimi K3 (Cursor agent); revised 2026-08-27 - Claude Fable 5 (Cursor agent), commit-message format added same day*
