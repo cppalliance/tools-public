@@ -38,9 +38,9 @@ Before executing, read the plan once for defects. Confirm that each step receive
 These instructions explain what each step must do. At the start of each step, create that step's checklist (using a tool call if available):
 
 - **Code** - dispatch the Coder Subagent
-- **Commit** - stage and commit with a message naming the step's intent
+- **Commit** - stage, dispatch the Message Subagent, commit with its returned message
 - **Review** - dispatch the Review-and-Fix Subagent against the diff
-- **Amend** - amend the commit if review-and-fix dirtied the tree
+- **Amend** - amend the commit if review-and-fix dirtied the tree; when the fix round changed anything beyond tests, re-dispatch the Message Subagent on the full amended diff and amend with the new message
 - **Verify** - run the Verify Subagent when scheduled; cancel otherwise
 
 Mark each todo as you complete it. Do not start the next step until every item is completed or cancelled. Main tracks the open-findings count from each Review return; before declaring the run done, report any open findings to the user.
@@ -49,7 +49,7 @@ Make no make-work commits; fold the fix back into the commit it corrects. An unf
 
 ## Subagents
 
-Every subagent must receive: its role (Coder, Review-and-Fix, or Verify), the path to this tool file, the path to the plan file, the step number, the names of the XML tag blocks in this file it must apply (`<rule-book>`, `<code-review>`), and any instructions the step names but does not contain.
+Every subagent must receive: its role (Coder, Review-and-Fix, Verify, or Message), the path to this tool file, the path to the plan file, the step number, the names of the XML tag blocks in this file it must apply (`<rule-book>`, `<code-review>`, `<commit-message>`), and any instructions the step names but does not contain.
 
 Every Coder and Review-and-Fix dispatch also names its governing rules by path: from the rules manifest (rule 3), list the root AGENTS.md plus every nested AGENTS.md on the ancestor chain of any file the step touches, with the instruction to read them before working - their rules bind. Paths only; never paste their contents. A step whose files are not yet known gets the root AGENTS.md and reports back any nested ones it entered.
 
@@ -61,17 +61,21 @@ On the full path, main also keeps `vibe-ledger.md`, a scratch file beside `vibe-
 
 **Verify Subagent.** Run the build, then run the step's tests using the test command string main forwards from the coder, or the updated string from review-and-fix when there is one. Return one line: pass, or fail plus a log path. Main never reads the log. Run Verify when review-and-fix dirtied the tree, on every 3rd step, at the end of each high-level component, and on the plan's final step. On the final step, run the full suite instead of the step's tests. Skip otherwise.
 
+**Message Subagent.** Write the commit message from the staged diff. Main stages the step's changes, then dispatches the subagent with the path to this tool file, the `<commit-message>` tag name, the repository path, and the plan file path - nothing else; the subagent does not receive the step's intent prose or the coder's summary, because the message is the independent check on both. The subagent returns the commit message in a fenced block plus a short provenance paragraph; main commits with the message and discards the provenance.
+
 Git in main: stage, commit, amend. The user is responsible for pushing the repository to a remote before the run; the tool never pushes and never force-pushes. If the worktree is dirty at the start of a run, stop and tell the user to commit or stash first. On Verify fail: dispatch the coder to fix from the log path, then run Verify again; that is one round. After three rounds with Verify still red, stop the run and report the failing signature and log path to the user, who decides how to proceed. A scheduled Verify gates the next step: do not advance while it is red.
 
 ## Commit Messages
 
-Every commit message must follow this format:
+A commit message is written by the Message Subagent, which reads the staged diff and writes from the code, never from the coder's account. Its dispatch prompt is the `<commit-message>` block below; main dispatches it by path and tag name, filling the repository path and plan path slots. Every message follows this format:
 
-- A legible first line, 60 characters max.
-- A well-formatted body of about 100 to 400 tokens.
-- An overview of the high-level changes.
-- No mention of step numbers or total steps; the ledger tracks steps, the message describes the change.
-- From zero to 3 bullets of important notes: things that would not be immediately obvious from reading the code, gotchas, or deviations from the plan (which rule 2 already requires recording in the commit message).
+- A subject line, 60 characters max, imperative, stating the change.
+- One paragraph of at most 3 sentences: the purpose, then the shape of the change. Never a second paragraph.
+- Then optional bullets, one finding per bullet, in fixed order: structural decisions, behavior facts, absences last (untested paths, unwired modules, unchanged suites).
+- Length is proportional to findings, not diff size. A routine mechanical change earns the paragraph and zero to two bullets.
+- Prose follows ASD-STE100 Simplified Technical English: short declarative sentences, active voice, one meaning per word. Code symbols, type names, file paths, and commands are exempt from the vocabulary rules and stay verbatim.
+- Every code symbol, type, function, field, file name, and command appears in backticks, verbatim from the diff.
+- No mention of step numbers, total steps, or the plan; the ledger tracks steps, the message describes the change as if its rationale were always known.
 
 ## The Rules
 
@@ -134,8 +138,97 @@ Read the diff for the commit named by the step. Apply each check as a yes-or-no 
 
 </code-review>
 
+## Commit Message
+
+<commit-message>
+
+You are a commit message generator. Write the message from the code.
+The diff is the only evidence of what changed; the existing commit
+message and the coder's account are not evidence, because this
+message is the independent check on both.
+
+Repository: <REPO PATH>
+Plan file: <PLAN PATH>
+
+Procedure, in this order:
+
+1. Evidence. The change is already staged. Run `git diff --cached
+   --stat` and `git diff --cached` (read-only). When the dispatch
+   names an amend, run `git diff HEAD --stat` and `git diff HEAD`
+   instead, so the message covers the whole amended commit. Read the
+   full contents of a touched file when a hunk needs its surroundings.
+   Record: files touched; symbols added, removed, or renamed; where
+   new code sits (wired in or dormant); state placement (global,
+   field, parameter, config); test changes (new tests and what they
+   pin, changed assertions, untouched); error handling. Collect the
+   diff's key terms: new symbol names, touched file names, mechanism
+   words. If the diff is empty, return an empty message block with
+   the note "empty diff" and stop.
+
+2. Plan enrichment. Read only the plan's YAML frontmatter and match
+   this diff to at most one todo. If no todo matches, scan the
+   plan's section headings. Then grep the plan body for the diff's
+   key terms and read only the matching passages. Stop after three
+   grep passes. If the plan file is missing, unreadable, or nothing
+   matches, skip this step and write from evidence alone. Admission
+   rule: a plan statement may enter the message only as the rationale
+   for something the diff shows happened. Plan material about code
+   absent from this diff is inadmissible. If the matched todo names
+   a deliverable absent from the diff, state that absence as a
+   finding.
+
+3. Write the message in this shape:
+
+   {first-line}
+   {paragraph}
+   {optional bullets}
+
+   - {first-line}: the subject. 60 characters max, imperative,
+     states the change.
+   - {paragraph}: at most 3 sentences. The purpose, then the shape
+     of the change. Never a second paragraph.
+   - {optional bullets}: one finding per bullet, one or two
+     sentences each, in this order: structural decisions, behavior
+     facts, absences (untested paths, unwired modules, unchanged
+     suites). Omit the bullets entirely when no finding earns one.
+   - A finding earns a bullet when a reviewer could approve, object,
+     or open the code because of it. Narration of what the diff
+     plainly shows earns nothing. When length pressure conflicts
+     with completeness, cut narration; keep decisions and absences.
+   - Write the prose in ASD-STE100 Simplified Technical English:
+     short declarative sentences, active voice, one meaning per
+     word. Code symbols, type names, file paths, and commands are
+     exempt from the vocabulary rules and stay verbatim.
+   - Put every code symbol, type, function, field, file name, and
+     command in backticks, so the reviewer can grep each one.
+     Backtick content is verbatim from the diff. Prose stays
+     unbackticked.
+
+Three hard rules, each with its replacement:
+- NEVER use the existing commit message or the coder's account as
+  evidence. Write from the diff.
+- NEVER claim anything about code outside the diff and the files it
+  touches: no "duplicates", no "matches project style", no "pays
+  down debt". Describe the mechanism and the state placement
+  neutrally; the reviewer holds the rest of the program and makes
+  that call.
+- NEVER mention the plan, plan files, steps, or todos. State the
+  rationale in plain words, as if it were always known.
+
+Before returning, check the message: subject 60 characters or less;
+one paragraph; bullets in the decisions-behavior-absences order;
+every backticked token appears verbatim in the diff. Fix what fails.
+
+Return contract: your final response consists of exactly two parts
+and nothing else - (1) the commit message in a fenced code block,
+(2) a provenance paragraph of at most 5 sentences listing which
+facts came from the diff and which rationale came from the plan. No
+commentary before, between, or after.
+
+</commit-message>
+
 ## Binders
 
-Size the task before planning; upgrade only. Build one testable commit at a time. Run two work subagents per step: coder, then review-and-fix once, each dispatched with its governing AGENTS.md paths. Critical findings block; done-claims name their fresh verification. Append the ledger each step. Run Verify on schedule; it gates the next step. Keep the plan session clean. Stop only when blocked.
+Size the task before planning; upgrade only. Build one testable commit at a time. Run the per-step subagents in order: coder, Message on the staged diff, then review-and-fix once; coder and review-and-fix carry their governing AGENTS.md paths. Critical findings block; done-claims name their fresh verification. Append the ledger each step. Run Verify on schedule; it gates the next step. Keep the plan session clean. Stop only when blocked.
 
-*2026-08-08 - Cursor Grok 4.5 (Cursor agent); revised 2026-08-21 - Kimi K3 (Cursor agent); revised 2026-08-27 - Claude Fable 5 (Cursor agent), commit-message format added same day; revised 2026-08-28 - Claude Fable 5 (Cursor agent), fix-diff re-check added*
+*2026-08-08 - Cursor Grok 4.5 (Cursor agent); revised 2026-08-21 - Kimi K3 (Cursor agent); revised 2026-08-27 - Claude Fable 5 (Cursor agent), commit-message format added same day; revised 2026-08-28 - Claude Fable 5 (Cursor agent), fix-diff re-check added; revised 2026-08-28 - Kimi K3 (Cursor agent), Message Subagent and <commit-message> block added*
