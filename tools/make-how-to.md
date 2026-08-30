@@ -125,7 +125,7 @@ Runs in the main context. Deterministic. Reads only the compact grouped draft, t
 
 1. Assign continuous, unique numbers across all sections, starting at 1 and never restarting per section.
 2. Title each section with a Roman numeral and its group name.
-3. Wrap each section, its stanza and its numbered rules, in one uniquely named tag whose name is the section slug, opening and closing on their own lines.
+3. Wrap each section, its stanza and its numbered rules, in one uniquely named tag whose name is the section slug, opening and closing on their own lines. Always put exactly one blank line before and one blank line after every tag, opener and closer alike, because markdown adjacent to a tag line gets swallowed into the HTML block and stops rendering.
 4. Add the house-style frontmatter `description`, the operate-from-this HTML comment, the H1 title from Step 6, a short executive summary paragraph, the binding-idea line, the image reference, and the italic `date - model` footer.
 5. Append a final section headed "The Approach Behind the Rules" containing the paragraph from Step 7. The merged "Not converted" list itself never appears in the emitted how-to manual; it survives only in the scratch draft for audit.
 6. Write the how-to manual to the output path (**output**).
@@ -254,7 +254,7 @@ Check each item as a yes-or-no question:
 3. Numbering: rule numbers run continuously from 1 with no repeat and no gap.
 4. Caps: the how-to manual holds at most the cap of rules across at most the maximum of groups.
 5. Balance: every group's rule count is within the balance tolerance of the mean.
-6. Structure: every section is wrapped in one uniquely named tag and opens with its stanza.
+6. Structure: every section is wrapped in one uniquely named tag and opens with its stanza, and every opening and closing tag has exactly one blank line before it and one blank line after it.
 7. Completeness: an executive summary and a closing "The Approach Behind the Rules" section are present, and the Approach section is a single prose paragraph with no bulleted "Not converted" list remaining anywhere in the how-to manual.
 8. Title: the H1 begins with "How to", runs at most 10 words, and names a capability the rules actually teach.
 
@@ -267,7 +267,7 @@ Every how-to manual passes these constraints before it is written. The how-to ma
 
 - Provenance stripped: no link, no locator, no source name, and no "so-and-so says" anywhere in the file.
 - Rules as substance: each rule is a standalone directive with the consequence that justifies it.
-- Structure last: one uniquely named tag per section, and continuous unique numbering, applied only at finalize.
+- Structure last: one uniquely named tag per section, and continuous unique numbering, applied only at finalize. Every tag, opening or closing, sits on its own line with exactly one blank line before it and one blank line after it.
 - Caps held: at most the rule cap, at most the group maximum, and every group within the balance tolerance of the mean.
 - One term per concept, every prohibition paired with its replacement, and no em dash or double dash.
 
@@ -277,7 +277,7 @@ Generation checklist, run at finalize:
 - [ ] No rule attributes itself to a named person or paper.
 - [ ] Numbering is continuous and unique from 1.
 - [ ] Rule count is at or under the cap; group count is at or under the maximum; each group is within the balance tolerance of the mean.
-- [ ] Every section is wrapped in a unique tag and opens with its stanza.
+- [ ] Every section is wrapped in a unique tag and opens with its stanza, and every opening and closing tag has exactly one blank line before it and one blank line after it.
 - [ ] The executive summary and the closing "The Approach Behind the Rules" paragraph are present, and no bulleted "Not converted" list remains in the file.
 - [ ] The H1 begins with "How to" and runs at most 10 words.
 
