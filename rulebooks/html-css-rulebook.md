@@ -221,7 +221,7 @@ h1 { font-size: clamp(1.75rem, 1rem + 2.5vw, 3rem); }
 
 ## 9. Modern CSS features
 
-- Use custom properties (`--var` + `var()`) over Sass variables for anything themed, toggled, or read at runtime; always supply a fallback: `var(--gap, 1rem)`.
+- Use custom properties (`--var` + `var()`) over Sass variables for anything themed, toggled, or read at runtime; supply a fallback only when the consumer may run without the defining stylesheet (published components, third-party widget CSS). In an app that bundles its own tokens, bare `var(--gap)` is correct - a fallback duplicates the source of truth and masks misspelled tokens.
 - Register animated custom properties with `@property` (typed, animatable; `syntax` and `inherits` are required).
 - Use `@layer` to manage precedence so selectors stay low-specificity; layer order beats specificity. Import third-party CSS into a low layer.
 - Use native CSS nesting (Baseline Dec 2023) over preprocessor nesting; cap depth at ~3 and use `&` explicitly for pseudo-classes.
@@ -240,7 +240,7 @@ h1 { font-size: clamp(1.75rem, 1rem + 2.5vw, 3rem); }
 ### Corrections
 
 - Sass `$brand: #0af` used at runtime -> `:root { --brand: ... }` + `var(--brand)`.
-- `var(--space-m)` with no fallback -> `var(--space-m, 1rem)`.
+- `var(--space-m)` with no fallback -> add a fallback only if this CSS ships independently of the token stylesheet. In a bundled app, bare `var(--space-m)` is correct.
 - animated `--angle` string -> register with `@property { syntax: "<angle>"; ... }`.
 - `h1 a, h2 a, h3 a` -> `:is(h1, h2, h3) a`.
 - `darken(#0af, 10%)` / `rgba(...)` mixing -> `oklch(from ...)` / `color-mix(in oklab, ...)`. *
