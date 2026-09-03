@@ -24,13 +24,25 @@ Build AI tools, super prompts, and plan files that produce reliable output acros
 _[how-to/how-to-glen.md](how-to/how-to-glen.md)_\
 Distilled from Glen Fernandes' record on C++ library design, allocator models, pointer utilities, alignment, API hygiene, and community review practice.
 
+**How to Build Software with AI Without Cutting Corners**\
+_[how-to/how-to-greg-bildson.md](how-to/how-to-greg-bildson.md)_\
+63 directives on steering AI coding sessions, durable plans and records, design judgment, security and data governance, teams, network health, and business strategy, distilled from Greg Bildson's written record.
+
 **How to Design Precise Technical Interfaces**\
 _[how-to/how-to-klemens.md](how-to/how-to-klemens.md)_\
 Reference for evaluating technical designs through precise naming, ownership enforcement, minimal API surfaces, evidence-based evolution, and verifiable review criteria.
 
+**How to Build Software With Coding Agents Without Losing Control**\
+_[how-to/how-to-mario-zechner.md](how-to/how-to-mario-zechner.md)_\
+98 directives on refusing scope, keeping architecture in human hands, delegating bounded agent work, reviewing generated output, engineering context, and owning the harness, distilled from Mario Zechner's record.
+
 **How to Investigate and Hold Power Accountable**\
 _[how-to/how-to-nowosielski.md](how-to/how-to-nowosielski.md)_\
 96 rules distilled from a documentarian's two decades of investigative journalism - developing sources, verifying evidence, parsing official language, detecting cover-ups, and surviving adversarial pressure.
+
+**How to Build AI Agents That Work in Production**\
+_[how-to/how-to-peak-ji.md](how-to/how-to-peak-ji.md)_\
+63 directives on KV-cache discipline, memory and compression, agent behavior and trust, action space, evaluation, autonomy, and product strategy, distilled from Yichao "Peak" Ji's record.
 
 **How to Evaluate Language Change Proposals**\
 _[how-to/how-to-spicer.md](how-to/how-to-spicer.md)_\
@@ -53,6 +65,10 @@ _[how-to/how-to-wiles.md](how-to/how-to-wiles.md)_\
 Style and format references for applying to prompts and plans.
 
 ![Rulebooks](images/rulebooks.png)
+
+**Writing C++**\
+_[rulebooks/cpp-rulebook.md](rulebooks/cpp-rulebook.md)_\
+Reference for writing or maintaining C++ - project layout, naming, headers, RAII, smart pointers, error handling, modern features, templates, concurrency, testing, tooling, and performance.
 
 **Writing Paper Abstracts**\
 _[rulebooks/create-abstracts-rulebook.md](rulebooks/create-abstracts-rulebook.md)_\
@@ -94,6 +110,10 @@ Write or audit a prompt, plan, tool, or rule file for unambiguous instructions a
 _[rulebooks/prose-rulebook.md](rulebooks/prose-rulebook.md)_\
 Rules for revising model-generated prose so it reads as human-written, in sequential editing passes from structure to wording.
 
+**Writing Python**\
+_[rulebooks/python-rulebook.md](rulebooks/python-rulebook.md)_\
+Reference for writing or maintaining Python - project layout, packaging, naming, idioms, typing, errors, API design, imports, dependencies, documentation, testing, tooling, performance, concurrency, and anti-patterns.
+
 **Reading Technical Papers**\
 _[rulebooks/read-papers-rulebook.md](rulebooks/read-papers-rulebook.md)_\
 Evaluate a paper's quality in three sequential passes, each with exit criteria, from the general idea to the depth a verdict needs.
@@ -101,10 +121,6 @@ Evaluate a paper's quality in three sequential passes, each with exit criteria, 
 **Structuring Reports**\
 _[rulebooks/reports-rulebook.md](rulebooks/reports-rulebook.md)_\
 Write or audit a report of any type for structure, evidence, uncertainty, sourcing, and format discipline.
-
-**Writing Python**\
-_[rulebooks/python-rulebook.md](rulebooks/python-rulebook.md)_\
-Reference for writing or maintaining Python - project layout, packaging, naming, idioms, typing, errors, API design, imports, dependencies, documentation, testing, tooling, performance, concurrency, and anti-patterns.
 
 **Writing Rust**\
 _[rulebooks/rust-rulebook.md](rulebooks/rust-rulebook.md)_\
@@ -114,7 +130,7 @@ Reference for writing or maintaining Rust - project layout, naming, ownership, A
 _[rulebooks/typescript-rulebook.md](rulebooks/typescript-rulebook.md)_\
 Reference for writing, reviewing, or cleaning up TypeScript - configuration, type discipline, imports, errors, async, validation, naming, testing, linting, and publishing.
 
-**Autonomous Coding with Minimal Prompting**\
+**Vibe-Coding with Minimal Prompting**\
 _[rulebooks/vibe-rulebook.md](rulebooks/vibe-rulebook.md)_\
 Turn a described idea into finished, tested software - plan in levels of resolution, build one testable commit at a time with two work subagents, review-and-fix once, verify on a schedule, and drive to completion.
 
@@ -164,6 +180,10 @@ Given a goal, produces either an architecture of inevitability that survives adv
 _[tools/diligence.md](tools/diligence.md)_\
 Writes a hire/hire-with-conditions/avoid verdict from a firm's public record, 30 diagnostic tests, and compound risk analysis.
 
+**Dokuman**\
+_[tools/dokuman.md](tools/dokuman.md)_\
+Points at any repository, folder, or file set and extracts its capabilities into tiered progressive-disclosure documentation - the thirty-second pitch, the five-minute orientation, the full mechanical exposition.
+
 **The Dramaturg**\
 _[tools/dramaturg.md](tools/dramaturg.md)_\
 Takes prose and delivers a catalog of machine-generated syntactic patterns with keep/rewrite verdicts, or rewrites the text directly with each edit checked by an internal quality gate.
@@ -196,6 +216,10 @@ Writes a structured game-theory document - players, moves, payoffs, equilibria -
 _[tools/normalize-prompt.md](tools/normalize-prompt.md)_\
 Given a prose tool definition, produces a machine-parseable pipeline spec with typed state fields and a dependency DAG.
 
+**refactor-rust**\
+_[tools/refactor-rust.md](tools/refactor-rust.md)_\
+Reviews the last week of Rust commits and applies API and hygiene fixes on one candidate branch, verified in a fresh challenger context against cargo public-api and the workspace gates before landing.
+
 **Refine Plan**\
 _[tools/refine-plan.md](tools/refine-plan.md)_\
 Rewrites a plan through three passes - number, audit, compress - into a tighter version of itself.
@@ -223,6 +247,10 @@ Transforms a learning goal into a chain of self-contained tutor files, each carr
 **The Voice**\
 _[tools/voice.md](tools/voice.md)_\
 Given a name, produces a self-contained voice file that, when loaded, speaks as that person - vocabulary, emotional architecture, life arc, and all.
+
+**What to Steal**\
+_[tools/what-to-steal.md](tools/what-to-steal.md)_\
+Profiles a codebase, surveys the popular projects sharing its stack, dives their architecture at pinned commits, tags every idiom's human-or-machine provenance, and reports what to steal ranked by payoff.
 
 ### Code
 
@@ -319,6 +347,10 @@ Writes a complete Python foundation in Modern Standard Arabic across 7 mastery-g
 **The Tutor: Python for Beginners**\
 _[tools/tutor/tutor-python-for-beginners.md](tools/tutor/tutor-python-for-beginners.md)_\
 Given an absolute beginner, produces a working Python programmer through 7 milestones in Mosh Hamedani's patient contrast-based voice.
+
+**The Tutor: Rust Programming**\
+_[tools/tutor/tutor-rust-programming.md](tools/tutor/tutor-rust-programming.md)_\
+Takes an experienced developer new to Rust through 8 milestones in Steve Klabnik's compiler-as-mentor voice - ownership, borrowing, lifetimes, traits, and fearless concurrency.
 
 ### Voice
 
@@ -422,7 +454,7 @@ Transforms a raw transcript into two-layer minutes - executive summary for the c
 
 **Slider**\
 _[tools-wg21/slider.md](tools-wg21/slider.md)_\
-Conversational tool that designs a slide deck with you and renders it to PowerPoint from Markdown.
+Conversational tool that designs a slide deck with you and renders it to PowerPoint from Markdown. The rendering engine is a Python package in [tools-wg21/slider/](tools-wg21/slider/README.md), run with `uv run slider`.
 
 **Summarize Papers**\
 _[tools-wg21/summarize-papers.md](tools-wg21/summarize-papers.md)_\
@@ -520,12 +552,28 @@ AI is good at judging. AI is bad at creating.
 _[lessons/semantic-blur-effect.md](lessons/semantic-blur-effect.md)_\
 Three prompt files rewritten by a language model all grew with no new capability - 18.7%, 43.6%, and 145.8% in characters. This article explains why.
 
-**Tool Building Lessons**\
-_[lessons/tool-building.md](lessons/tool-building.md)_\
-Tool building captures how you do something well, in a form precise enough for an agent to run it and reusable enough that the next person inherits your best version.
-
 ## Output
 
 Samples of generated reports. See [output/README.md](output/README.md) for the full listing.
 
 ![Output](images/output.png)
+
+## Repository
+
+Supporting material that is not itself a tool.
+
+**squeeze-pngs**\
+_[crates/png2jpg/squeeze-pngs.md](crates/png2jpg/squeeze-pngs.md)_\
+Rust utility that converts PNG images to JPEG at quality 50, keeps the originals, and rewrites `.png` references to `.jpg` in sibling markdown files.
+
+**Dokuman design conversation**\
+_[chats/chat-dokuman.md](chats/chat-dokuman.md)_\
+The chat transcript in which Dokuman was specified, kept as a record of how the tool was designed.
+
+**Art**\
+_[art/images/](art/images/)_\
+Illustrations that do not pair with a specific tool.
+
+**AGENTS.md**\
+_[AGENTS.md](AGENTS.md)_\
+Structural rules for agents working in this repository - README tracking, tool locations, the retired convention, and the image invariant.
