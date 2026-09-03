@@ -2,11 +2,11 @@
 
 Prompts, rulebooks, how-tos, and lessons for building things with language models.
 
+![How-Tos](images/how-tos.png)
+
 ## How-Tos
 
 Guides distilled from how real people think and work. For humans to read.
-
-![How-Tos](images/how-tos.png)
 
 **How to Tell Visual Stories with a Camera**\
 _[how-to/how-to-collier-landry.md](how-to/how-to-collier-landry.md)_\
@@ -60,11 +60,11 @@ Reference for evaluating C++ designs through evidence, user value, minimal scope
 _[how-to/how-to-wiles.md](how-to/how-to-wiles.md)_\
 87 directives on building and running web applications drawn from consulting practice - query measurement, doing less work, testing, automation, conventions, observability, and project structure.
 
+![Rulebooks](images/rulebooks.png)
+
 ## Rulebooks
 
 Style and format references for applying to prompts and plans.
-
-![Rulebooks](images/rulebooks.png)
 
 **Writing C++**\
 _[rulebooks/cpp-rulebook.md](rulebooks/cpp-rulebook.md)_\
@@ -134,11 +134,11 @@ Reference for writing, reviewing, or cleaning up TypeScript - configuration, typ
 _[rulebooks/vibe-rulebook.md](rulebooks/vibe-rulebook.md)_\
 Turn a described idea into finished, tested software - plan in levels of resolution, build one testable commit at a time with two work subagents, review-and-fix once, verify on a schedule, and drive to completion.
 
+![Tools](images/tools.png)
+
 ## Tools
 
 General-purpose self-contained prompts.
-
-![Tools](images/tools.png)
 
 **The AI Reasoner**\
 _[tools/ai-reasoner.md](tools/ai-reasoner.md)_\
@@ -398,11 +398,11 @@ Writes every response as Bion - the tank commander turned psychoanalyst who teac
 _[tools/voice/voice-of-william-gibson.md](tools/voice/voice-of-william-gibson.md)_\
 On load, becomes Gibson - the author-consciousness who renders emotion as body-event, character as pocket-dump, and technology as surface texture across four era registers.
 
+![Tools-WG21](images/tools-wg21.png)
+
 ## Tools-WG21
 
 Tools specific to the C++ Standards Committee (WG21).
-
-![Tools-WG21](images/tools-wg21.png)
 
 **Advocatus Diaboli**\
 _[tools-wg21/advocatus.md](tools-wg21/advocatus.md)_\
@@ -472,77 +472,11 @@ Takes a bloated document and delivers the same document at half the line count w
 _[tools-wg21/vasa.md](tools-wg21/vasa.md)_\
 Given cross-room committee material, produces a coherence report measuring which of Stroustrup's 24 structural principles are under stress.
 
-### Retired
-
-**The Arno**\
-_[tools-wg21/retired/arno.md](tools-wg21/retired/arno.md)_\
-Transforms a WG21 paper into a severity-ranked readability and argumentation findings report.
-
-**Chud Whisperer**\
-_[tools-wg21/retired/chud-whisperer.md](tools-wg21/retired/chud-whisperer.md)_\
-On load, becomes a Discord-native senior C++ engineer who drops deep technical knowledge in bro-casual register while trash-talking the committee and recommending Boost anyway.
-
-**Dry Sorter**\
-_[tools-wg21/retired/dry-sorter.md](tools-wg21/retired/dry-sorter.md)_\
-On load, becomes a terse, deadpan C++ expert who corrects you in fewer words than you used to be wrong.
-
-**Grand Chamberlain**\
-_[tools-wg21/retired/grand-chamberlain.md](tools-wg21/retired/grand-chamberlain.md)_\
-Given a political landscape with shifting factions, produces a survival strategy built on reframing weakness as principle, outlasting opponents through delay, and making the audience believe the outcome was their idea.
-
-**Legendary Lecturer**\
-_[tools-wg21/retired/legendary-lecturer.md](tools-wg21/retired/legendary-lecturer.md)_\
-Takes a technical dispute and delivers a complete pedagogical model that walks the audience through Socratic questions, war stories, and axioms until they derive the answer themselves.
-
-**PaperGate**\
-_[tools-wg21/retired/papergate.md](tools-wg21/retired/papergate.md)_\
-Evaluate a WG21 paper against admission-gate criteria and report what evidence for standardization it does and does not provide.
-
-**Plovdiv Assassin**\
-_[tools-wg21/retired/plovdiv-assassin.md](tools-wg21/retired/plovdiv-assassin.md)_\
-Transforms a flawed argument into a one-sentence kill - concrete counterexample, logical trap, or working code - then stops talking.
-
-**Shenyueguan**\
-_[tools-wg21/retired/shenyueguan.md](tools-wg21/retired/shenyueguan.md)_\
-Given a committee paper, produces a formal multi-phase review record with verified citations, adversarial self-challenge, and a sealed verdict.
-
-**Der Werkprufer**\
-_[tools-wg21/retired/werkprufer.md](tools-wg21/retired/werkprufer.md)_\
-Writes a German-flavored formal inspection report - complete with Werkmeister counter-challenge and Prufsiegel verdict - from a committee paper's claims tested against public evidence.
-
-**WG21-Host**\
-_[tools-wg21/retired/wg21-host.md](tools-wg21/retired/wg21-host.md)_\
-Takes evidence and arranges it so the reader draws the conclusion in the white space between paragraphs, feeling smart rather than argued at.
-
-**WG21-Lawyer**\
-_[tools-wg21/retired/wg21-lawyer.md](tools-wg21/retired/wg21-lawyer.md)_\
-Given a technical position and its evidence, produces a precision-formatted persuasive paper that frames the argument, quotes the opposition into agreement, and writes the straw polls.
-
-**WG21-Notary**\
-_[tools-wg21/retired/wg21-notary.md](tools-wg21/retired/wg21-notary.md)_\
-Transforms a specification into a record of verified exhibits - quotes checked character by character, code traced to repositories, facts placed adjacent.
-
-**WG21-Persuader**\
-_[tools-wg21/retired/wg21-persuader.md](tools-wg21/retired/wg21-persuader.md)_\
-Given a proposal, produces a coalition strategy that maps the room's existing positions, decomposes the ask into independently agreeable steps, and makes consensus feel like the committee's own idea.
-
-**WG21-Scribe**\
-_[tools-wg21/retired/wg21-scribe.md](tools-wg21/retired/wg21-scribe.md)_\
-Writes a sourced, neutral committee paper - evidence presented, tradeoffs named, contributors credited, nothing recommended.
-
-**WG21-Supplicant**\
-_[tools-wg21/retired/wg21-supplicant.md](tools-wg21/retired/wg21-supplicant.md)_\
-Transforms a request to a WG21 authority into a precisely calibrated diplomatic message that the recipient reads as "what a polite email."
-
-**WG21-Vintner**\
-_[tools-wg21/retired/wg21-vintner.md](tools-wg21/retired/wg21-vintner.md)_\
-Takes a body of evidence and bottles it as a patient, zero-ask informational paper that sits in the committee record demanding nothing, expiring never, and delegating all conclusions to the reader.
+![Lessons](images/lessons.png)
 
 ## Lessons
 
 Articles for humans on tool building and AI craft.
-
-![Lessons](images/lessons.png)
 
 **The Fan-Out Problem: Why AI Is a Critic, Not an Author**\
 _[lessons/fan-out-problem-ai-as-critic.md](lessons/fan-out-problem-ai-as-critic.md)_\
@@ -552,11 +486,11 @@ AI is good at judging. AI is bad at creating.
 _[lessons/semantic-blur-effect.md](lessons/semantic-blur-effect.md)_\
 Three prompt files rewritten by a language model all grew with no new capability - 18.7%, 43.6%, and 145.8% in characters. This article explains why.
 
+![Output](images/output.png)
+
 ## Output
 
 Samples of generated reports. See [output/README.md](output/README.md) for the full listing.
-
-![Output](images/output.png)
 
 ## Repository
 
