@@ -1,0 +1,3 @@
+# Retired tools: exclude from Cursor indexing and @ mentions.
+*
+!.cursorignore

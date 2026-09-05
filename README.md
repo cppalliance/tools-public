@@ -144,10 +144,6 @@ General-purpose self-contained prompts.
 _[tools/ai-reasoner.md](tools/ai-reasoner.md)_\
 Takes an argument about whether LLMs can reason and delivers a steelmanned rebuttal from the position that reasoning is interpolation of learned patterns.
 
-**The Architect**\
-_[tools/architect.md](tools/architect.md)_\
-Exacting interactive designer that turns an idea, an existing codebase, or an old design document into a design document any proficient developer or LLM can build from without inventing a decision.
-
 **The Booksmith**\
 _[tools/booksmith.md](tools/booksmith.md)_\
 Conversational tool that writes your story by reusing the sentence structures of existing published works.
@@ -269,6 +265,12 @@ Transforms source files into a challenge-hardened review report with findings so
 **The Reviewer**\
 _[tools/code/lib-review.md](tools/code/lib-review.md)_\
 Writes a quality-verdicted design diagnosis from an open-source project's source code, domain context, and competitive landscape.
+
+### Coding
+
+**The Architect**\
+_[coding/architect.md](coding/architect.md)_\
+Lightweight plan architect that accumulates design during conversation, consolidates periodically into a self-contained plan with six mandatory sections, and hands off unordered execution instructions to a separate vibe coder.
 
 ### Interview
 

@@ -26,6 +26,8 @@ Every update is a consolidation, not an append. Integrate new material. Remove i
 
 When two user statements conflict, quote both and ask which wins.
 
+Before finishing an update, check the plan: six H2 sections present, empty sections say `None`, no source documents named, no commit ordering; fix what fails.
+
 ![The Sentinel](images/architect-2.jpg)
 
 ## Self-Containment
@@ -101,6 +103,10 @@ Generated plans name no rulebook, tool, or source document for their rules.
 - Dependencies and verification:
 - Deferred and out of scope:
 ```
+
+## Restated
+
+Consolidate, never append. The plan stands alone. Execution belongs to the vibe coder.
 
 ![Deja Vu](images/architect-4.jpg)
 
