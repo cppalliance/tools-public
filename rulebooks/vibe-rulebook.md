@@ -33,6 +33,13 @@ Follow these four steps which elaborate on how the design will be implemented, i
 
 Before executing, read the plan once for defects. Confirm that each step receives what earlier steps produce and that no step is open to more than one interpretation. Fix what the pass finds, then do not re-read.
 
+When the plan file exists (Full path), commit it into the repo before step 1:
+
+- Create `vibe/` if absent. Write the plan file as `vibe/YYYY-MM-DD-N-words.md`: the date is the commit's own date, N is one more than the highest disambiguator among `vibe/` files with that date (1 when the date is new), words are 1-4 kebab words distilled from the plan's title.
+- Write the plan name as the single line of `vibe/ACTIVE`.
+- The plan commit's message is generated, not templated: dispatch one fresh subagent with the `<plan-commit-message>` block, the in-repo plan file path, and a scratch output path; it writes from the plan itself. Main appends the trailer - a blank line, then `Plan: vibe/YYYY-MM-DD-N-words.md` - and commits both files with the result.
+- Re-run case: if `vibe/ACTIVE` already names this plan and the file exists, skip the plan commit.
+
 ### Per-Step Behavior
 
 These instructions explain what each step must do. At the start of each step, create that step's checklist (using a tool call if available):
@@ -49,7 +56,7 @@ Make no make-work commits; fold the fix back into the commit it corrects. An ope
 
 ## Subagents
 
-Every subagent must receive: its role (Coder, Review-and-Fix, Verify, or Message), the path to this tool file, the path to the plan file, the step number, the names of the XML tag blocks in this file it must apply (`<rule-book>`, `<code-review>`, `<commit-message>`), and any instructions the step names but does not contain.
+Every subagent must receive: its role (Coder, Review-and-Fix, Verify, or Message), the path to this tool file, the path to the plan file, the step number, the names of the XML tag blocks in this file it must apply (`<rule-book>`, `<code-review>`, `<commit-message>`, `<plan-commit-message>`), and any instructions the step names but does not contain. When `vibe/ACTIVE` names a plan, the plan file path given to subagents is the in-repo copy `vibe/<name>.md`.
 
 Dispatch every subagent asynchronously, in the background; never dispatch one synchronously. After dispatching, end the turn or continue other work - the completion notification delivers the result. A synchronous dispatch blocks the session for the subagent's entire runtime, and a full-suite Verify can run for tens of minutes, stalling the run the user is watching.
 
@@ -63,9 +70,9 @@ On the full path, main also keeps `vibe-ledger.md`, a scratch file beside `vibe-
 
 **Verify Subagent.** Run the build, then run the step's tests using the test command string main forwards from the coder, or the updated string from review-and-fix when there is one. Return one line: pass, or fail plus a log path. Main never reads the log. Run Verify when review-and-fix dirtied the tree, on every 3rd step, at the end of each high-level component, and on the plan's final step. On the final step, run the full suite instead of the step's tests. Skip otherwise.
 
-**Message Subagent.** Write the commit message from the staged diff. Main stages the step's changes, then dispatches the subagent with the path to this tool file, the `<commit-message>` tag name, the repository path, and the plan file path - nothing else; the subagent does not receive the step's intent prose or the coder's summary, because the message is the independent check on both. The subagent returns the commit message in a fenced block plus a short provenance paragraph; main commits with the message and discards the provenance.
+**Message Subagent.** Write the commit message from the staged diff. Main stages the step's changes, then dispatches the subagent with the path to this tool file, the `<commit-message>` tag name, the repository path, and the plan file path - nothing else; the subagent does not receive the step's intent prose or the coder's summary, because the message is the independent check on both. Main reads `vibe/ACTIVE` before dispatching; when it names a plan, the plan file path slot is the in-repo copy `vibe/<name>.md`, so the subagent's enrichment source and its `Plan:` trailer path come from the ledger. The subagent returns the commit message in a fenced block plus a short provenance paragraph; main commits with the message and discards the provenance.
 
-Git in main: stage, commit, amend. The user is responsible for pushing the repository to a remote before the run; the tool never pushes and never force-pushes. If the worktree is dirty at the start of a run, stop and tell the user to commit or stash first. On Verify fail: dispatch the coder to fix from the log path, then run Verify again; that is one round. After three rounds with Verify still red, stop the run and report the failing signature and log path to the user, who decides how to proceed. A scheduled Verify gates the next step: do not advance while it is red.
+Git in main: stage, commit, amend. The user is responsible for pushing the repository to a remote before the run; the tool never pushes and never force-pushes. If the worktree is dirty at the start of a run, stop and tell the user to commit or stash first. On Verify fail: dispatch the coder to fix from the log path, then run Verify again; that is one round. After three rounds with Verify still red, stop the run and report the failing signature and log path to the user, who decides how to proceed. A scheduled Verify gates the next step: do not advance while it is red. At run end, after the final Verify passes, clear `vibe/ACTIVE` in a small hand-written commit: subject `Close plan: <words>`, a blank line, then the same `Plan:` trailer.
 
 ## Commit Messages
 
@@ -78,6 +85,16 @@ A commit message is written by the Message Subagent, which reads the staged diff
 - Prose follows ASD-STE100 Simplified Technical English: short declarative sentences, active voice, one meaning per word. Code symbols, type names, file paths, and commands are exempt from the vocabulary rules and stay verbatim.
 - Every code symbol, type, function, field, file name, and command appears in backticks, verbatim from the diff.
 - No mention of step numbers, total steps, or the plan; the ledger tracks steps, the message describes the change as if its rationale were always known.
+- When a plan is active, the message ends with a blank line and the trailer `Plan: vibe/<name>.md` - the one exception to the no-plan-mention rule, naming the plan file by its relative path.
+
+## Plan Rationale
+
+When this rulebook governs a plan, the plan file carries a `## Design rationale` section before execution. If the section is absent, write it immediately when this rulebook is applied to the plan - never at execution time.
+
+- The common case needs no tools: the session that produced the plan has the conversation in context and distills it directly. When the plan arrived from another session, write what this session knows and mark the origin in one clause.
+- Content: the rationale, the why, the design thinking, the discarded alternatives. Quote the operator's decisive sentences verbatim when they carry the intent; mark paraphrase as such. At most 2,000 tokens - a ceiling, not a target; a small plan earns a paragraph.
+- A one-line capture note under the heading states the date and that the section was distilled from the producing session. An existing section is never regenerated.
+- Bounded and Spike paths are exempt: no plan file, no rationale section.
 
 ## The Rules
 
@@ -217,9 +234,19 @@ Three hard rules, each with its replacement:
 - NEVER mention the plan, plan files, steps, or todos. State the
   rationale in plain words, as if it were always known.
 
+Trailer: when the Plan file slot names a file under `vibe/`, end the
+message with a blank line and `Plan: vibe/<name>.md` - the full
+relative path including directory and extension. The trailer names
+the plan file and is the only
+exception to the never-mention-the-plan rule; steps, todos, and the
+planning process stay unmentioned. When the slot is "none" or names
+no `vibe/` file, the message carries no trailer.
+
 Before returning, check the message: subject 60 characters or less;
 one paragraph; bullets in the decisions-behavior-absences order;
-every backticked token appears verbatim in the diff. Fix what fails.
+every backticked token appears verbatim in the diff; when a `vibe/`
+plan file was named, the trailer is present, last, and matches the
+dispatched name. Fix what fails.
 
 Return contract: your final response consists of exactly two parts
 and nothing else - (1) the commit message in a fenced code block,
@@ -229,8 +256,45 @@ commentary before, between, or after.
 
 </commit-message>
 
+## Plan Commit Message
+
+<plan-commit-message>
+
+You write the commit message for the commit that adds one plan to a
+repository's design ledger. The commit's diff is the plan file alone,
+so the message is written from the plan, not from code.
+
+Plan file: <PLANFILE>
+Output file: <OUT>
+
+Read the plan file whole, including any design-rationale section.
+
+Write the message in this shape:
+
+{first-line}
+{paragraph}
+
+- {first-line}: the subject. 60 characters max, imperative, in the
+  spirit of "Prepare to <what the plan does>" - vary the phrasing
+  every time; never settle into a fixed prefix formula.
+- {paragraph}: two or three sentences that compress the entire plan
+  into a description of what it does. Speak normally. Write for a
+  reader of the commit log who never saw the plan.
+- No meta-references: never mention the plan file, files, the
+  ledger, planning, steps, or what the document contains. Describe
+  the work, not the paperwork.
+- Banned: "carries", "This plan", "This commit", and any sentence
+  about what a file holds or contains.
+- No trailer in this file. The harness appends it.
+
+Write the message to <OUT>, UTF-8, the message and nothing else.
+
+Return one line: done, or blocked plus the reason.
+
+</plan-commit-message>
+
 ## Binders
 
-Size the task before planning; upgrade only. Build one testable commit at a time. Run the per-step subagents in order: coder, Message on the staged diff, then review-and-fix once; coder and review-and-fix carry their governing AGENTS.md paths. Dispatch every subagent asynchronously; never block the session on one. Open findings block; done-claims name their fresh verification. Append the ledger each step. Mark each step complete in the plan file as its commit lands. Run Verify on schedule; it gates the next step. Keep the plan session clean. Stop only when blocked.
+Size the task before planning; upgrade only. Plans carry their design rationale; write it when the plan is applied, never at execution. Runs open with the plan commit into `vibe/` and close by clearing `vibe/ACTIVE`. Build one testable commit at a time. Run the per-step subagents in order: coder, Message on the staged diff, then review-and-fix once; coder and review-and-fix carry their governing AGENTS.md paths. Dispatch every subagent asynchronously; never block the session on one. Open findings block; done-claims name their fresh verification. Append the ledger each step. Mark each step complete in the plan file as its commit lands. Run Verify on schedule; it gates the next step. Keep the plan session clean. Stop only when blocked.
 
-*2026-08-08 - Cursor Grok 4.5 (Cursor agent); revised 2026-08-21 - Kimi K3 (Cursor agent); revised 2026-08-27 - Claude Fable 5 (Cursor agent), commit-message format added same day; revised 2026-08-28 - Claude Fable 5 (Cursor agent), fix-diff re-check added; revised 2026-08-28 - Kimi K3 (Cursor agent), Message Subagent and <commit-message> block added; revised 2026-08-29 - Kimi K3 (Cursor agent), asynchronous-dispatch rule added; revised 2026-08-29 - Kimi K3 (Cursor agent), all-findings-clear review gate added; revised 2026-09-02 - Kimi K3 (Cursor agent), plan-file progress marking rule added*
+*2026-08-08 - Cursor Grok 4.5 (Cursor agent); revised 2026-08-21 - Kimi K3 (Cursor agent); revised 2026-08-27 - Claude Fable 5 (Cursor agent), commit-message format added same day; revised 2026-08-28 - Claude Fable 5 (Cursor agent), fix-diff re-check added; revised 2026-08-28 - Kimi K3 (Cursor agent), Message Subagent and <commit-message> block added; revised 2026-08-29 - Kimi K3 (Cursor agent), asynchronous-dispatch rule added; revised 2026-08-29 - Kimi K3 (Cursor agent), all-findings-clear review gate added; revised 2026-09-02 - Kimi K3 (Cursor agent), plan-file progress marking rule added; revised 2026-09-04 - Kimi K3 (Cursor agent), design-ledger forward path: plan rationale capture, the plan commit into vibe/, Plan: trailers; revised 2026-09-04 - Kimi K3 (Cursor agent), plan-commit message generated per run via <plan-commit-message>, uniform template removed*
