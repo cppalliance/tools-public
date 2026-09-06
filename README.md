@@ -130,10 +130,6 @@ Reference for writing or maintaining Rust - project layout, naming, ownership, A
 _[rulebooks/typescript-rulebook.md](rulebooks/typescript-rulebook.md)_\
 Reference for writing, reviewing, or cleaning up TypeScript - configuration, type discipline, imports, errors, async, validation, naming, testing, linting, and publishing.
 
-**Vibe-Coding with Minimal Prompting**\
-_[rulebooks/vibe-rulebook.md](rulebooks/vibe-rulebook.md)_\
-Turn a described idea into finished, tested software - plan in levels of resolution, build one testable commit at a time with two work subagents, review-and-fix once, verify on a schedule, and drive to completion.
-
 ![Tools](images/tools.png)
 
 ## Tools
@@ -271,6 +267,10 @@ Writes a quality-verdicted design diagnosis from an open-source project's source
 **The Architect**\
 _[coding/architect.md](coding/architect.md)_\
 Lightweight plan architect that accumulates design during conversation, consolidates periodically into a self-contained plan with six mandatory sections, and hands off unordered execution instructions to a separate vibe coder.
+
+**The Vibe Coder**\
+_[coding/vibe-coder.md](coding/vibe-coder.md)_\
+Executes a ready plan as tested commits - sizes the task, surveys the project once, builds each step in an isolated sub-agent, reviews and fixes once per step, and drives to completion, resumable from the repository alone.
 
 ### Interview
 
