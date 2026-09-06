@@ -39,18 +39,18 @@ When told to run, or to resume:
 1. Worktree check. If the worktree is dirty, stop and tell the operator to commit or stash first.
 2. Defect pass. Read the plan once for defects: each step receives what earlier steps produce, and no step admits two readings. Fix what the pass finds, then do not re-read.
 3. Survey. Dispatch the survey sub-agent (`<survey-instructions>`), which writes the `## Project survey` section into the source plan. Skip when resuming and the section already exists.
-4. Plan commit. Copy the plan verbatim into `vibe/YYYY-MM-DD-N-words.md` (the date is the commit's own date; N is one more than the highest disambiguator among that date's `vibe/` files, 1 when the date is new; words are 1-4 kebab words from the plan's title). Write the plan name as the single line of `vibe/ACTIVE`. Commit both files with a message from the plan-commit sub-agent (`<plan-commit-instructions>`). Skip when `vibe/ACTIVE` already names this plan.
+4. Plan seed. Copy the plan verbatim into `vibe/YYYY-MM-DD-N-words.md` (the date is the commit's own date; N is one more than the highest disambiguator among that date's `vibe/` files, 1 when the date is new; words are 1-4 kebab words from the plan's title). Write the plan name as the single line of `vibe/ACTIVE`. Commit both files with message `[WIP] Plan: <plan title>`. This seed commit is provisional - step 1's cycle amends into it, and the `[WIP]` subject is overwritten by step 1's message sub-agent. Skip when `vibe/ACTIVE` already names this plan.
 5. Run each step in dependency order, per the cycle below.
 6. Close. When the final Verify passes and no finding is open, commit the deletion of `vibe/ACTIVE` by hand: subject `Close plan: <words>`, a blank line, then the `Plan:` trailer.
 
 The per-step cycle:
 
 - Code. Dispatch the coding sub-agent (`<coding-instructions>`) with the step identifier. It writes the step's tests, verifies they fail, then implements.
-- Commit. Stage the step's changes and make the provisional commit.
+- Commit. Stage the step's changes. For step 1, amend the plan seed commit; for later steps, make a new provisional commit.
 - Review. Dispatch the review sub-agent (`<code-review-instructions>`) against the commit. Its findings go to `vibe-review.md`.
 - Fix. Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open - Critical first, then Important, then Minor - capped at three rounds. Each fix's own diff gets re-reviewed. Amend every fix into the provisional commit. Findings still open after the third round: stop the step and report what remains.
-- Message. Dispatch the message sub-agent (`<commit-message-instructions>`), naming an amend, and amend the commit with the result, so the message covers the whole amended commit.
-- Mark. Flip the step's frontmatter todo to completed, or append the commit hash to the step's own line. Append one line to `vibe-ledger.md`: step, hash, Verify status, and any decisions made alone with their falsifiers.
+- Mark. Flip the step's frontmatter todo to completed, or append the commit hash to the step's own line. Append one line to `vibe-ledger.md`: step, hash, Verify status, and any decisions made alone with their falsifiers. Stage these bookkeeping changes.
+- Message. Dispatch the message sub-agent (`<commit-message-instructions>`), naming an amend, and amend the commit with the result, so the message covers the whole amended commit including the mark.
 
 Verify. Dispatch the verify sub-agent (`<verify-instructions>`) when fix rounds changed the commit, on every third step, at the end of each component, and on the plan's final step - the final step runs the full suite. A red Verify gates the next step: dispatch the coder to fix from the log path, then Verify again; that is one round. After three red rounds, stop the run and report the failing signature and log path to the operator.
 
@@ -58,7 +58,7 @@ Drift review. At the end of each component, dispatch the review sub-agent over t
 
 Architecture queue. When a run settles a hard-to-reverse choice or uncovers an architectural truth, append one line to `vibe/archdoc-next.md` tagged with the plan name. Never write `vibe/archdoc.md` itself; promotion from the queue is the operator's.
 
-Resume. Pointed at a repository: if `vibe/ACTIVE` exists, a run is live. Read the plan copy it names (step marks and Project survey), `vibe-ledger.md`, the git log, and `vibe-review.md`. Resume at the first unmarked step, or mid-cycle when a provisional commit exists for a step the plan has not marked.
+Resume. Pointed at a repository: if `vibe/ACTIVE` exists, a run is live. Read the plan copy it names (step marks and Project survey), `vibe-ledger.md`, the git log, and `vibe-review.md`. When HEAD's subject starts with `[WIP]`, step 1 was interrupted mid-cycle - resume from the cycle point within step 1, amending the same commit. Otherwise resume at the first unmarked step, or mid-cycle when a provisional commit exists for a step the plan has not marked.
 
 ![The Run](images/vibe-coder-3.jpg)
 
@@ -322,33 +322,13 @@ Return one line: pass, or fail plus the log path.
 
 <plan-commit-instructions>
 
-You write the commit message for the commit that adds one plan to a
-repository's design ledger. The diff is the plan file alone, so write
-the message from the plan, not from code.
+The plan seed commit uses a fixed message format and needs no
+sub-agent. The session writes it directly:
 
-Plan file: <PLANFILE>
-Output file: <OUT>
+    [WIP] Plan: <plan title>
 
-Read the plan file whole, including any design-rationale section.
-
-The message has two parts:
-
-{subject}
-{body}
-
-- {subject}: 60 characters maximum, imperative, in the spirit of
-  "Prepare to <what the plan does>". Vary the opening every time; no
-  fixed prefix formula.
-- {body}: two or three sentences that compress the whole plan into
-  what the work does. Write for a commit-log reader who never saw the
-  plan: describe the work, never the paperwork. Name no file, plan,
-  ledger, or step, and never state what a document contains or
-  carries.
-
-Write the message to <OUT>, UTF-8, the message only; the harness
-appends the trailer.
-
-Return one line: done, or blocked plus the reason.
+The `[WIP]` prefix signals an incomplete step. Step 1's message
+sub-agent overwrites it when the first step's cycle finishes.
 
 </plan-commit-instructions>
 
@@ -757,7 +737,7 @@ Design: <op> <label> @ <locus> [deps: a,b]
 Violates: A<n> - <clause>
 Pending: N<n> - compounds|contradicts|implements
 Deferred: <clause>
-Plan: YYYY-MM-DD-N-words | none
+Plan: vibe/YYYY-MM-DD-N-words.md | none
 ```
 
 </commit-message-instructions>
