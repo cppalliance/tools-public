@@ -1,5 +1,5 @@
 ---
-description: Execute a ready plan as tested commits - size the task, survey the project, build each step in a sub-agent, review and fix once per step, and drive to completion.
+description: Execute a ready plan as tested commits - size the task, survey the project, build each step in a sub-agent, review once, fix up to seven rounds, and drive to completion.
 ---
 
 <!-- Do not read this whole file. A sub-agent receives a bare tag name, for example `coding-instructions`, substitutes it into the anchored pattern `^</?coding-instructions>$`, and requires exactly two matches in opening-then-closing order. It reads only that inclusive range and returns blocked when either tag is missing, duplicated, reversed, indented, or decorated with other text. The guidance above the blocks is for the session that loads this file. -->
@@ -44,19 +44,16 @@ When told to run, or to resume:
 The per-step cycle:
 
 - Code. Dispatch the coding sub-agent (`<coding-instructions>`) with the step identifier. It writes the step's tests, verifies they fail, then implements.
-- Commit. Stage the step's changes. For step 1, amend the plan seed commit; for later steps, make a new provisional commit.
-- Review. Dispatch the review sub-agent (`<code-review-instructions>`) against the commit. Its findings go to `vibe-review.md`.
-- Fix. Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open - Critical first, then Important, then Minor - capped at seven rounds. Each fix's own diff gets re-reviewed. Amend every fix into the provisional commit. Findings still open after the seventh round: stop the step and report what remains.
-- Mark. Flip the step's frontmatter todo to completed, or append the commit hash to the step's own line. Append one line to `vibe-ledger.md`: step, hash, Verify status, and any decisions made alone with their falsifiers. Stage these bookkeeping changes.
-- Message. Dispatch the message sub-agent (`<commit-message-instructions>`), naming an amend, and amend the commit with the result, so the message covers the whole amended commit including the mark.
-
-Verify. Dispatch the verify sub-agent (`<verify-instructions>`) when fix rounds changed the commit, on every third step, at the end of each component, and on the plan's final step - the final step runs the full suite. A red Verify gates the next step: dispatch the coder to fix from the log path, then Verify again; that is one round. After seven red rounds, stop the run and report the failing signature and log path to the operator.
-
-Drift review. At the end of each component, dispatch the review sub-agent over the component's cumulative diff against the plan's Technical Design section, and against `vibe/archdoc.md` when the repository carries one. Findings enter `vibe-review.md` and gate like any other.
+- Commit. Stage the step's changes. Step 1 amends the plan seed. Every later step creates one provisional commit with subject `[WIP] Step N: name`; fixes and bookkeeping amend that commit without changing its message.
+- Review. Dispatch the review sub-agent (`<code-review-instructions>`) once against the provisional commit. On a component-ending step, give it the component's base commit so the same review also checks the cumulative diff for design drift. Findings go to `vibe-review.md`.
+- Fix. Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open - Critical first, then Important, then Minor - capped at seven rounds. Amend every fix into the provisional commit. Findings still open after the seventh round: stop the step and report what remains.
+- Verify. Dispatch the verify sub-agent (`<verify-instructions>`) after fixes changed the commit, on every third step, at each component's end, and on the final step, which runs the full suite. On failure, dispatch the coder from the log path, stage and amend its fix, then Verify again. After seven failed rounds, stop and report the signature and log path.
+- Mark. Append ` [completed]` to the step's `### Step N: name` heading. Append to `vibe-ledger.md` the step, last verification command and result, and any decisions made alone with their falsifiers. Stage and amend these bookkeeping changes.
+- Message. After fixes, Verify, and Mark, dispatch the message sub-agent (`<commit-message-instructions>`) once against the complete provisional commit. Amend with its raw message; this removes `[WIP]` and finalizes the step commit.
 
 Architecture queue. When a run settles a hard-to-reverse choice or uncovers an architectural truth, append one line to `vibe/archdoc-next.md` tagged with the plan name. Never write `vibe/archdoc.md` itself; promotion from the queue is the operator's.
 
-Resume. Pointed at a repository: if `vibe/ACTIVE` exists, a run is live. Read the plan copy it names (step marks and Project survey), `vibe-ledger.md`, the git log, and `vibe-review.md`. When HEAD's subject starts with `[WIP]`, step 1 was interrupted mid-cycle - resume from the cycle point within step 1, amending the same commit. Otherwise resume at the first unmarked step, or mid-cycle when a provisional commit exists for a step the plan has not marked.
+Resume. When `vibe/ACTIVE` exists, read its plan, `vibe-ledger.md`, the log, and `vibe-review.md`. A HEAD subject starting with literal `[WIP] Plan:` means Step 1 is provisional; literal `[WIP] Step N:` names any later provisional step. Resume that commit at its current cycle point. Otherwise resume the first heading without ` [completed]`.
 
 ![Decomposition](images/vibe-coder-2.jpg)
 
@@ -127,7 +124,7 @@ Read the plan whole. Define the objective internally: what is the thing, at the 
 2. Pieces of each component. Choose how a component's pieces get built - one after another, or together because they depend on each other - by the dependencies, not by habit. Record the choice with its reason.
 3. Steps. Each step is the largest slice of behavior one set of tests can cover completely: too large needs a second set of tests, too small cannot be tested at all. Each step is one commit carrying its code and its tests.
 
-Rewrite the plan's execution section into the numbered steps. Give each step a heading on its own line - `### Step N: name` - so a grep anchored to line boundaries finds exactly one match. Each step names concrete artifacts: files, modules, functions, structs. No step contains a full implementation.
+Rewrite the plan's execution section into numbered steps headed `### Step N: name`; completed steps later gain the suffix ` [completed]`. Each step names concrete artifacts - files, modules, functions, structs - without a full implementation.
 
 Preserve the plan's YAML frontmatter verbatim. Keep the plan self-contained: a reader who never saw the conversation must be able to execute it. When a hard-to-reverse design choice is missing, add it to the plan's decision record and flag it in your return.
 
@@ -161,17 +158,18 @@ Return under 500 tokens: done or blocked, files touched, the test command string
 
 <code-review-instructions>
 
-You review one provisional commit against one plan step. You produce findings; you never fix.
+You review one provisional commit against one plan step, plus its component's cumulative design drift when given a base commit. You produce findings; you never fix.
 
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
 - Step: <STEP ID>
 - Commit: <COMMIT REF> (the provisional commit; HEAD when the dispatch names none)
+- Component base: <BASE COMMIT OR NONE>
 - Findings file: <FINDINGS FILE>
 
 Procedure, in order:
 
-1. Evidence. Run `git show --stat <COMMIT REF>` and `git show <COMMIT REF>` (read-only). Grep the plan for <STEP ID> and read only that step. Read a touched file in full when a hunk needs its surroundings. If the diff is empty, return clean with the note "empty diff" and stop. If the commit or the step matches nothing, return blocked plus the reason and stop.
+1. Evidence. Run `git show --stat <COMMIT REF>` and `git show <COMMIT REF>` (read-only). Grep the plan for <STEP ID> and read only that step. When Component base is not NONE, also run `git diff <BASE COMMIT>..<COMMIT REF>` and read the plan's Technical Design section and `vibe/archdoc.md` when present. Read a touched file in full when a hunk needs its surroundings. If the diff is empty, return clean with the note "empty diff" and stop. If the commit or the step matches nothing, return blocked plus the reason and stop.
 
 2. Review the diff against the step. Apply each check as a yes-or-no question, in this order:
    - Correctness: does the code do what the step specifies?
@@ -183,6 +181,7 @@ Procedure, in order:
    - Reuse: does the change reuse what already exists instead of rebuilding it?
    - Simplicity: does every new symbol, branch, and option serve the step's specified behavior - nothing speculative, nothing just-in-case?
    - Architecture: when the repository carries an architecture document, does the change violate an invariant it records?
+   - Drift: when Component base is not NONE, does the cumulative component diff conform to Technical Design and the architecture document?
    - Hygiene: is the change free of dead code, unreachable branches, commented-out lines, secrets, and credentials? Run the tests for the touched areas using the test command in the plan's Project survey section; if the survey names none or the command fails, note it as a finding and move on. A test failure is a finding.
 
 3. Write findings. A finding earns existence when a reviewer would change the code before accepting the commit; preference and narration earn nothing. Append one entry per finding to <FINDINGS FILE>, at most three sentences:
@@ -193,7 +192,7 @@ Procedure, in order:
 
 Three hard rules, each with its replacement:
 - NEVER treat the commit message or the coder's account as evidence; this review is the independent check on both. Review from the diff.
-- NEVER flag code outside the commit's diff. Surrounding code informs the review; only the diff is reviewed.
+- NEVER flag code outside the reviewed diff: the commit diff normally, or the cumulative component diff when given a base commit. Surrounding code only informs the review.
 - NEVER modify any file other than <FINDINGS FILE>. Findings are the only output.
 
 Before returning, check each finding: it names a file and symbol, its evidence appears in the diff, and accepting it would change code. Cut what fails.
@@ -206,7 +205,7 @@ Return exactly two parts: (1) a verdict line - clean, or the finding count by se
 
 <fix-instructions>
 
-You work the open findings of one step's review until none remain open or the round cap is reached.
+You perform one fix round on the open findings from one step's review.
 
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
