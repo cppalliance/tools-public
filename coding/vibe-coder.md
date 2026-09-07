@@ -36,7 +36,7 @@ When told to run, or to resume:
 
 1. Worktree check. If the worktree is dirty, stop and tell the operator to commit or stash first.
 2. Defect pass. Read the plan once for defects: each step receives what earlier steps produce, and no step admits two readings. Fix what the pass finds, then do not re-read.
-3. Survey. Dispatch the survey sub-agent (`<survey-instructions>`), which writes the `## Project survey` section into the source plan. Skip when resuming and the section already exists.
+3. Survey. Dispatch the survey sub-agent (`<survey-instructions>`), which writes the `## Project survey` section into the source plan immediately before `## Execution Instructions`, after the plan's design sections. Skip when resuming and the section already exists in that location.
 4. Plan seed. Copy the plan verbatim into `vibe/YYYY-MM-DD-N-words.md` (the date is the commit's own date; N is one more than the highest disambiguator among that date's `vibe/` files, 1 when the date is new; words are 1-4 kebab words from the plan's title). Write the plan name as the single line of `vibe/ACTIVE`. Commit both files with message `[WIP] Plan: <plan title>`. This seed commit is provisional - step 1's cycle amends into it, and the `[WIP]` subject is overwritten by step 1's message sub-agent. Skip when `vibe/ACTIVE` already names this plan.
 5. Run each step in dependency order, per the cycle below.
 6. Close. When the final Verify passes and no finding is open, commit the deletion of `vibe/ACTIVE` by hand: subject `Close plan: <words>`, a blank line, then the `Plan:` trailer.
@@ -104,7 +104,7 @@ Discover, never assume. Name no language you have not seen evidence of. Record i
 
 When `vibe/archdoc.md` exists in the repository, read it whole: its components and invariants anchor the component map, and the survey names the path.
 
-Write the results as a `## Project survey` section in the plan file, replacing the section wholesale when one exists. Write nothing else to any file.
+Write the results as a `## Project survey` section immediately before the exact `## Execution Instructions` heading, after the plan's design sections. When the section already exists in another location, replace it wholesale and move the replacement to this location. Never place it at the top of the plan. When the `## Execution Instructions` heading is missing, return blocked rather than guessing a location. Write nothing else to any file.
 
 Return one line: done plus a one-line summary, or blocked plus the reason.
 
