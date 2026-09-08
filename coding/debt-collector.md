@@ -22,9 +22,9 @@ Resolve an explicit commit or range exactly. For a repository-only request, comp
 
 Create one local scratch file containing every complete commit message in reachable history through the endpoint, in chronological order. Preserve multiline bodies and trailers exactly. Add enough separate metadata to identify each commit and clearly mark commits in the target set. Keep history, diffs, source, and detailed findings file-backed rather than returning their payloads to the main context.
 
-Use commit messages as evidence of intent and as a navigation index, never as prose to rewrite or grade. Follow references to affected code, design plans, queues, aliases, architectural obligations, and explicit deferrals.
+Use commit messages as evidence of intent and as a navigation index, never as prose to rewrite or grade. Treat every ledger trailer as navigation: `Design:`, `Violates:`, `Uncertain:`, `Pending:`, `Deferred:`, `Repairs:`, and `Plan:`. Hydrate every claim a trailer suggests from the target diff or current code before accepting it as evidence. Treat both `Uncertain: A<n> - <clause>` and the legacy `Violates: A<n> - not determinable from diff` as abstentions, never as invariant contradictions or findings.
 
-When `vibe/` exists, discover `archdoc.md` and `archdoc-next.md` and treat them as read-only evidence. Resolve `Plan:` trailers in target commits to their plan files. Include the active plan when uncommitted target work belongs to it. Record missing or malformed references without inventing their contents.
+When `vibe/` exists, discover `archdoc.md` and `archdoc-next.md` and treat them as read-only evidence. Resolve `Pending:` IDs against both legacy `N<digits> | proposal|observation | <text> | <refs>` records and Markdown `- N<digits> | proposal|observation | <text> | <refs>` records. Resolve `Plan:` trailers in target commits to their plan files. Include the active plan when uncommitted target work belongs to it. Record missing or malformed references without inventing their contents.
 
 ![The Collection](images/debt-collector-2.jpg)
 
@@ -37,6 +37,18 @@ Dispatch an isolated analysis subagent with this tool's path, the bare tag name 
 Analyze technical debt attributable to the resolved target work. Choose how to examine the complete commit-log scratch file according to its size and contents. Use message content to reconstruct intent and direct inspection, but do not rewrite or grade commit messages.
 
 Inspect the actual target diffs and current code before accepting historical claims. Read the supplied design records as evidence only.
+
+Route ledger trailers to evidence without treating them as evidence:
+
+- `Design:` names a label and locus to inspect in the diff and current code.
+- A demonstrated `Violates:` names an invariant and contradiction to re-check against the archdoc, diff, and current code.
+- `Uncertain:`, and legacy `Violates: A<n> - not determinable from diff`, record abstention. They establish no contradiction and support no finding.
+- `Pending:` names a queue record to resolve in either accepted queue format, then follow through its refs to diffs and current code.
+- `Deferred:` names an explicit omission to locate and test for current disposition.
+- `Repairs:` names a contract, locus, and regression claim to verify against the changed behavior, direct regression test, and current code.
+- `Plan:` names rationale to resolve, never implementation proof.
+
+Do not carry any trailer claim into a finding until the target diff or current code hydrates it with the observed code facts and demonstrated consequence required below.
 
 Retain a finding only when evidence demonstrates incorrect behavior, a reachable contradiction of a stated contract, a concrete credential, authority, durable-data, or irreversible-corruption path, or the same maintenance cause across two distinct corrective episodes. Count episodes separately only when unrelated work or a different plan separates them.
 
