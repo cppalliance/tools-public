@@ -26,7 +26,7 @@ Every update is a consolidation, not an append. Integrate new material. Remove i
 
 When two user statements conflict, quote both and ask which wins.
 
-Before finishing an update, check the plan: six H2 sections present, empty sections say `None`, no source documents named, no commit ordering, no bullet grown into a paragraph; fix what fails.
+Before finishing an update, check the plan: six H2 sections present, empty sections say `None`, no source documents named, no commit ordering, no bullet combining unrelated items into a dense paragraph; fix what fails.
 
 ![The Sentinel](images/architect-2.jpg)
 
@@ -40,7 +40,7 @@ If a section is empty, write `None`. If information cannot fit any existing bull
 
 Every plan uses this template. Six H2 sections are mandatory. Use an H3 only when a bullet would be ambiguous without it. Omit empty or merely topical H3 headings.
 
-One bullet per item, in every section. When an item needs more than two sentences, give it sub-bullets - one per decision, alternative, assumption, or risk. No bullet ever grows into a paragraph.
+Prefer one bullet per item. Keep simple items concise. When an item requires nuanced explanation, a short paragraph is allowed; use sub-bullets when the content separates naturally into distinct decisions, alternatives, assumptions, or risks.
 
 `Technical Design` records only consequential shape: module boundaries, public interfaces, files owning cross-module contracts, persisted data, protocols, security, privacy, failure behavior, and lifecycle constraints. Omit private helpers, one-file choices, local names, routine refactors, and dependency pins unless one changes the design.
 
