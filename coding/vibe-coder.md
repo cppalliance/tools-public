@@ -34,7 +34,7 @@ Only the instructions below govern model behavior. The preceding human-facing te
 
 Require exactly these seven H2 headings in order and no others: `Product Requirements`, `Functional Specification`, `Technical Design`, `Testing Plan`, `Decision Record`, `Project Survey`, and `Execution Instructions`.
 
-For each name in `product-contract`, `implementation-contract`, `verification-contract`, `decision-record`, `project-survey`, and `execution-plan`, grep the plan with `^</?NAME>\r?$`. Require exactly two matches in opening-then-closing order, each equal to its undecorated tag after removing line terminators, and require every range to close before the next opens. Require `product-contract` to contain the first two H2 sections and each remaining contract to contain its corresponding section.
+For each name in `product-contract`, `implementation-contract`, `verification-contract`, `decision-record`, `project-survey`, and `execution-plan`, grep the plan with `^</?NAME>`. Require exactly two matches in opening-then-closing order, each equal to its undecorated tag after removing line terminators, and require every range to close before the next opens. Require `product-contract` to contain the first two H2 sections and each remaining contract to contain its corresponding section.
 
 If any check fails, explain why the plan cannot be used, name every failed check, and stop without repairing the plan. During later plan updates, preserve every opening and closing tag line verbatim.
 
@@ -91,7 +91,7 @@ Copy the matching template verbatim. Replace every uppercase angle-bracket field
 **Survey**
 
 ```text
-Grep <VIBE CODER PATH> with `^</?survey-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <VIBE CODER PATH> with `^</?survey-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Plan file: <PLAN PATH>
@@ -100,7 +100,7 @@ Plan file: <PLAN PATH>
 **Decomposition**
 
 ```text
-Grep <VIBE CODER PATH> with `^</?decomposition-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <VIBE CODER PATH> with `^</?decomposition-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Plan file: <PLAN PATH>
 Path: <BOUNDED OR FULL>
@@ -109,7 +109,7 @@ Path: <BOUNDED OR FULL>
 **Coding**
 
 ```text
-Grep <VIBE CODER PATH> with `^</?coding-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <VIBE CODER PATH> with `^</?coding-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Plan file: <PLAN PATH>
@@ -119,7 +119,7 @@ Step: <STEP NUMBER>
 **Review**
 
 ```text
-Grep <VIBE CODER PATH> with `^</?code-review-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <VIBE CODER PATH> with `^</?code-review-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Plan file: <PLAN PATH>
@@ -132,7 +132,7 @@ Findings file: <FINDINGS FILE>
 **Fix**
 
 ```text
-Grep <VIBE CODER PATH> with `^</?fix-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <VIBE CODER PATH> with `^</?fix-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Plan file: <PLAN PATH>
@@ -143,7 +143,7 @@ Findings file: <FINDINGS FILE>
 **Verify**
 
 ```text
-Grep <VIBE CODER PATH> with `^</?verify-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <VIBE CODER PATH> with `^</?verify-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Plan file: <PLAN PATH>
@@ -156,7 +156,7 @@ Log file: <LOG PATH>
 **Verification fix**
 
 ```text
-Grep <VIBE CODER PATH> with `^</?verification-fix-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <VIBE CODER PATH> with `^</?verification-fix-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Plan file: <PLAN PATH>
@@ -170,7 +170,7 @@ Round: <ROUND NUMBER>
 **Commit message**
 
 ```text
-Grep <VIBE CODER PATH> with `^</?commit-message-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <VIBE CODER PATH> with `^</?commit-message-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Plan file: <PLAN PATH OR NONE>
@@ -205,7 +205,7 @@ You survey a project once, at the start of a run, so no later sub-agent re-disco
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
 
-Grep <PLAN PATH> with `^</?project-survey>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
+Grep <PLAN PATH> with `^</?project-survey>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
 
 Discover, never assume. Name no language you have not seen evidence of. Record in this list:
 
@@ -238,7 +238,7 @@ You rewrite a ready plan's execution section into ordered, committable steps.
 - Plan file: <PLAN PATH>
 - Path: <BOUNDED OR FULL>
 
-Grep <PLAN PATH> with `^</?execution-plan>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
+Grep <PLAN PATH> with `^</?execution-plan>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
 
 Read the plan whole. Define its highest-level objective internally.
 
@@ -266,7 +266,7 @@ For a Bounded path, require Component `none`. For a Full path, require a compone
 
 Preserve the plan's YAML frontmatter verbatim. Keep the plan self-contained: a reader who never saw the conversation must be able to execute it. When a hard-to-reverse design choice is missing, add it to the plan's decision record and flag it in your return.
 
-Before returning, grep the plan for each generated pattern `^</?step-N>\r?$`. Require exactly two matches in opening-then-closing order for every step number. Confirm that the steps cover every plan requirement and each Full component occupies one contiguous range. Return blocked when coverage or component checks fail or any step tag is missing, duplicated, reversed, indented, decorated, or mismatched with its heading.
+Before returning, grep the plan for each generated pattern `^</?step-N>`. Require exactly two matches in opening-then-closing order for every step number. Confirm that the steps cover every plan requirement and each Full component occupies one contiguous range. Return blocked when coverage or component checks fail or any step tag is missing, duplicated, reversed, indented, decorated, or mismatched with its heading.
 
 Return under 500 tokens: path, component count, step count, and each flag raised.
 
@@ -282,7 +282,7 @@ You implement one step of a plan: its code and its tests. Nothing else.
 - Plan file: <PLAN PATH>
 - Step: <STEP NUMBER>
 
-Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
+Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Return blocked before changing files when the focused test command is `None` or absent.
 
@@ -309,7 +309,7 @@ You review one provisional commit against one plan step, plus its component's cu
 - Component base: <BASE COMMIT OR NONE>
 - Findings file: <FINDINGS FILE>
 
-Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
+Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Procedure, in order:
 
@@ -356,7 +356,7 @@ You perform one fix round on the open findings from one step's review.
 - Step: <STEP NUMBER>
 - Findings file: <FINDINGS FILE>
 
-Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
+Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Read the findings file. A finding without an appended closing clause is open. Return blocked before changing files when an open finding requires tests and the focused test command is `None` or absent. Fix the open findings in severity order: Critical first, then Important, then Minor. For each fix, run the focused tests using the test command in the plan's Project survey section.
 
@@ -381,7 +381,7 @@ You run the build and the tests, and you report one line.
 - Scope: <FOCUSED OR COMPONENT OR FULL>
 - Log file: <LOG PATH>
 
-Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?verification-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
+Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?verification-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Accept only `FOCUSED`, `COMPONENT`, or `FULL` as Scope. Require a non-`none` Component for `COMPONENT`; return blocked for any invalid combination.
 
@@ -409,7 +409,7 @@ You repair one failed verification round for one plan step.
 - Log file: <LOG PATH>
 - Round: <ROUND NUMBER>
 
-Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
+Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Read <LOG PATH>. Return blocked with the path when the file is missing or unreadable. Identify the first failed command and its failure signature. Change only the code or tests required to correct that failure. Run the failed command once after the fix. Return blocked without changing files when the failure requires a hard-to-reverse choice or no repository change can correct it.
 
@@ -441,7 +441,7 @@ Read `vibe/archdoc.md` whole: components and their allowed dependency directions
 
 ### 3. Plan
 
-Skip this step when the Plan file slot is "none". Otherwise, read the plan's YAML frontmatter and resolve N from the provisional `[WIP] Step N:` subject; use N = 1 for the `[WIP] Plan:` seed. Replace N in `^</?step-N>\r?$` with that decimal value. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$` and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Return blocked and stop when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading. Use the matched line numbers to read only both inclusive ranges.
+Skip this step when the Plan file slot is "none". Otherwise, read the plan's YAML frontmatter and resolve N from the provisional `[WIP] Step N:` subject; use N = 1 for the `[WIP] Plan:` seed. Replace N in `^</?step-N>` with that decimal value. Grep <PLAN PATH> separately with `^</?implementation-contract>` and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Return blocked and stop when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading. Use the matched line numbers to read only both inclusive ranges.
 
 Match the diff to at most one todo by the evidence list's key terms: new symbol names, touched file names, mechanism words. If none matches, grep only the implementation-contract range and the current step for the key terms; stop after 3 grep passes. Admission rule: a plan statement enters the message only as the rationale for something the evidence list shows happened; plan text about code absent from this diff is inadmissible. Admit a `Deferred:` candidate only for an explicit omission in that resolved current step: an explicit TODO, FIXME, stub, or changed unit left unwired that belongs to the step; a deferral the step expressly authorizes; or a deliverable of the step that this diff leaves incomplete. Never infer a deferral from silence, and never defer work assigned to a later step. When there is no resolved current step, emit no `Deferred:` trailer. If no plan text matches, write from evidence alone and still set `Plan:` to the plan's vibe name.
 
