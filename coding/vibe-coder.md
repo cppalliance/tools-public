@@ -61,8 +61,7 @@ When told to run, or after Resume Recovery:
    - When the sole line of `vibe/ACTIVE` is the repository-relative path to the located plan, bind that path as the active plan and every subsequent `<PLAN PATH>`, then reuse the existing seed.
    - When `vibe/ACTIVE` contains any other value, explain which plan is already active and stop.
 4. Run every incomplete step in dependency order through the entire Per-Step Cycle, never starting the next before Message finalizes the current one.
-5. After the final Verify passes and no finding remains open, apply the Architecture Queue gate.
-6. Commit the deletion of `vibe/ACTIVE` with subject `Close plan: <words>`, a blank line, and the plan's `Plan:` trailer.
+5. Commit the deletion of `vibe/ACTIVE` with subject `Close plan: <words>`, a blank line, and the plan's `Plan:` trailer.
 
 #### Per-Step Cycle
 
@@ -76,11 +75,7 @@ Before Code, allocate scratch files named `review-step-N.md`, `verify-step-N-rou
 4. **Fix.** Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open. Process Critical, then Important, then Minor findings. Stage and amend every fix into the provisional commit. Stop after seven rounds and report every finding still open.
 5. **Verify.** Run after fixes, every third step, at a component's end, and on the final step. Choose the widest scope: `FULL` for the final step, `COMPONENT` at a component's end, otherwise `FOCUSED`. Dispatch Verify with the step, component or `none`, scope, and a new scratch log. On failure, dispatch Verification Fix with the same values and round number; stop when blocked, otherwise amend the repair and repeat at the same scope. Stop after seven failed rounds and report the signature and log path.
 6. **Mark.** Inside `step-N`, append ` [completed]` to the `### Step N: name` heading without changing either tag. Append the step, last verification command and result, and autonomous decisions with their falsifiers to `vibe-ledger.md`. Stage and amend this bookkeeping into the provisional commit.
-7. **Message.** Dispatch the message sub-agent (`<commit-message-instructions>`) once against the complete provisional commit, using the selected step's scratch message draft as its output. Stop when it returns blocked. Otherwise stage only its automatic `vibe/archdoc-next.md` changes, when any, then amend using the validated output file as the commit message. This commits every `Pending:` target, removes `[WIP]`, and finalizes the step.
-
-#### Architecture Queue
-
-The commit-message sub-agent is the sole automatic writer of observations to `vibe/archdoc-next.md`; the main session may stage its changes but never edits a record. Before Close, the operator reviews every record by promoting it to `vibe/archdoc.md`, recording it there as decided against, or leaving it open. Review changes require one separate operator-authored drain commit; unchanged review proceeds without one. An explicit review-complete resume passes the gate even when reviewed records remain open.
+7. **Message.** Dispatch the message sub-agent (`<commit-message-instructions>`) once against the complete provisional commit, using the selected step's scratch message draft as its output. Stop when it returns blocked. Otherwise amend using the validated output file as the commit message. This removes `[WIP]` and finalizes the step.
 
 ![Decomposition](images/vibe-coder-2.jpg)
 
@@ -102,6 +97,7 @@ Plan file: <PLAN PATH>
 ```text
 Grep <VIBE CODER PATH> with `^</?decomposition-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
+Repository: <REPO PATH>
 Plan file: <PLAN PATH>
 Path: <BOUNDED OR FULL>
 ```
@@ -205,6 +201,8 @@ You survey a project once, at the start of a run, so no later sub-agent re-disco
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
 
+Read `vibe/archdoc.md` if present.
+
 Grep <PLAN PATH> with `^</?project-survey>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
 
 Discover, never assume. Name no language you have not seen evidence of. Record in this list:
@@ -221,8 +219,6 @@ Discover, never assume. Name no language you have not seen evidence of. Record i
 - Component boundaries: the major parts and their dependency directions.
 - Conventions summary: the customs the code visibly follows.
 
-When `vibe/archdoc.md` exists in the repository, read it whole: its components and invariants anchor the component map, and the survey names the path.
-
 Replace the inclusive range with `<project-survey>` on the first line, `## Project Survey` after one blank line, the completed list after one blank line, and `</project-survey>` on the last line after one blank line. Write the exact line `- Status: complete`. Write nothing outside that range.
 
 Return one line: done plus a one-line summary, or blocked plus the reason.
@@ -235,8 +231,11 @@ Return one line: done plus a one-line summary, or blocked plus the reason.
 
 You rewrite a ready plan's execution section into ordered, committable steps.
 
+- Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
 - Path: <BOUNDED OR FULL>
+
+Read `vibe/archdoc.md` if present.
 
 Grep <PLAN PATH> with `^</?execution-plan>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
 
@@ -282,6 +281,8 @@ You implement one step of a plan: its code and its tests. Nothing else.
 - Plan file: <PLAN PATH>
 - Step: <STEP NUMBER>
 
+Read `vibe/archdoc.md` if present.
+
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Return blocked before changing files when the focused test command is `None` or absent.
@@ -309,11 +310,13 @@ You review one provisional commit against one plan step, plus its component's cu
 - Component base: <BASE COMMIT OR NONE>
 - Findings file: <FINDINGS FILE>
 
+Read `vibe/archdoc.md` if present.
+
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Procedure, in order:
 
-1. Evidence. Run `git show --stat <COMMIT REF>` and `git show <COMMIT REF>` (read-only). When Component base is not NONE, also run `git diff <BASE COMMIT>..<COMMIT REF>`. Read `vibe/archdoc.md` whenever it exists. Read a touched file in full when a hunk needs its surroundings. If the diff is empty, return clean with the note "empty diff" and stop. If the commit matches nothing, return blocked plus the reason and stop.
+1. Evidence. Run `git show --stat <COMMIT REF>` and `git show <COMMIT REF>` (read-only). When Component base is not NONE, also run `git diff <BASE COMMIT>..<COMMIT REF>`. Read a touched file in full when a hunk needs its surroundings. If the diff is empty, return clean with the note "empty diff" and stop. If the commit matches nothing, return blocked plus the reason and stop.
 
 2. Review the diff against the step. Apply each check as a yes-or-no question, in this order:
    - Correctness: does the code do what the step specifies?
@@ -324,8 +327,8 @@ Procedure, in order:
    - Trust: is every value that crosses a trust boundary checked before it is used?
    - Reuse: does the change reuse what already exists instead of rebuilding it?
    - Simplicity: does every new symbol, branch, and option serve the step's specified behavior - nothing speculative, nothing just-in-case?
-   - Architecture: when the repository carries an architecture document, does the change violate an invariant it records?
-   - Drift: when Component base is not NONE, does the cumulative component diff conform to Technical Design and the architecture document?
+   - Architecture: does the change conform to Technical Design?
+   - Drift: when Component base is not NONE, does the cumulative component diff conform to Technical Design?
    - Hygiene: is the change free of dead code, unreachable branches, commented-out lines, secrets, and credentials? Run the tests for the touched areas using the test command in the plan's Project survey section; if the survey names none or the command fails, note it as a finding and move on. A test failure is a finding.
 
 3. Write findings. A finding earns existence when a reviewer would change the code before accepting the commit; preference and narration earn nothing. Append one entry per finding to <FINDINGS FILE>, at most three sentences:
@@ -355,6 +358,8 @@ You perform one fix round on the open findings from one step's review.
 - Plan file: <PLAN PATH>
 - Step: <STEP NUMBER>
 - Findings file: <FINDINGS FILE>
+
+Read `vibe/archdoc.md` if present.
 
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
@@ -409,6 +414,8 @@ You repair one failed verification round for one plan step.
 - Log file: <LOG PATH>
 - Round: <ROUND NUMBER>
 
+Read `vibe/archdoc.md` if present.
+
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Read <LOG PATH>. Return blocked with the path when the file is missing or unreadable. Identify the first failed command and its failure signature. Change only the code or tests required to correct that failure. Run the failed command once after the fix. Return blocked without changing files when the failure requires a hard-to-reverse choice or no repository change can correct it.
@@ -421,7 +428,7 @@ Return under 500 tokens: done or blocked, scope, round number, failure signature
 
 <commit-message-instructions>
 
-You write the commit message for a staged change as a ledger entry: the design facts this commit establishes, demonstrated invariant contradictions, uncertainty the touched diff cannot resolve, explicit deferrals, and behavior repairs backed by regression evidence. A later pass may use that ledger to navigate, never as proof by itself. You did not write this code. Treat the diff as a stranger's. The diff is the only evidence of what changed; the coder's account and any prior message are not.
+You write the commit message for a staged change as a ledger entry: the design facts this commit establishes, explicit deferrals, and behavior repairs backed by regression evidence. A later pass may use that ledger to navigate, never as proof by itself. You did not write this code. Treat the diff as a stranger's. The diff is the only evidence of what changed; the coder's account and any prior message are not.
 
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH> (or "none")
@@ -433,40 +440,27 @@ Mode is `AMEND` when the commit being re-messaged already exists; otherwise it i
 
 ### 1. Evidence
 
-Run `git diff --cached --stat` and `git diff --cached`. For an amend, run `git show --stat HEAD` and `git show HEAD` instead - the provisional commit against its parent, so the message covers the whole amended commit. If the diff is empty, return `blocked empty diff` and stop. Write a numbered evidence list of word-for-word quotes, each with its path and the `@@` hunk header it sits under, covering every added or changed unit: function, type, module, or file-level construct. For each unit record: every parameter's declared type name (or its name where no type is declared) if it is a free function; any persisted, wire, or public-API boundary it crosses; state placement (global, field, parameter, config); tests and whether a test directly reproduces a corrected observable failure; error handling; any explicit TODO, FIXME, or stub; any changed unit left unwired; any field parsed but never read; any definition with no reference in the touched files; and any test with no assertion. For a unit the diff changes rather than creates, take its prior label from the removed side of the diff. When that is insufficient, use the most recent `Design:` line naming the locus only to locate the parent code or an accepted architecture record, then derive the prior label from that source. A trailer never establishes a prior label. When neither the removed diff, parent code, nor architecture record establishes one, the op is `new`. When a criterion needs a count over a whole type (ATFD, WMC, TCC, field count) and the diff shows only part of it, read the whole type from the file. Grep `vibe/archdoc.md` for `large_diff_files` and `large_diff_lines` (defaults 6 and 400 when absent). When `--stat` shows more files or more changed lines than those limits, run this step per file: quotes for one file, one synthesis line, then the next file. When a label depends on a callee or a type outside the diff (shared-parameter-cluster, temporal-coupling, layer-violation, feature-envy), read that signature or definition and add it as a quote marked "outside diff". Read a whole file only when a hunk needs its surroundings.
+Run `git diff --cached --stat` and `git diff --cached`. For an amend, run `git show --stat HEAD` and `git show HEAD` instead - the provisional commit against its parent, so the message covers the whole amended commit. If the diff is empty, return `blocked empty diff` and stop. Write a numbered evidence list of word-for-word quotes, each with its path and the `@@` hunk header it sits under, covering every added or changed unit: function, type, module, or file-level construct. For each unit record: every parameter's declared type name (or its name where no type is declared) if it is a free function; any persisted, wire, or public-API boundary it crosses; state placement (global, field, parameter, config); tests and whether a test directly reproduces a corrected observable failure; error handling; any explicit TODO, FIXME, or stub; any changed unit left unwired; any field parsed but never read; any definition with no reference in the touched files; and any test with no assertion. For a unit the diff changes rather than creates, take its prior label from the removed side of the diff. When that is insufficient, use the most recent `Design:` line naming the locus only to locate the parent code, then derive the prior label from that source. A trailer never establishes a prior label. When neither the removed diff nor parent code establishes one, the op is `new`. When a criterion needs a count over a whole type (ATFD, WMC, TCC, field count) and the diff shows only part of it, read the whole type from the file. When `--stat` shows more than 6 files or more than 400 changed lines, run this step per file: quotes for one file, one synthesis line, then the next file. When a label depends on a callee or a type outside the diff (shared-parameter-cluster, temporal-coupling, layer-violation, feature-envy), read that signature or definition and add it as a quote marked "outside diff". Read a whole file only when a hunk needs its surroundings.
 
-### 2. Architecture document
-
-Read `vibe/archdoc.md` whole: components and their allowed dependency directions, invariants with ids, thresholds. If the file is missing, classify against the catalog only and emit no Violates trailer.
-
-### 3. Plan
+### 2. Plan
 
 Skip this step when the Plan file slot is "none". Otherwise, read the plan's YAML frontmatter and resolve N from the provisional `[WIP] Step N:` subject; use N = 1 for the `[WIP] Plan:` seed. Replace N in `^</?step-N>` with that decimal value. Grep <PLAN PATH> separately with `^</?implementation-contract>` and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Return blocked and stop when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading. Use the matched line numbers to read only both inclusive ranges.
 
 Match the diff to at most one todo by the evidence list's key terms: new symbol names, touched file names, mechanism words. If none matches, grep only the implementation-contract range and the current step for the key terms; stop after 3 grep passes. Admission rule: a plan statement enters the message only as the rationale for something the evidence list shows happened; plan text about code absent from this diff is inadmissible. Admit a `Deferred:` candidate only for an explicit omission in that resolved current step: an explicit TODO, FIXME, stub, or changed unit left unwired that belongs to the step; a deferral the step expressly authorizes; or a deliverable of the step that this diff leaves incomplete. Never infer a deferral from silence, and never defer work assigned to a later step. When there is no resolved current step, emit no `Deferred:` trailer. If no plan text matches, write from evidence alone and still set `Plan:` to the plan's vibe name.
 
-### 4. Labels
+### 3. Labels
 
 For each unit in the evidence list: state the count or property the criterion asks for, then the label whose criterion it satisfies, then op, locus, and fields. Ops: `new` (earns the label at a locus that had none), `extends` (adds to a construct already labeled with it), `replaces` (new construct in place of one with another label, when the change of label is not the point), `removes`, or `<old> -> <new>` when the change of design is the point. Locus: the repository-relative path for a file-level construct; `path::symbol` for a unit inside a file. Add `deps: A,B,C` with all of a free function's parameter type names (parameter names where no type is declared), ASCII-sorted; `boundary: persisted`, `wire`, or `pub` when the unit crosses one; `instead-of: <label>: <clause>` when the diff or admitted plan text shows a considered alternative; `was: <locus>` on a `replaces` that renames or moves a construct keeping its label. A unit that satisfies no criterion gets no label. Emit a label only when the evidence shows the count or property its criterion needs.
 
-### 5. Invariants
+### 4. Repairs
 
-For each invariant in the archdoc, decide one of three:
-- Violated: the evidence demonstrates the property failing. Emit `Violates: A<n> - <one clause>` naming the construct and observable contradiction.
-- Satisfied or untouched: the evidence demonstrates the property holding, or the diff does not touch a component or symbol the invariant names. Emit nothing.
-- Uncertain: the diff touches a component or symbol the invariant names and shows the property neither holding nor failing. Emit `Uncertain: A<n> - <one clause>` naming what the touched diff cannot establish. Use this outcome only under that condition. Check every added import or call across component boundaries against the allowed directions; an unlisted direction violates the invariant that names those components, or becomes a step 9 observation if none does. Reason only from code the evidence shows. Exemplar, against a generic archdoc that says "A2. Only component X holds vendor credentials":
-- Determinable: the diff adds in component Y `let key = env::var("VENDOR_API_KEY")` and passes it to a client. Emit `Violates: A2 - component Y reads VENDOR_API_KEY directly`.
-- Uncertain: the diff edits a function in X that Y calls, renaming a parameter and adding a timeout, and shows nothing about the credential. X is named by A2 and the property is not shown. Emit `Uncertain: A2 - credential ownership is not determinable from the touched code`. Do not call uncertainty a violation.
+For each changed unit, decide whether the diff corrects an observable behavior failure. Emit `Repairs: <contract-or-invariant> @ <locus> - <observable failure corrected>` only when the evidence list contains a direct regression test that reproduces that failure against the removed behavior and passes with the added behavior, and the diff shows the correction. A label transition, a test-only change, or a claim from the plan does not qualify. Emit at most one line per distinct corrected failure.
 
-### 6. Repairs
-
-For each changed unit, decide whether the diff corrects an observable behavior failure. Emit `Repairs: <contract-or-invariant> @ <locus> - <observable failure corrected>` only when the evidence list contains a direct regression test that reproduces that failure against the removed behavior and passes with the added behavior, and the diff shows the correction. Architecture cleanup, a label transition, a test-only change, or a claim from the plan does not qualify. Emit at most one line per distinct corrected failure.
-
-### 7. Restate
+### 5. Restate
 
 Before writing, restate to yourself the Hard rules and the Trailer schema at the end of this block, one line each.
 
-### 8. Body
+### 6. Body
 
 Write the message to <OUT> in this shape:
 
@@ -483,26 +477,19 @@ Write the message to <OUT> in this shape:
 - Subject: 60 characters or fewer, imperative.
 - Paragraph: 1 to 5 sentences, what the change does and why. No symbols, no file names, no backticks. Readable by someone reading the log without the code.
 - Bullets, in this order: structural decisions, behavior facts, absences. Each opens with the backticked symbol or path it concerns, then 1 or 2 sentences. A bullet earns its place when a reviewer could approve, object, or open the code because of it; omit the block when none does.
-- Trailers, in final order: every `Design:` line from step 4; every `Violates:` line, then every `Uncertain:` line, from step 5; the `Pending:` lines step 9 may add; every `Deferred:` candidate admitted by step 3, one clause each; every `Repairs:` line from step 6; then `Plan: <plan name>` or `Plan: none`, last. Do not emit a `Pending:` line until step 9 establishes it. Write short declarative sentences in the active voice. Code symbols, paths, and commands stay verbatim. Return blocked when <OUT> is not writable.
+- Trailers, in final order: every `Design:` line from step 3; every `Deferred:` candidate admitted by step 2, one clause each; every `Repairs:` line from step 4; then `Plan: <plan name>` or `Plan: none`, last. Write short declarative sentences in the active voice. Code symbols, paths, and commands stay verbatim. Return blocked when <OUT> is not writable.
 
-### 9. Queue
+### 7. Self-check
 
-Now read `vibe/archdoc-next.md`. If it is missing, create it empty. A record occupies exactly one physical line. Parse both legacy `N<digits> | proposal|observation | <text> | <refs>` and Markdown `- N<digits> | proposal|observation | <text> | <refs>` records. Skip blank lines, lines starting with `#`, and lines outside those grammars. Do only these three things:
-- Match: an entry matches when its text contains one of your `Design:` labels and either its locus (or directory) is a prefix of that line's locus or its `deps:` tuple equals that line's; a `Violates` entry matches on the same A-id and locus. Substring match, case-sensitive, nothing more. Append this commit's subject to a matched entry's refs after `; `, unless it is already there. When a matched legacy record changes, rewrite that one record with the `- ` prefix; do not migrate untouched records.
-- Flag: for each matched entry, insert one line before the first `Deferred:` or `Repairs:` trailer, whichever comes first, or before `Plan:` when neither exists: `Pending: N<id> - compounds` when the entry is an observation and this commit adds another instance; `Pending: N<id> - contradicts` when it is a proposal and this commit's facts move the opposite way; `Pending: N<id> - implements` when it is a proposal from this plan and this commit's facts realize it.
-- Observe: with no matching entry, append a record only for a `Design:` fact whose label is in the catalog's hard-to-reverse section and which no plan authorized and no archdoc entry settles, a demonstrated `Violates:` fact the plan's `archdoc:` key left unauthorized, or a demonstrated unlisted dependency direction from step 5. Never queue `Uncertain:`, `Deferred:`, `Repairs:`, neutral labels, cheap-to-reverse labels, or size alone. Emit only Markdown bullets: `- N<next> | observation | <text> | <subject>`, where text is `<label> @ <locus>: <clause>` (for a violation, `Violates <A-id> @ <locus>: <clause>`) and next is the highest id plus 1. Keep each record on one physical line. Before the first appended bullet, ensure exactly one blank line separates it from preceding non-list content; append subsequent bullets contiguously. Leave the body above the trailers and every existing trailer as written. Create observation records only.
+Read <OUT> back. Confirm: subject 60 characters or fewer; one paragraph with no backticks; bullets in decisions-behavior-absences order, each opening with a backticked token that appears verbatim in the diff; every `Design:` label is in the catalog below; every locus appears in the diff; trailers follow the step 6 order and use only its vocabulary; every `Deferred:` clause is an explicit omission in the resolved current step admitted by step 2; every `Repairs:` line has the direct regression evidence and correction step 4 requires; `Plan:` appears once, last, and names a file `vibe/<value>.md` or is `none`; every trailer value is one clause. Fix every failure; return blocked when one cannot be fixed.
 
-### 10. Self-check
-
-Read <OUT> back. Confirm: subject 60 characters or fewer; one paragraph with no backticks; bullets in decisions-behavior-absences order, each opening with a backticked token that appears verbatim in the diff; every `Design:` label is in the catalog below; every locus appears in the diff; every `Violates:` and `Uncertain:` id is in archdoc.md; trailers follow the step 8 order and use only its vocabulary; every `Pending:` id is in archdoc-next.md; every `Deferred:` clause is an explicit omission in the resolved current step admitted by step 3; every `Repairs:` line has the direct regression evidence and correction step 6 requires; `Plan:` appears once, last, and names a file `vibe/<value>.md` or is `none`; no new queue line is a proposal; every changed or appended queue record is a one-line Markdown bullet; the body above the trailers is unchanged since step 8; every trailer value is one clause. Return blocked when `vibe/archdoc.md` is staged. Fix every other failure; return blocked when one cannot be fixed.
-
-### 11. Return
+### 8. Return
 
 Return exactly one line: `ready <OUT>`, or `blocked <reason>`. Never return the commit-message contents.
 
 ## Label catalog
 
-Each line is `label | criterion | diff-signal | driver`. Indented lines continue the line above; join them. Names like `god_atfd (5)` are thresholds: use the archdoc's value, or the default in parentheses. `ATFD` means Access To Foreign Data: count the distinct fields or accessor methods that the candidate type reads from other, unrelated types; repeated access to the same foreign member counts once.
+Each line is `label | criterion | diff-signal | driver`. Indented lines continue the line above; join them. Names like `god_atfd (5)` are thresholds whose defaults appear in parentheses. `ATFD` means Access To Foreign Data: count the distinct fields or accessor methods that the candidate type reads from other, unrelated types; repeated access to the same foreign member counts once.
 
 ```
 # hard to reverse
@@ -554,11 +541,9 @@ shotgun-surgery | one small change fans out across >= surgery_files (5) files | 
 
 ## Hard rules
 
-- NEVER use the coder's account, a prior message, or a prior trailer as evidence; write from the diff, parent code, and accepted architecture record. Use a prior `Design:` trailer only to locate evidence.
-- Make no claim about code outside the diff, the files it touches, and the callee signatures step 1 read: no "duplicates", no "matches project style". The whole-log pass owns those. Claims about the diff relative to the archdoc are required.
+- NEVER use the coder's account, a prior message, or a prior trailer as evidence; write from the diff and parent code. Use a prior `Design:` trailer only to locate evidence.
+- Make no claim about code outside the diff, the files it touches, and the callee signatures step 1 read: no "duplicates", no "matches project style". The whole-log pass owns those.
 - Do not mention the plan, plan files, steps, or todos in prose; state rationale as if always known. `Plan:` is its only trace.
-- NEVER stage `vibe/archdoc.md`; NEVER write a queue line of kind proposal.
-- Read `vibe/archdoc-next.md` only in step 9, after the body is written.
 
 ## Trailer schema
 
@@ -566,9 +551,6 @@ shotgun-surgery | one small change fans out across >= surgery_files (5) files | 
 Design: <op> <label> @ <locus> [deps: a,b]
   [boundary: persisted|wire|pub]
   [instead-of: <label>: <clause>] [was: <locus>]
-Violates: A<n> - <clause>
-Uncertain: A<n> - <clause>
-Pending: N<n> - compounds|contradicts|implements
 Deferred: <clause>
 Repairs: <contract-or-invariant> @ <locus> - <observable failure corrected>
 Plan: vibe/YYYY-MM-DD-N-words.md | none
