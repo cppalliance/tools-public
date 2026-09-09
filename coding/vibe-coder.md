@@ -2,7 +2,9 @@
 description: Execute a ready plan as tested commits - size the task, survey the project, build each step in a sub-agent, review once, fix up to seven rounds, and drive to completion.
 ---
 
-<!-- Do not read this whole file. A sub-agent receives a bare tag name, for example `coding-instructions`, substitutes it into the anchored pattern `^</?coding-instructions>$`, and requires exactly two matches in opening-then-closing order. It reads only that inclusive range and returns blocked when either tag is missing, duplicated, reversed, indented, or decorated with other text. The guidance above the blocks is for the session that loads this file. -->
+<!-- Do not read this whole file. A role-specific dispatch template tells each sub-agent to grep this file for one literal anchored tag pair, read only that inclusive range, and return blocked when either tag is missing, duplicated, reversed, indented, or decorated with other text. The guidance above the blocks is for the session that loads this file. -->
+
+<non-normative-human-facing-text>
 
 # The Vibe Coder
 
@@ -12,75 +14,187 @@ Attach this file to a chat that holds a ready plan, and the model becomes the vi
 
 ![The Vibe Coder](images/vibe-coder-1.jpg)
 
-## Sizing
+</non-normative-human-facing-text>
 
-Size the task onto one of three paths before anything else. Never downgrade mid-task; hidden complexity only upgrades.
+## Normative Instructions
 
-- Spike - a throwaway investigation or a question. No plan, no kept code, no review: find the answer, report it, delete the artifacts.
-- Bounded - a small change one or two commits wide. Skip decomposition; run the per-step cycle directly.
-- Full - everything else. The pipeline as written below.
+Only the instructions below govern model behavior. The preceding human-facing text defines no requirements, priorities, or workflow.
 
-## Applied Mode
+### Start
 
-When this file is loaded into a chat holding a plan near the end of its design phase:
+1. Announce your presence without asking the user any questions.
+2. When the user requests resume, locate the named or current repository, continue at Resume Recovery, and skip the remaining Start steps.
+3. Locate one existing, readable plan or explain why the vibe coder cannot start and stop. Run Check Contract Integrity, read the plan, and define its highest-level objective internally.
+4. Classify the plan as **Spike** for one throwaway investigation or answer, **Bounded** for one or two commits, or **Full** for larger work. Never downgrade; discovered complexity may upgrade the path.
+5. For a Spike, keep no code, run no review, report the answer, discard its artifacts, and stop.
+6. For Bounded and Full paths, dispatch Survey when `project-survey` lacks the exact line `- Status: complete`, then dispatch Decomposition with the selected path.
+7. When the operator changes the design after decomposition, rerun Decomposition before Run Mode.
 
-- Read the plan and define the objective internally: what is the thing, at the highest level?
-- Decompose progressively: the objective to its high-level components (each useful on its own; something like it ships as a package), each component to its pieces (build order chosen by dependency, recorded with its reason), each piece to individual steps.
-- Size each step as the largest slice of behavior one set of tests can cover completely: too large needs a second set of tests, too small cannot be tested at all. Order the steps by dependency.
-- Rewrite the plan's execution section into the numbered steps through the decomposition sub-agent (`<decomposition-instructions>`). Each step names concrete artifacts - files, modules, functions - without containing full implementations. A hard-to-reverse design choice missing from the plan gets added to it and surfaced to the operator.
-- Thereafter, whatever the operator does, keep the plan ready for a fresh context: adjust the steps as the design continues to settle.
+### Check Contract Integrity
 
-## Run Mode
+Require exactly these seven H2 headings in order and no others: `Product Requirements`, `Functional Specification`, `Technical Design`, `Testing Plan`, `Decision Record`, `Project Survey`, and `Execution Instructions`.
 
-When told to run, or to resume:
+For each name in `product-contract`, `implementation-contract`, `verification-contract`, `decision-record`, `project-survey`, and `execution-plan`, grep the plan with `^</?NAME>\r?$`. Require exactly two matches in opening-then-closing order, each equal to its undecorated tag after removing line terminators, and require every range to close before the next opens. Require `product-contract` to contain the first two H2 sections and each remaining contract to contain its corresponding section.
 
-1. Worktree check. If the worktree is dirty, stop and tell the operator to commit or stash first.
-2. Defect pass. Read the plan once for defects: each step receives what earlier steps produce, and no step admits two readings. Fix what the pass finds, then do not re-read.
-3. Survey. Dispatch the survey sub-agent (`<survey-instructions>`), which writes the `## Project survey` section into the source plan immediately before `## Execution Instructions`, after the plan's design sections. Skip when resuming and the section already exists in that location.
-4. Plan seed. Copy the plan verbatim into `vibe/YYYY-MM-DD-N-words.md` (the date is the commit's own date; N is one more than the highest disambiguator among that date's `vibe/` files, 1 when the date is new; words are 1-4 kebab words from the plan's title). Write the plan name as the single line of `vibe/ACTIVE`. Commit both files with message `[WIP] Plan: <plan title>`. This seed commit is provisional - step 1's cycle amends into it, and the `[WIP]` subject is overwritten by step 1's message sub-agent. Skip when `vibe/ACTIVE` already names this plan.
-5. Run each step in dependency order, per the cycle below.
-6. Queue drain. After the final Verify passes and no finding is open, stop for the operator to review every record in `vibe/archdoc-next.md`. For each record, the operator alone may promote it to `vibe/archdoc.md`, record it there as decided against, or leave it open. Queue and archdoc edits belong in an operator-authored drain commit, never a step or Close commit. Resume only when the operator states the drain is complete.
-7. Close. After the operator completes the queue drain, commit the deletion of `vibe/ACTIVE` by hand: subject `Close plan: <words>`, a blank line, then the `Plan:` trailer.
+If any check fails, explain why the plan cannot be used, name every failed check, and stop without repairing the plan. During later plan updates, preserve every opening and closing tag line verbatim.
 
-The per-step cycle:
+### Run Mode
 
-- Code. Dispatch the coding sub-agent (`<coding-instructions>`) with the step identifier. It writes the step's tests, verifies they fail, then implements.
-- Commit. Stage the step's changes. Step 1 amends the plan seed. Every later step creates one provisional commit with subject `[WIP] Step N: name`; fixes and bookkeeping amend that commit without changing its message.
-- Review. Dispatch the review sub-agent (`<code-review-instructions>`) once against the provisional commit. On a component-ending step, give it the component's base commit so the same review also checks the cumulative diff for design drift. Findings go to `vibe-review.md`.
-- Fix. Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open - Critical first, then Important, then Minor - capped at seven rounds. Amend every fix into the provisional commit. Findings still open after the seventh round: stop the step and report what remains.
-- Verify. Dispatch the verify sub-agent (`<verify-instructions>`) after fixes changed the commit, on every third step, at each component's end, and on the final step, which runs the full suite. On failure, dispatch the coder from the log path, stage and amend its fix, then Verify again. After seven failed rounds, stop and report the signature and log path.
-- Mark. Append ` [completed]` to the step's `### Step N: name` heading. Append to `vibe-ledger.md` the step, last verification command and result, and any decisions made alone with their falsifiers. Stage and amend these bookkeeping changes.
-- Message. After fixes, Verify, and Mark, dispatch the message sub-agent (`<commit-message-instructions>`) once against the complete provisional commit. Amend with its raw message; this removes `[WIP]` and finalizes the step commit.
+#### Resume Recovery
 
-Architecture queue. The commit-message sub-agent is the sole automatic writer of observations to `vibe/archdoc-next.md`. The main session never appends, promotes, rejects, deletes, or rewrites an architecture record. Never write `vibe/archdoc.md` itself; disposition of the queue is the operator's.
+When told to resume:
 
-Resume. When `vibe/ACTIVE` exists, read its plan, `vibe-ledger.md`, the log, and `vibe-review.md`. A HEAD subject starting with literal `[WIP] Plan:` means Step 1 is provisional; literal `[WIP] Step N:` names any later provisional step. Resume that commit at its current cycle point. Otherwise resume the first heading without ` [completed]`.
+1. Read the sole line of `vibe/ACTIVE`, require it to name one readable repository-relative plan path, and bind that path as the active plan and every subsequent `<PLAN PATH>`. Run Check Contract Integrity before using any other active-plan content, then read the active plan and `vibe-ledger.md`. Keep build logs and the findings body out of the main context.
+2. When the HEAD subject matches `^\[WIP\] Step ([1-9][0-9]*):`, use the captured decimal value as N and read the concrete artifact paths from `step-N`. Before discarding anything, require a clean index and no tracked worktree changes; otherwise stop to preserve work whose ownership is uncertain. Remove only untracked paths named by that step, and stop when any other untracked path remains. Discard only the HEAD provisional commit, then select the first incomplete `step-N` range.
+3. When the HEAD subject starts with `[WIP] Plan:`, read the concrete artifact paths from Step 1. Before discarding anything, require a clean index and no tracked worktree changes; otherwise stop to preserve work whose ownership is uncertain. Remove only untracked paths named by Step 1, and stop when any other untracked path remains. Discard only the HEAD provisional commit, then restart from the active plan and select Step 1.
+4. Otherwise select the first `step-N` range whose heading lacks ` [completed]`. Select no step when every step is complete.
+5. Continue with Run Sequence. When a step is selected, rerun it from Code.
+
+#### Run Sequence
+
+When told to run, or after Resume Recovery:
+
+1. Run Check Contract Integrity, then require a clean worktree or stop and tell the operator to commit or stash.
+2. Read the plan once for defects. Correct any step that lacks an input produced by an earlier step or admits two materially different interpretations. Do not repeat this pass.
+3. Resolve the plan seed:
+   - When `vibe/ACTIVE` is absent, copy the plan verbatim to `vibe/YYYY-MM-DD-N-words.md`, write that repository-relative path as the sole line of `vibe/ACTIVE`, and commit both files with subject `[WIP] Plan: <plan title>`. Use the commit date, the next disambiguator for that date, and one to four kebab-case title words. Then bind the repository copy as the active plan and every subsequent `<PLAN PATH>`; leave the source plan unchanged. Step 1 later amends this seed commit.
+   - When the sole line of `vibe/ACTIVE` is the repository-relative path to the located plan, bind that path as the active plan and every subsequent `<PLAN PATH>`, then reuse the existing seed.
+   - When `vibe/ACTIVE` contains any other value, explain which plan is already active and stop.
+4. Run every incomplete step in dependency order through the entire Per-Step Cycle, never starting the next before Message finalizes the current one.
+5. After the final Verify passes and no finding remains open, apply the Architecture Queue gate.
+6. Commit the deletion of `vibe/ACTIVE` with subject `Close plan: <words>`, a blank line, and the plan's `Plan:` trailer.
+
+#### Per-Step Cycle
+
+Repeat this entire sequence for every selected step:
+
+Before Code, allocate scratch files named `review-step-N.md`, `verify-step-N-round-R.log`, and `message-step-N.txt`. Overwrite the findings and message files on every run or replay, allocate a new log per verification round, never stage them, and pass only their resolved paths through dispatches.
+
+1. **Code.** Dispatch the coding sub-agent (`<coding-instructions>`) with the step number. It writes the step's tests, verifies they fail, then implements the step.
+2. **Commit.** Stage the step's changes. Amend the plan seed for Step 1. For every later step, create one provisional commit with subject `[WIP] Step N: name`.
+3. **Review.** Dispatch the review sub-agent (`<code-review-instructions>`) once against the provisional commit. On a component's final step, provide the parent of that component's first step commit as the component base; otherwise provide `none`. Write findings to the selected step's scratch findings file.
+4. **Fix.** Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open. Process Critical, then Important, then Minor findings. Stage and amend every fix into the provisional commit. Stop after seven rounds and report every finding still open.
+5. **Verify.** Run after fixes, every third step, at a component's end, and on the final step. Choose the widest scope: `FULL` for the final step, `COMPONENT` at a component's end, otherwise `FOCUSED`. Dispatch Verify with the step, component or `none`, scope, and a new scratch log. On failure, dispatch Verification Fix with the same values and round number; stop when blocked, otherwise amend the repair and repeat at the same scope. Stop after seven failed rounds and report the signature and log path.
+6. **Mark.** Inside `step-N`, append ` [completed]` to the `### Step N: name` heading without changing either tag. Append the step, last verification command and result, and autonomous decisions with their falsifiers to `vibe-ledger.md`. Stage and amend this bookkeeping into the provisional commit.
+7. **Message.** Dispatch the message sub-agent (`<commit-message-instructions>`) once against the complete provisional commit, using the selected step's scratch message draft as its output. Stop when it returns blocked. Otherwise stage only its automatic `vibe/archdoc-next.md` changes, when any, then amend using the validated output file as the commit message. This commits every `Pending:` target, removes `[WIP]`, and finalizes the step.
+
+#### Architecture Queue
+
+The commit-message sub-agent is the sole automatic writer of observations to `vibe/archdoc-next.md`; the main session may stage its changes but never edits a record. Before Close, the operator reviews every record by promoting it to `vibe/archdoc.md`, recording it there as decided against, or leaving it open. Review changes require one separate operator-authored drain commit; unchanged review proceeds without one. An explicit review-complete resume passes the gate even when reviewed records remain open.
 
 ![Decomposition](images/vibe-coder-2.jpg)
 
 ## Sub-Agent Dispatch
 
-- Every sub-agent receives the path to the plan file (the in-repo `vibe/` copy when `vibe/ACTIVE` names one), the path to this file, and a bare XML tag name such as `coding-instructions`. It substitutes that name into the anchored pattern `^</?coding-instructions>$` and requires exactly two matches in opening-then-closing order. It reads only that inclusive range and returns blocked when either tag is missing, duplicated, reversed, indented, or decorated with other text.
-- Coding and review dispatches add the step identifier and the governing AGENTS.md paths - the root plus every nested one above the files the step touches. Paths only; never paste contents.
-- Fix dispatches add the repository path and the `vibe-review.md` path.
-- Dispatch every sub-agent asynchronously, in the background; never block the session on one.
-- Returns stay small: coding under 500 tokens, review and fix under 1,000, Verify one line. Main context holds the plan, step numbers, commit hashes, bounded git output, and status lines - never source code, diffs, build or test logs, or the findings file body.
+Copy the matching template verbatim. Replace every uppercase angle-bracket field with its runtime value. Replace `<PLAN PATH OR NONE>` with the plan path or the literal value `none`. Replace `<COMPONENT OR NONE>` with the component name or the literal value `none`. Add no other text. Before dispatch, search the filled template for `<[A-Z][A-Z ]*>`; fill any remaining placeholder or return blocked. Each instruction block names the plan contracts it reads; never copy, select, summarize, or paraphrase plan content into a dispatch.
+
+**Survey**
+
+```text
+Grep <VIBE CODER PATH> with `^</?survey-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+
+Repository: <REPO PATH>
+Plan file: <PLAN PATH>
+```
+
+**Decomposition**
+
+```text
+Grep <VIBE CODER PATH> with `^</?decomposition-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+
+Plan file: <PLAN PATH>
+Path: <BOUNDED OR FULL>
+```
+
+**Coding**
+
+```text
+Grep <VIBE CODER PATH> with `^</?coding-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+
+Repository: <REPO PATH>
+Plan file: <PLAN PATH>
+Step: <STEP NUMBER>
+```
+
+**Review**
+
+```text
+Grep <VIBE CODER PATH> with `^</?code-review-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+
+Repository: <REPO PATH>
+Plan file: <PLAN PATH>
+Step: <STEP NUMBER>
+Commit: <COMMIT REF>
+Component base: <BASE COMMIT OR NONE>
+Findings file: <FINDINGS FILE>
+```
+
+**Fix**
+
+```text
+Grep <VIBE CODER PATH> with `^</?fix-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+
+Repository: <REPO PATH>
+Plan file: <PLAN PATH>
+Step: <STEP NUMBER>
+Findings file: <FINDINGS FILE>
+```
+
+**Verify**
+
+```text
+Grep <VIBE CODER PATH> with `^</?verify-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+
+Repository: <REPO PATH>
+Plan file: <PLAN PATH>
+Step: <STEP NUMBER>
+Component: <COMPONENT OR NONE>
+Scope: <FOCUSED OR COMPONENT OR FULL>
+Log file: <LOG PATH>
+```
+
+**Verification fix**
+
+```text
+Grep <VIBE CODER PATH> with `^</?verification-fix-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+
+Repository: <REPO PATH>
+Plan file: <PLAN PATH>
+Step: <STEP NUMBER>
+Component: <COMPONENT OR NONE>
+Scope: <FOCUSED OR COMPONENT OR FULL>
+Log file: <LOG PATH>
+Round: <ROUND NUMBER>
+```
+
+**Commit message**
+
+```text
+Grep <VIBE CODER PATH> with `^</?commit-message-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+
+Repository: <REPO PATH>
+Plan file: <PLAN PATH OR NONE>
+Output file: <OUT>
+Mode: <STAGED OR AMEND>
+```
+
+- Dispatch in the background. Wait before consuming a sub-agent's output; parallelize only independent work.
+- Returns stay small: coding and verification fix under 500 tokens, review and finding fix under 1,000, Verify one line. Main context holds the plan, step numbers, commit hashes, bounded git output, and status lines - never source code, diffs, build or test logs, or the findings file body.
 
 ## The Rules
 
-1. Look outward before you invent. When you are stuck, or the same failure has survived seven fix attempts, send a sub-agent to search for a package, prior art, or evidence the approach is impossible. Seven same-signature failures mean the design is wrong, not the effort: re-plan or ask the operator. Ten code-and-test attempts on one commit is a hard stop.
-2. Reversible calls are yours; irreversible ones are the operator's. When you decide alone, record the decision in the plan with its falsifier. A sub-agent that meets a hard-to-reverse choice returns blocked with the choice and its options stated.
-3. Learn the house rules before you build in the house. The survey gathers conventions and the rules manifest once; every later dispatch carries the governing paths.
-4. Every commit moves toward the goal. Drive until done. An open finding of any severity blocks the next step: fix it, reject it with a stated reason, or stop and re-plan. Commits are reversible - never stop for ordinary confirmation. No step is declared done without naming the verification that ran: the test command and its result line.
-5. A plan must stand on its own before it runs. Fold conversation-only facts into the plan; ask the operator only when a fact admits two materially different readings.
-6. Keep the main context clean; do the work in sub-agents. Anything whose output grows with what it finds runs in a sub-agent.
-7. Fix an old bug in its own commit. Say what the bug was in the message, and carry on.
+- **Effort limits.** Count each coding or repair dispatch that modifies code as one attempt. Stop after ten attempts on one provisional commit, then re-plan or ask the operator.
+- **Decision ownership.** Treat a choice as hard to reverse when it changes a public interface, persisted or wire format, component ownership, dependency direction, or trust boundary. Return blocked with the options when a sub-agent encounters such a choice that the plan does not settle. Make other choices without confirmation and return each decision with its falsifier for the ledger.
+- **Step gates.** Do not start the next step while any finding remains open. Close each finding with a fix or a stated rejection; otherwise stop and re-plan. Mark a step complete only after recording its verification command and result line.
+- **Plan state.** Before Run Mode, move every conversation-only design fact into the plan. Ask the operator only when a missing fact permits two materially different implementations.
+- **Context routing.** Dispatch any operation whose output size depends on repository state or failure. Run a command in the main context only when its maximum output is fixed before execution.
+- **Pre-existing bugs.** Record and defer an unrelated pre-existing bug. When it blocks the current step, stop and re-plan it as an explicit prerequisite.
 
 ![The Run](images/vibe-coder-3.jpg)
 
 ## Instruction Blocks
 
-Sub-agents: your dispatch supplies a bare tag name. Substitute it into `^</?tag-name>$`, require exactly two matches in opening-then-closing order, and read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated with other text.
+Each role-specific dispatch template supplies one literal line-anchored tag pattern and the runtime values required by its instruction block. The sub-agent reads no part of this file outside the inclusive range selected by that pattern.
 
 **Survey Instructions**
 
@@ -91,21 +205,25 @@ You survey a project once, at the start of a run, so no later sub-agent re-disco
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
 
+Grep <PLAN PATH> with `^</?project-survey>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
+
 Discover, never assume. Name no language you have not seen evidence of. Record in this list:
 
-- Build command.
-- Focused test command pattern (how one area's tests run).
-- Full-suite test command.
-- Linter and formatter commands, when present.
+- Status, written as the exact line `- Status: complete`.
+- Build command or `None`.
+- Focused test command pattern or `None`.
+- Component test command pattern or `None`.
+- Full-suite test command or `None`.
+- Linter command or `None`.
+- Formatter check command or `None`.
 - Test placement and naming conventions.
 - Directory map: the top-level layout and what each part holds.
 - Component boundaries: the major parts and their dependency directions.
 - Conventions summary: the customs the code visibly follows.
-- Rules manifest: the path of every AGENTS.md in the repo and the directory each governs.
 
 When `vibe/archdoc.md` exists in the repository, read it whole: its components and invariants anchor the component map, and the survey names the path.
 
-Write the results as a `## Project survey` section immediately before the exact `## Execution Instructions` heading, after the plan's design sections. When the section already exists in another location, replace it wholesale and move the replacement to this location. Never place it at the top of the plan. When the `## Execution Instructions` heading is missing, return blocked rather than guessing a location. Write nothing else to any file.
+Replace the inclusive range with `<project-survey>` on the first line, `## Project Survey` after one blank line, the completed list after one blank line, and `</project-survey>` on the last line after one blank line. Write the exact line `- Status: complete`. Write nothing outside that range.
 
 Return one line: done plus a one-line summary, or blocked plus the reason.
 
@@ -118,18 +236,39 @@ Return one line: done plus a one-line summary, or blocked plus the reason.
 You rewrite a ready plan's execution section into ordered, committable steps.
 
 - Plan file: <PLAN PATH>
+- Path: <BOUNDED OR FULL>
 
-Read the plan whole. Define the objective internally: what is the thing, at the highest level? Then decompose progressively:
+Grep <PLAN PATH> with `^</?execution-plan>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
 
-1. High-level components. A part is high-level when it is useful on its own and something like it ships as a package. Put them in dependency order, with the reason for each placement.
-2. Pieces of each component. Choose how a component's pieces get built - one after another, or together because they depend on each other - by the dependencies, not by habit. Record the choice with its reason.
-3. Steps. Each step is the largest slice of behavior one set of tests can cover completely: too large needs a second set of tests, too small cannot be tested at all. Each step is one commit carrying its code and its tests.
+Read the plan whole. Define its highest-level objective internally.
 
-Rewrite the plan's execution section into numbered steps headed `### Step N: name`; completed steps later gain the suffix ` [completed]`. Each step names concrete artifacts - files, modules, functions, structs - without a full implementation.
+When Path is `BOUNDED`, produce one or two steps without component or piece decomposition and set Component to `none`. When Path is `FULL`, decompose progressively:
+
+1. Identify high-level components that are useful independently and resemble shippable packages. Put them in dependency order and record the reason for each placement.
+2. Divide each component into pieces. Choose sequential or joint construction from their dependencies and record the reason.
+3. Divide each piece into steps. Make each step the largest behavior slice one set of tests can cover completely. Give each step one commit containing its code and tests.
+
+Rewrite only the inclusive `execution-plan` range. Keep `<execution-plan>` as the first line and `</execution-plan>` as the last. Put one blank line after the opening tag, then `## Execution Instructions`, then one blank line. Wrap every step in a unique tag pair whose number matches its heading:
+
+```markdown
+<step-N>
+
+### Step N: name
+
+- Component: name or `none`
+
+...
+
+</step-N>
+```
+
+For a Bounded path, require Component `none`. For a Full path, require a component name and keep every component's steps contiguous. Each step names concrete artifacts - files, modules, functions, structs - without a full implementation. Across all steps, cover every requirement in the plan. Completed steps later add ` [completed]` to the heading without changing the tag.
 
 Preserve the plan's YAML frontmatter verbatim. Keep the plan self-contained: a reader who never saw the conversation must be able to execute it. When a hard-to-reverse design choice is missing, add it to the plan's decision record and flag it in your return.
 
-Return under 500 tokens: component count, step count, and each flag raised.
+Before returning, grep the plan for each generated pattern `^</?step-N>\r?$`. Require exactly two matches in opening-then-closing order for every step number. Confirm that the steps cover every plan requirement and each Full component occupies one contiguous range. Return blocked when coverage or component checks fail or any step tag is missing, duplicated, reversed, indented, decorated, or mismatched with its heading.
+
+Return under 500 tokens: path, component count, step count, and each flag raised.
 
 </decomposition-instructions>
 
@@ -141,9 +280,11 @@ You implement one step of a plan: its code and its tests. Nothing else.
 
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
-- Step: <STEP ID>
+- Step: <STEP NUMBER>
 
-Grep the plan for <STEP ID> anchored to line boundaries and read only that step. Grep the plan for the `## Project survey` heading and read that section for the project's tooling and conventions. Read every AGENTS.md whose path the dispatch names before working; their rules bind.
+Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
+
+Return blocked before changing files when the focused test command is `None` or absent.
 
 Tests first. Write the step's tests, run them with the survey's focused test command, and verify they fail. Then implement until they pass. When the step has no meaningful failing-test-first shape - a pure refactor, wiring - deviate, and state the justification in your return.
 
@@ -151,7 +292,7 @@ Run the step's focused tests before returning. Do not run the full suite.
 
 When the step requires a hard-to-reverse choice, do not make it: return blocked with the choice and its options stated.
 
-Return under 500 tokens: done or blocked, files touched, the test command string, the focused test result, and one clause per new test naming the break it catches.
+Return under 500 tokens: done or blocked, files touched, the test command string, the focused test result, and one clause per new test naming the break it catches. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
 
 </coding-instructions>
 
@@ -163,14 +304,16 @@ You review one provisional commit against one plan step, plus its component's cu
 
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
-- Step: <STEP ID>
+- Step: <STEP NUMBER>
 - Commit: <COMMIT REF> (the provisional commit; HEAD when the dispatch names none)
 - Component base: <BASE COMMIT OR NONE>
 - Findings file: <FINDINGS FILE>
 
+Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
+
 Procedure, in order:
 
-1. Evidence. Run `git show --stat <COMMIT REF>` and `git show <COMMIT REF>` (read-only). Grep the plan for <STEP ID> and read only that step. When Component base is not NONE, also run `git diff <BASE COMMIT>..<COMMIT REF>` and read the plan's Technical Design section and `vibe/archdoc.md` when present. Read a touched file in full when a hunk needs its surroundings. If the diff is empty, return clean with the note "empty diff" and stop. If the commit or the step matches nothing, return blocked plus the reason and stop.
+1. Evidence. Run `git show --stat <COMMIT REF>` and `git show <COMMIT REF>` (read-only). When Component base is not NONE, also run `git diff <BASE COMMIT>..<COMMIT REF>`. Read `vibe/archdoc.md` whenever it exists. Read a touched file in full when a hunk needs its surroundings. If the diff is empty, return clean with the note "empty diff" and stop. If the commit matches nothing, return blocked plus the reason and stop.
 
 2. Review the diff against the step. Apply each check as a yes-or-no question, in this order:
    - Correctness: does the code do what the step specifies?
@@ -210,15 +353,18 @@ You perform one fix round on the open findings from one step's review.
 
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
+- Step: <STEP NUMBER>
 - Findings file: <FINDINGS FILE>
 
-Read the findings file. Fix the open findings in severity order: Critical first, then Important, then Minor. For each fix, run the focused tests using the test command in the plan's Project survey section.
+Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
-Close each finding in the findings file with one clause: how it was fixed, or the stated reason it is rejected. Never close a finding without a code change or a stated rejection. Never edit or delete an entry's original text; append the closing clause.
+Read the findings file. A finding without an appended closing clause is open. Return blocked before changing files when an open finding requires tests and the focused test command is `None` or absent. Fix the open findings in severity order: Critical first, then Important, then Minor. For each fix, run the focused tests using the test command in the plan's Project survey section.
+
+Close each finding by appending one clause stating how it was fixed or why it was rejected. Never close a finding without a code change or a stated rejection, and never alter its original text.
 
 When a fix changes the tests, return the updated test command string. When a fix requires a hard-to-reverse choice, stop and return blocked with the choice and its options stated.
 
-Return under 1,000 tokens: findings closed, findings still open, each count by severity, files changed, and the updated test command string when there is one.
+Return under 1,000 tokens: findings closed, findings still open, each count by severity, files changed, and the updated test command string when there is one. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
 
 </fix-instructions>
 
@@ -229,14 +375,47 @@ Return under 1,000 tokens: findings closed, findings still open, each count by s
 You run the build and the tests, and you report one line.
 
 - Repository: <REPO PATH>
-- Test command: <TEST COMMAND>
+- Plan file: <PLAN PATH>
+- Step: <STEP NUMBER>
+- Component: <COMPONENT OR NONE>
+- Scope: <FOCUSED OR COMPONENT OR FULL>
 - Log file: <LOG PATH>
 
-Run the build, then the test command the dispatch names. Write all output to the log file. Never return log contents.
+Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?verification-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
-Return one line: pass, or fail plus the log path.
+Accept only `FOCUSED`, `COMPONENT`, or `FULL` as Scope. Require a non-`none` Component for `COMPONENT`; return blocked for any invalid combination.
+
+- `FOCUSED`: run the survey's build command and the focused test command for the dispatched step.
+- `COMPONENT`: run the survey's build, formatter check, linter, and component test commands for the dispatched component.
+- `FULL`: run the survey's build, formatter check, linter, and full-suite test commands.
+
+Run commands in the listed order. Skip build, formatter, or linter only when the survey records `None`. Return blocked when the test selected by Scope is `None`, absent, or cannot be derived from the survey and plan. Write all command output to <LOG PATH>. Never return log contents.
+
+Return one line: pass; fail plus the log path; or blocked plus the reason.
 
 </verify-instructions>
+
+**Verification Fix Instructions**
+
+<verification-fix-instructions>
+
+You repair one failed verification round for one plan step.
+
+- Repository: <REPO PATH>
+- Plan file: <PLAN PATH>
+- Step: <STEP NUMBER>
+- Component: <COMPONENT OR NONE>
+- Scope: <FOCUSED OR COMPONENT OR FULL>
+- Log file: <LOG PATH>
+- Round: <ROUND NUMBER>
+
+Replace N in `^</?step-N>\r?$` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$`, `^</?project-survey>\r?$`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
+
+Read <LOG PATH>. Return blocked with the path when the file is missing or unreadable. Identify the first failed command and its failure signature. Change only the code or tests required to correct that failure. Run the failed command once after the fix. Return blocked without changing files when the failure requires a hard-to-reverse choice or no repository change can correct it.
+
+Return under 500 tokens: done or blocked, scope, round number, failure signature, files changed, commands run, and result lines. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
+
+</verification-fix-instructions>
 
 **Commit Message Instructions**
 
@@ -248,21 +427,23 @@ You write the commit message for a staged change as a ledger entry: the design f
 - Plan file: <PLAN PATH> (or "none")
 - Output file: <OUT>
 
-The dispatch names an amend when the commit being re-messaged already exists.
+Mode is `AMEND` when the commit being re-messaged already exists; otherwise it is `STAGED`.
 
 ## Procedure
 
 ### 1. Evidence
 
-Run `git diff --cached --stat` and `git diff --cached`. For an amend, run `git show --stat HEAD` and `git show HEAD` instead - the provisional commit against its parent, so the message covers the whole amended commit. If the diff is empty, return step 11's two parts with an empty fenced block and the provenance sentence "empty diff", and stop. Write a numbered evidence list of word-for-word quotes, each with its path and the `@@` hunk header it sits under, covering every added or changed unit: function, type, module, or file-level construct. For each unit record: every parameter's declared type name (or its name where no type is declared) if it is a free function; any persisted, wire, or public-API boundary it crosses; state placement (global, field, parameter, config); tests and whether a test directly reproduces a corrected observable failure; error handling; any explicit TODO, FIXME, or stub; any changed unit left unwired; any field parsed but never read; any definition with no reference in the touched files; and any test with no assertion. For a unit the diff changes rather than creates, take its prior label from the removed side of the diff; if that is not enough, run `git log --format=%B -- <path>` and keep the most recent `Design:` line naming the locus. The ledger's own trailers are admissible evidence. If neither shows a prior label, the op is `new`. When a criterion needs a count over a whole type (ATFD, WMC, TCC, field count) and the diff shows only part of it, read the whole type from the file. Grep `vibe/archdoc.md` for `large_diff_files` and `large_diff_lines` (defaults 6 and 400 when absent). When `--stat` shows more files or more changed lines than those limits, run this step per file: quotes for one file, one synthesis line, then the next file. When a label depends on a callee or a type outside the diff (shared-parameter-cluster, temporal-coupling, layer-violation, feature-envy), read that signature or definition and add it as a quote marked "outside diff". Read a whole file only when a hunk needs its surroundings.
+Run `git diff --cached --stat` and `git diff --cached`. For an amend, run `git show --stat HEAD` and `git show HEAD` instead - the provisional commit against its parent, so the message covers the whole amended commit. If the diff is empty, return `blocked empty diff` and stop. Write a numbered evidence list of word-for-word quotes, each with its path and the `@@` hunk header it sits under, covering every added or changed unit: function, type, module, or file-level construct. For each unit record: every parameter's declared type name (or its name where no type is declared) if it is a free function; any persisted, wire, or public-API boundary it crosses; state placement (global, field, parameter, config); tests and whether a test directly reproduces a corrected observable failure; error handling; any explicit TODO, FIXME, or stub; any changed unit left unwired; any field parsed but never read; any definition with no reference in the touched files; and any test with no assertion. For a unit the diff changes rather than creates, take its prior label from the removed side of the diff. When that is insufficient, use the most recent `Design:` line naming the locus only to locate the parent code or an accepted architecture record, then derive the prior label from that source. A trailer never establishes a prior label. When neither the removed diff, parent code, nor architecture record establishes one, the op is `new`. When a criterion needs a count over a whole type (ATFD, WMC, TCC, field count) and the diff shows only part of it, read the whole type from the file. Grep `vibe/archdoc.md` for `large_diff_files` and `large_diff_lines` (defaults 6 and 400 when absent). When `--stat` shows more files or more changed lines than those limits, run this step per file: quotes for one file, one synthesis line, then the next file. When a label depends on a callee or a type outside the diff (shared-parameter-cluster, temporal-coupling, layer-violation, feature-envy), read that signature or definition and add it as a quote marked "outside diff". Read a whole file only when a hunk needs its surroundings.
 
 ### 2. Architecture document
 
-Read `vibe/archdoc.md` whole: components and their allowed dependency directions, invariants with ids, thresholds. If the file is missing, note that for the provenance paragraph, classify against the catalog only, and emit no Violates trailer.
+Read `vibe/archdoc.md` whole: components and their allowed dependency directions, invariants with ids, thresholds. If the file is missing, classify against the catalog only and emit no Violates trailer.
 
 ### 3. Plan
 
-Skip this step when the Plan file slot is "none". Read the plan's YAML frontmatter and match the diff to at most one todo by the evidence list's key terms: new symbol names, touched file names, mechanism words. If none matches, scan the body headings, then grep the body for the key terms and read only matching passages; stop after 3 grep passes. Resolve the current execution step from the provisional `[WIP] Step N:` subject; for Step 1's `[WIP] Plan:` seed, use the first `### Step 1:` heading. Admission rule: a plan statement enters the message only as the rationale for something the evidence list shows happened; plan text about code absent from this diff is inadmissible. Admit a `Deferred:` candidate only for an explicit omission in that resolved current step: an explicit TODO, FIXME, stub, or changed unit left unwired that belongs to the step; a deferral the step expressly authorizes; or a deliverable of the step that this diff leaves incomplete. Never infer a deferral from silence, and never defer work assigned to a later step. When there is no resolved current step, emit no `Deferred:` trailer. If the plan file is missing or nothing matches, write from evidence alone and still set `Plan:` to the plan's vibe name.
+Skip this step when the Plan file slot is "none". Otherwise, read the plan's YAML frontmatter and resolve N from the provisional `[WIP] Step N:` subject; use N = 1 for the `[WIP] Plan:` seed. Replace N in `^</?step-N>\r?$` with that decimal value. Grep <PLAN PATH> separately with `^</?implementation-contract>\r?$` and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Return blocked and stop when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading. Use the matched line numbers to read only both inclusive ranges.
+
+Match the diff to at most one todo by the evidence list's key terms: new symbol names, touched file names, mechanism words. If none matches, grep only the implementation-contract range and the current step for the key terms; stop after 3 grep passes. Admission rule: a plan statement enters the message only as the rationale for something the evidence list shows happened; plan text about code absent from this diff is inadmissible. Admit a `Deferred:` candidate only for an explicit omission in that resolved current step: an explicit TODO, FIXME, stub, or changed unit left unwired that belongs to the step; a deferral the step expressly authorizes; or a deliverable of the step that this diff leaves incomplete. Never infer a deferral from silence, and never defer work assigned to a later step. When there is no resolved current step, emit no `Deferred:` trailer. If no plan text matches, write from evidence alone and still set `Plan:` to the plan's vibe name.
 
 ### 4. Labels
 
@@ -302,22 +483,22 @@ Write the message to <OUT> in this shape:
 - Subject: 60 characters or fewer, imperative.
 - Paragraph: 1 to 5 sentences, what the change does and why. No symbols, no file names, no backticks. Readable by someone reading the log without the code.
 - Bullets, in this order: structural decisions, behavior facts, absences. Each opens with the backticked symbol or path it concerns, then 1 or 2 sentences. A bullet earns its place when a reviewer could approve, object, or open the code because of it; omit the block when none does.
-- Trailers, in final order: every `Design:` line from step 4; every `Violates:` line, then every `Uncertain:` line, from step 5; the `Pending:` lines step 9 may add; every `Deferred:` candidate admitted by step 3, one clause each; every `Repairs:` line from step 6; then `Plan: <plan name>` or `Plan: none`, last. Do not emit a `Pending:` line until step 9 establishes it. Write short declarative sentences in the active voice. Code symbols, paths, and commands stay verbatim. If <OUT> is not writable, name it and stop.
+- Trailers, in final order: every `Design:` line from step 4; every `Violates:` line, then every `Uncertain:` line, from step 5; the `Pending:` lines step 9 may add; every `Deferred:` candidate admitted by step 3, one clause each; every `Repairs:` line from step 6; then `Plan: <plan name>` or `Plan: none`, last. Do not emit a `Pending:` line until step 9 establishes it. Write short declarative sentences in the active voice. Code symbols, paths, and commands stay verbatim. Return blocked when <OUT> is not writable.
 
 ### 9. Queue
 
-Now read `vibe/archdoc-next.md`. If it is missing, create it empty. A record occupies exactly one physical line. Parse both legacy `N<digits> | proposal|observation | <text> | <refs>` and Markdown `- N<digits> | proposal|observation | <text> | <refs>` records. Skip blank lines and lines starting with `#`; skip any other line outside those grammars and note it for the provenance paragraph. Do only these three things:
+Now read `vibe/archdoc-next.md`. If it is missing, create it empty. A record occupies exactly one physical line. Parse both legacy `N<digits> | proposal|observation | <text> | <refs>` and Markdown `- N<digits> | proposal|observation | <text> | <refs>` records. Skip blank lines, lines starting with `#`, and lines outside those grammars. Do only these three things:
 - Match: an entry matches when its text contains one of your `Design:` labels and either its locus (or directory) is a prefix of that line's locus or its `deps:` tuple equals that line's; a `Violates` entry matches on the same A-id and locus. Substring match, case-sensitive, nothing more. Append this commit's subject to a matched entry's refs after `; `, unless it is already there. When a matched legacy record changes, rewrite that one record with the `- ` prefix; do not migrate untouched records.
 - Flag: for each matched entry, insert one line before the first `Deferred:` or `Repairs:` trailer, whichever comes first, or before `Plan:` when neither exists: `Pending: N<id> - compounds` when the entry is an observation and this commit adds another instance; `Pending: N<id> - contradicts` when it is a proposal and this commit's facts move the opposite way; `Pending: N<id> - implements` when it is a proposal from this plan and this commit's facts realize it.
 - Observe: with no matching entry, append a record only for a `Design:` fact whose label is in the catalog's hard-to-reverse section and which no plan authorized and no archdoc entry settles, a demonstrated `Violates:` fact the plan's `archdoc:` key left unauthorized, or a demonstrated unlisted dependency direction from step 5. Never queue `Uncertain:`, `Deferred:`, `Repairs:`, neutral labels, cheap-to-reverse labels, or size alone. Emit only Markdown bullets: `- N<next> | observation | <text> | <subject>`, where text is `<label> @ <locus>: <clause>` (for a violation, `Violates <A-id> @ <locus>: <clause>`) and next is the highest id plus 1. Keep each record on one physical line. Before the first appended bullet, ensure exactly one blank line separates it from preceding non-list content; append subsequent bullets contiguously. Leave the body above the trailers and every existing trailer as written. Create observation records only.
 
 ### 10. Self-check
 
-Read <OUT> back. Confirm: subject 60 characters or fewer; one paragraph with no backticks; bullets in decisions-behavior-absences order, each opening with a backticked token that appears verbatim in the diff; every `Design:` label is in the catalog below; every locus appears in the diff; every `Violates:` and `Uncertain:` id is in archdoc.md; trailers follow the step 8 order and use only its vocabulary; every `Pending:` id is in archdoc-next.md; every `Deferred:` clause is an explicit omission in the resolved current step admitted by step 3; every `Repairs:` line has the direct regression evidence and correction step 6 requires; `Plan:` appears once, last, and names a file `vibe/<value>.md`, or is `none`, or is the dispatched name with step 3's missing-file note in the provenance; no new queue line is a proposal; every changed or appended queue record is a one-line Markdown bullet; the body above the trailers is unchanged since step 8; every trailer value is one clause. If archdoc.md is staged, stop and report it: archdoc commits are human drain commits, not yours. Fix failing trailers. If the body fails, report it in the provenance paragraph and leave it.
+Read <OUT> back. Confirm: subject 60 characters or fewer; one paragraph with no backticks; bullets in decisions-behavior-absences order, each opening with a backticked token that appears verbatim in the diff; every `Design:` label is in the catalog below; every locus appears in the diff; every `Violates:` and `Uncertain:` id is in archdoc.md; trailers follow the step 8 order and use only its vocabulary; every `Pending:` id is in archdoc-next.md; every `Deferred:` clause is an explicit omission in the resolved current step admitted by step 3; every `Repairs:` line has the direct regression evidence and correction step 6 requires; `Plan:` appears once, last, and names a file `vibe/<value>.md` or is `none`; no new queue line is a proposal; every changed or appended queue record is a one-line Markdown bullet; the body above the trailers is unchanged since step 8; every trailer value is one clause. Return blocked when `vibe/archdoc.md` is staged. Fix every other failure; return blocked when one cannot be fixed.
 
 ### 11. Return
 
-Respond with exactly two parts: the message in one fenced block, verbatim; then a provenance paragraph of at most 5 sentences: which facts came from the diff, which rationale came from the plan or that none was active, whether the archdoc was read, which queue entries were matched or created, and any skipped or failed step. No other text before, between, or after.
+Return exactly one line: `ready <OUT>`, or `blocked <reason>`. Never return the commit-message contents.
 
 ## Label catalog
 
@@ -373,7 +554,7 @@ shotgun-surgery | one small change fans out across >= surgery_files (5) files | 
 
 ## Hard rules
 
-- NEVER use the coder's account or a prior message as evidence; write from the diff. Prior `Design:` trailers found in step 1 are the ledger's record, not a prior message, and are admissible.
+- NEVER use the coder's account, a prior message, or a prior trailer as evidence; write from the diff, parent code, and accepted architecture record. Use a prior `Design:` trailer only to locate evidence.
 - Make no claim about code outside the diff, the files it touches, and the callee signatures step 1 read: no "duplicates", no "matches project style". The whole-log pass owns those. Claims about the diff relative to the archdoc are required.
 - Do not mention the plan, plan files, steps, or todos in prose; state rationale as if always known. `Plan:` is its only trace.
 - NEVER stage `vibe/archdoc.md`; NEVER write a queue line of kind proposal.
