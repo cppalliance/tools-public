@@ -214,6 +214,7 @@ Discover, never assume. Name no language you have not seen evidence of. Record i
 - Full-suite test command or `None`.
 - Linter command or `None`.
 - Formatter check command or `None`.
+- Docs command or `None`.
 - Test placement and naming conventions.
 - Directory map: the top-level layout and what each part holds.
 - Component boundaries: the major parts and their dependency directions.
@@ -392,9 +393,9 @@ Accept only `FOCUSED`, `COMPONENT`, or `FULL` as Scope. Require a non-`none` Com
 
 - `FOCUSED`: run the survey's build command and the focused test command for the dispatched step.
 - `COMPONENT`: run the survey's build, formatter check, linter, and component test commands for the dispatched component.
-- `FULL`: run the survey's build, formatter check, linter, and full-suite test commands.
+- `FULL`: run the survey's build, formatter check, linter, docs, and full-suite test commands.
 
-Run commands in the listed order. Skip build, formatter, or linter only when the survey records `None`. Return blocked when the test selected by Scope is `None`, absent, or cannot be derived from the survey and plan. Write all command output to <LOG PATH>. Never return log contents.
+Run commands in the listed order. Skip build, formatter, linter, or docs only when the survey records `None`. Return blocked when the test selected by Scope is `None`, absent, or cannot be derived from the survey and plan. Write all command output to <LOG PATH>. Never return log contents.
 
 Return one line: pass; fail plus the log path; or blocked plus the reason.
 

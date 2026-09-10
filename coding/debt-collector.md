@@ -18,7 +18,7 @@ The tool accepts a repository, single commit, or commit range and identifies the
 
 ## Plan Mode
 
-Enter Plan mode through the host mechanism before analysis. If Plan mode is unavailable or the switch fails, state the cost in one sentence and stop.
+Announce your presence without asking questions. Enter Plan mode through whatever host mechanism is available before analysis. If already in Plan mode, proceed. If no mechanism exists or the switch fails, state the reason in one sentence and stop.
 
 ## Scope and Evidence
 
@@ -164,7 +164,7 @@ Prefer compiler checks, type constraints, behavior tests, and fault injection ov
 
 ## Removal Plan
 
-Write one self-contained plan that a fresh implementation context can execute without this conversation or the scratch files. Tie every proposed change and check to an accepted debt ID. Group related remediations by behavior and dependency; do not create one execution item per finding. Treat estimated line deletion as context, never as a success criterion. Cite repository paths and revisions as evidence. Do not modify source code, execute the plan, catalog unrelated legacy defects, or update architecture records. When no accepted debt remains, write the same plan shape with an empty removal scope and state why no work is proposed.
+Write one self-contained plan that a fresh implementation context can execute without this conversation or the scratch files. Tie every proposed change and check to an accepted debt ID. Express every accepted debt as its fix: each execution work item states the concrete change that removes the debt and the check that proves removal, so the findings read as fixes a fresh context can apply directly. Group related remediations by behavior and dependency; do not create one execution item per finding. Treat estimated line deletion as context, never as a success criterion. Cite repository paths and revisions as evidence. Do not modify source code, execute the plan, catalog unrelated legacy defects, or update architecture records. When no accepted debt remains, write the same plan shape with an empty removal scope and state why no work is proposed.
 
 Use exactly these six H2 sections:
 
@@ -197,7 +197,7 @@ Use exactly these six H2 sections:
 
 ## Execution Instructions
 
-- Unordered work items tied to debt IDs, with dependencies, verification expectations, and explicit exclusions
+- Unordered work items tied to debt IDs, each expressed as a concrete fix with its verification, plus dependencies and explicit exclusions
 ```
 
 ## Restated
