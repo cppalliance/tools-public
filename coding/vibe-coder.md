@@ -67,7 +67,7 @@ When told to run, or after Resume Recovery:
 
 Repeat this entire sequence for every selected step:
 
-Before Code, allocate scratch files named `review-step-N.md`, `verify-step-N-round-R.log`, and `message-step-N.txt`. Overwrite the findings and message files on every run or replay, allocate a new log per verification round, never stage them, and pass only their resolved paths through dispatches.
+Before Code, allocate **scratch** files named `review-step-N.md`, `verify-step-N-round-R.log`, and `message-step-N.txt`. Overwrite the findings and message files on every run or replay, allocate a new log per verification round, never stage them, and pass only their resolved paths through dispatches.
 
 1. **Code.** Dispatch the coding sub-agent (`<coding-instructions>`) with the step number. It writes the step's tests, verifies they fail, then implements the step.
 2. **Commit.** Stage the step's changes. Amend the plan seed for Step 1. For every later step, create one provisional commit with subject `[WIP] Step N: name`.
