@@ -71,7 +71,7 @@ Before Code, allocate **scratch** files named `review-step-N.md`, `verify-step-N
 
 1. **Code.** Dispatch the coding sub-agent (`<coding-instructions>`) with the step number. It writes the step's tests, verifies they fail, then implements the step.
 2. **Commit.** Stage the step's changes. Amend the plan seed for Step 1. For every later step, create one provisional commit with subject `[WIP] Step N: name`.
-3. **Review.** Dispatch the review sub-agent (`<code-review-instructions>`) once against the provisional commit. On a component's final step, provide the parent of that component's first step commit as the component base; otherwise provide `none`. Write findings to the selected step's scratch findings file.
+3. **Review.** Dispatch the review sub-agent (`<code-review-instructions>`) once against the provisional commit. On a component's final step, provide the parent of that component's first step commit as the component base; otherwise provide `none`. Write findings to the selected step's scratch findings file. When the verdict carries a `needs-context: <identifier>` clause, surface the identifier to the operator, then either supply the artifact and re-dispatch the review, or accept the gap and continue.
 4. **Fix.** Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open. Process Critical, then Important, then Minor findings. Stage and amend every fix into the provisional commit. Stop after seven rounds and report every finding still open.
 5. **Verify.** Run after fixes, every third step, at a component's end, and on the final step. Choose the widest scope: `FULL` for the final step, `COMPONENT` at a component's end, otherwise `FOCUSED`. Dispatch Verify with the step, component or `none`, scope, and a new scratch log. On failure, dispatch Verification Fix with the same values and round number; stop when blocked, otherwise amend the repair and repeat at the same scope. Stop after seven failed rounds and report the signature and log path.
 6. **Mark.** Inside `step-N`, append ` [completed]` to the `### Step N: name` heading without changing either tag. Append the step, last verification command and result, and autonomous decisions with their falsifiers to `vibe-ledger.md`. Stage and amend this bookkeeping into the provisional commit.
@@ -181,7 +181,7 @@ Mode: <STAGED OR AMEND>
 
 - **Effort limits.** Count each coding or repair dispatch that modifies code as one attempt. Stop after ten attempts on one provisional commit, then re-plan or ask the operator.
 - **Decision ownership.** Treat a choice as hard to reverse when it changes a public interface, persisted or wire format, component ownership, dependency direction, or trust boundary. Return blocked with the options when a sub-agent encounters such a choice that the plan does not settle. Make other choices without confirmation and return each decision with its falsifier for the ledger.
-- **Step gates.** Do not start the next step while any finding remains open. Close each finding with a fix or a stated rejection; otherwise stop and re-plan. Mark a step complete only after recording its verification command and result line.
+- **Step gates.** Do not start the next step while any finding remains open. Close each finding with a fix or a stated rejection; otherwise stop and re-plan. A `needs-context` clause gates the step until the operator supplies the artifact or accepts the gap. Mark a step complete only after recording its verification command and result line.
 - **Plan state.** Before Run Mode, move every conversation-only design fact into the plan. Ask the operator only when a missing fact permits two materially different implementations.
 - **Context routing.** Dispatch any operation whose output size depends on repository state or failure. Run a command in the main context only when its maximum output is fixed before execution.
 - **Pre-existing bugs.** Record and defer an unrelated pre-existing bug. When it blocks the current step, stop and re-plan it as an explicit prerequisite.
@@ -345,7 +345,9 @@ Three hard rules, each with its replacement:
 
 Before returning, check each finding: it names a file and symbol, its evidence appears in the diff, and accepting it would change code. Cut what fails.
 
-Return exactly two parts: (1) a verdict line - clean, or the finding count by severity; (2) the path to <FINDINGS FILE>. No commentary before or after.
+When the diff references an external artifact that the diff, the step, the grepped contract ranges, and `vibe/archdoc.md` cannot resolve - a ticket ID, an ADR number, an external spec the step does not define - do not guess its contents and do not skip the affected check. This gates only Architecture, Drift, and Trust; every other check is diff-local and always decidable. Record no finding for the unresolvable reference itself.
+
+Return exactly two parts: (1) a verdict line - clean, or the finding count by severity - followed by one `needs-context: <identifier>` clause per unresolvable external reference when any exist; (2) the path to <FINDINGS FILE>. A `needs-context` clause means the review completed with a declared blind spot: the gated checks were neither passed nor flagged for that reference. No commentary before or after.
 
 </code-review-instructions>
 
