@@ -140,7 +140,6 @@ Keep `Execution Instructions` unordered. Leave implementation decomposition and 
 - Acceptance criteria:
 
 </product-contract>
-
 <implementation-contract>
 
 ## Technical Design
@@ -153,7 +152,6 @@ Keep `Execution Instructions` unordered. Leave implementation decomposition and 
 - Data, persistence, failure, security, and privacy constraints:
 
 </implementation-contract>
-
 <verification-contract>
 
 ## Testing Plan
@@ -166,7 +164,6 @@ Keep `Execution Instructions` unordered. Leave implementation decomposition and 
 - Exit criteria:
 
 </verification-contract>
-
 <decision-record>
 
 ## Decision Record
@@ -179,7 +176,6 @@ Keep `Execution Instructions` unordered. Leave implementation decomposition and 
   - One sub-bullet per item.
 
 </decision-record>
-
 <project-survey>
 
 ## Project Survey
@@ -187,7 +183,6 @@ Keep `Execution Instructions` unordered. Leave implementation decomposition and 
 None
 
 </project-survey>
-
 <execution-plan>
 
 ## Execution Instructions
