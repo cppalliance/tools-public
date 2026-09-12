@@ -831,6 +831,7 @@ Corrections:
 Unit tests live in the file they test, so they can reach private items. Integration tests live in one binary, because each extra file directly under `tests/` relinks the whole library.
 
 - Put unit tests in `#[cfg(test)] mod tests` in the same file as the code, with `use super::*;`.
+- Import what a test needs inside the test module, never through a `#[cfg(test)] use` or re-export in the parent module whose only consumer is that test module; a test-only re-export leaks test plumbing into the parent's namespace, and a private `use` inside `mod tests` already reaches child test modules through their own `use super::*;`. A `#[cfg(test)] use` is correct only when its consumer is `#[cfg(test)]` code in the same module, such as a test-only helper method on the type.
 - Keep exactly one integration-test binary at `tests/it/main.rs`, with `mod foo;` for each area.
 - Put shared integration helpers in `tests/common/mod.rs`, never `tests/common.rs`, which Cargo would build as its own binary.
 - Give every `#[should_panic]` an `expected = "..."` substring, since the bare form passes on any unrelated panic.
@@ -884,6 +885,7 @@ Detect in existing code:
 - `#[ignore]` with no reason string, or a randomized test with no printed seed - silent gaps and unreproducible failures.
 - `tests/common.rs`, or several files directly under `tests/` - an accidental test binary, and a relink per file.
 - a test that writes inside the source tree instead of a `tempfile::TempDir` - cross-test interference.
+- a `#[cfg(test)]` `use` or `pub use` outside a test module whose only consumers are test modules - it exists only to feed a test glob; move the import into the test module.
 
 Corrections:
 
@@ -894,6 +896,7 @@ Corrections:
 - `#[bench] fn bench_parse` -> a `criterion` benchmark with `harness = false` - `#[bench]` is nightly-only.
 - `sleep(Duration::from_secs(1))` in an async test -> paused time and an explicit advance - deterministic and instant.
 - `#[test]` on an `async fn` -> `#[tokio::test]` - the bare attribute does not run the future, and current toolchains reject it outright.
+- `#[cfg(test)] pub(crate) use crate::scope::DispatchTarget;` beside production code -> `use crate::scope::DispatchTarget;` inside `#[cfg(test)] mod tests` - the parent's namespace carries production items only.
 
 ## 12. Lints, tooling, CI, and maintenance
 
