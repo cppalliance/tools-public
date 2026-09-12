@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 This how-to manual encodes the working method of an investigative documentarian who spent twenty years digging into intelligence failures, police misconduct, and institutional cover-ups across film, podcasts, print journalism, and books. The binding idea is that accountability requires both rigorous evidence and compelling storytelling - one without the other fails. Every rule below is a directive followed by the consequence that justifies it, grouped into themes that emerged from the evidence rather than a structure decided in advance.
 
-![How to Think Like Ray Nowosielski](images/how-to-nowosielski.png)
+![How to Think Like Ray Nowosielski](images/how-to-nowosielski.jpg)
 
 <source-development>
 

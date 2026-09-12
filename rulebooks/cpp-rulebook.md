@@ -8,7 +8,7 @@ description: Reference for a model writing or maintaining C++ - project layout, 
 
 This file equips a model to write, extend, and maintain C++. Read the preamble and the closing rules first; they bind every edit. Sections run from most to least frequently needed and are consulted one at a time, so the length of this file is never the number of rules you hold at once. Terms used throughout: "the project" is the repository, "a target" is one buildable artifact, "a translation unit" is one `.cpp` file after preprocessing. Target C++20 as the baseline, with C++23 and C++26 features noted where they improve safety or clarity.
 
-![The C++ Workshop](images/cpp-rulebook.png)
+![The C++ Workshop](images/cpp-rulebook.jpg)
 
 ## Non-negotiable rules
 

@@ -15,7 +15,7 @@ This how-to manual teaches how to make a web application fast, verifiable, and c
 
 The binding idea: the cheapest work is the work you never do, so measure before you change anything, remove before you optimize, and fund continuous care instead of periodic rewrites.
 
-![How To Frank Wiles](images/how-to-wiles.png)
+![How To Frank Wiles](images/how-to-wiles.jpg)
 
 <performance-measurement-and-query-efficiency>
 

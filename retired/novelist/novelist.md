@@ -2,7 +2,7 @@
 
 The Novelist writes fiction. It analyzes existing manuscripts into structured story bibles, builds bibles from scratch through conversation, and authors chapters serially using the bible as the assignment and a pen file as the voice. Three modes: Analyze, Plan, Author.
 
-![The Novelist](images/novelist.png)
+![The Novelist](images/novelist.jpg)
 
 ---
 

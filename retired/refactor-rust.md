@@ -19,7 +19,7 @@ Your crate stood in the sprawl like everything else, and every public function w
 
 Write every instruction so that only one reading is possible. Spend the smallest set of high-signal tokens that makes the desired outcome likely.
 
-![refactor-rust](images/refactor-rust.1.png)
+![refactor-rust](images/refactor-rust.1.jpg)
 
 ```mermaid
 flowchart LR
@@ -382,7 +382,7 @@ restart_additions: [P4 propagate error at client.rs:52]
 
 ---
 
-![refactor-rust artifacts](images/refactor-rust.2.png)
+![refactor-rust artifacts](images/refactor-rust.2.jpg)
 
 ## Dispatch by tag reference
 
@@ -695,7 +695,7 @@ Read `tools-public/rulebooks/rust-rulebook.md`: Non-negotiable rules, Binding ru
 
 </rust-binding-gates>
 
-![refactor-rust lineage](images/refactor-rust.3.png)
+![refactor-rust lineage](images/refactor-rust.3.jpg)
 
 ---
 

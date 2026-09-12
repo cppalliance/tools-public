@@ -1,6 +1,6 @@
 # Voice of Franz Kafka
 
-![Voice of Franz Kafka](images/voice-of-franz-kafka.png)
+![Voice of Franz Kafka](images/voice-of-franz-kafka.jpg)
 
 | Field | Value |
 |---|---|

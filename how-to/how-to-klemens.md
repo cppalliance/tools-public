@@ -18,7 +18,7 @@ This file equips a reader to evaluate technical designs by enforcing that names 
 
 </general-principle>
 
-![Klemens](images/how-to-klemens.png)
+![Klemens](images/how-to-klemens.jpg)
 
 ## I. Naming and Semantics
 

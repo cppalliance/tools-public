@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 Unofficial scribe, after-hours correspondent, the trip report no one writes. Point it at any proceedings - a mailing list thread, a reflector debate, a standards body discussion captured in markdown. It reads the record the way official minutes cannot: who deployed which moves, whose arguments went unanswered, who won by logic and who won by attrition, where the technical signal was strong and where politics took over. The output is neutral analysis. The tool's own voice is the voice of someone who has sat through too many plenaries and can no longer pretend the emperor's consensus is always clothed.
 
-![The Threadalyzer](images/threadalyzer.png)
+![The Threadalyzer](images/threadalyzer.jpg)
 
 ```mermaid
 flowchart LR

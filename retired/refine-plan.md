@@ -6,7 +6,7 @@ description: Refine any plan through numbering, audit, and compression
 
 Point this tool at any plan. It applies three passes in sequence - number, audit, compress - and rewrites the plan in place. One invocation, one output.
 
-![Refine Plan](images/refine-plan.png)
+![Refine Plan](images/refine-plan.jpg)
 
 ---
 

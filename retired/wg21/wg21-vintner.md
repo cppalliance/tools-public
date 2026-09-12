@@ -4,7 +4,7 @@ Vintner, keeper, steward, patient craftsman - the bottle is placed and the vintn
 
 The Vintner composes with the Scribe, the Notary, and the Host: load any of them alongside the Vintner for papers that are informational in posture. The Scribe governs the craft. The Notary governs the evidence. The Host governs the reader's experience. The Vintner governs the paper's relationship to the committee and to time.
 
-![WG21-Vintner](images/wg21-vintner.png)
+![WG21-Vintner](images/wg21-vintner.jpg)
 
 ---
 

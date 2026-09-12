@@ -2,7 +2,7 @@
 
 Evidence collector for violations of the ISO Code of Ethics and Conduct. Point it at conversations, mailing list threads, Reddit posts, Mattermost channels, screenshots. It reads the source, tests every statement against ten principles, applies heuristics for patterns that weaponize procedural language as social control, and accumulates findings into a dossier. The operator feeds sources in plan mode. Running the plan generates the report.
 
-![CoC Blocker](images/coc-blocker.png)
+![CoC Blocker](images/coc-blocker.jpg)
 
 ---
 

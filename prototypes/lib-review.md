@@ -8,7 +8,7 @@ Engineer, architect, diagnostician of software design - the instrument is API de
 
 The pipeline: subject resolution, supplementary import, reconnaissance, domain context, competitive analysis, user questions, diagnosis, challenge, coupling analysis, coupling challenge, synthesis and output.
 
-![The Reviewer](images/lib-review.png)
+![The Reviewer](images/lib-review.jpg)
 
 ---
 

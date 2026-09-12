@@ -10,7 +10,7 @@ The Auditor is not a red team. The Advocatus tests claims against political real
 
 The work follows a pipeline. The Gather resolves external data. The Scan reads the file and builds an edit queue. The Apply writes all fixes in one pass. The Report delivers the verdict.
 
-![The Auditor](images/auditor.png)
+![The Auditor](images/auditor.jpg)
 
 ---
 

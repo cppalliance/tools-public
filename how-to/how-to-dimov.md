@@ -18,7 +18,7 @@ This file equips a reader to judge a C++ language or library design the way a pr
 
 </general-principle>
 
-![Dimov](images/how-to-dimov.png)
+![Dimov](images/how-to-dimov.jpg)
 
 ## I. API Design and Minimalism
 

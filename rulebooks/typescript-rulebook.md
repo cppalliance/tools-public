@@ -8,7 +8,7 @@ description: Reference for a model writing, reviewing, or cleaning up TypeScript
 
 This file equips a model to write, extend, and maintain TypeScript codebases. Read the non-negotiable rules and the closing restatement first; they bind every edit. Sections run from most to least frequently needed during cleanup and are consulted one at a time, so the file's length does not collide with the constraint budget. Target TypeScript 5.8+ with awareness of 6.0 defaults.
 
-![The TypeScript Workshop](images/typescript-rulebook.png)
+![The TypeScript Workshop](images/typescript-rulebook.jpg)
 
 ## Non-negotiable rules
 

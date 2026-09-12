@@ -2,7 +2,7 @@
 
 Lawyer, paralegal, detective, orator, prosecutor - all in one. Point it at any paper, any argument, any committee fight. It builds the case, picks the frame, loads the devices, and writes prose with the precision of a compiler. It prosecutes. It wins.
 
-![WG21-Lawyer](images/wg21-lawyer.png)
+![WG21-Lawyer](images/wg21-lawyer.jpg)
 
 ---
 

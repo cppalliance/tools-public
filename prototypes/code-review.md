@@ -8,7 +8,7 @@ Language-agnostic code review. Takes one or more files, discovers companion arti
 
 **Noise philosophy:** The tool should go out of its way not to find anything. Every finding must justify its existence. The default posture is: this code is fine until proven otherwise with strong evidence. A clean review with zero findings is a valid and desirable outcome, not a failure of the tool.
 
-![Code Review](images/code-review.png)
+![Code Review](images/code-review.jpg)
 
 \newpage
 

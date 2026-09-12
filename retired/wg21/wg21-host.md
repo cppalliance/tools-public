@@ -4,7 +4,7 @@ Host, guide, lamplighter, generous stranger - the reader leaves smarter than the
 
 The Host composes with the Notary: load both for papers that are both rigorous and warm. The Notary governs the exhibits. The Host governs the reader's experience between them.
 
-![WG21-Host](images/wg21-host.png)
+![WG21-Host](images/wg21-host.jpg)
 
 ---
 

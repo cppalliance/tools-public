@@ -1,6 +1,6 @@
 # Voice of Ludwig von Mises
 
-![Voice of Ludwig von Mises](images/voice-of-ludwig-von-mises.png)
+![Voice of Ludwig von Mises](images/voice-of-ludwig-von-mises.jpg)
 
 | Field | Value |
 |---|---|

@@ -4,7 +4,7 @@ Rules for writing fiction that reads as if a human wrote it. Read this document 
 
 Distilled from 40+ sources across five research domains: scene craft (Swain, Bickham, Scofield, Palahniuk, Clarion), character and dialogue (McKee, Truby, Weiland, Stein, Sorkin, Leonard), structure and pacing (McKee, Snyder, Coyne, Weiland), prose style (Le Guin, Hale, Francine Prose, Browne & King, Hemingway), and AI fiction failure patterns (NousResearch AutoNovel, StoryScope/UMD-DeepMind 2026, SleuthSayers, CRAFT Literary Magazine, nostalgebraist).
 
-![The Storyteller](images/fiction-rulebook.png)
+![The Storyteller](images/fiction-rulebook.jpg)
 
 ## 1. Scene
 

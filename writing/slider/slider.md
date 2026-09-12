@@ -14,7 +14,7 @@ Slider turns a talk into a finished PowerPoint deck. You describe the talk; Slid
 
 It works in two halves. Designing the deck and making the images is your job, done in the conversation (this file). Rendering is the renderer's job, done by a small program in [`slider/`](slider/) that reads Markdown and writes `.pptx`; it is deterministic and never improvises. You do what you are good at (structure, prose, images); the renderer does what it is good at (exact geometry, fonts, fitting).
 
-![Slider](images/slider.png)
+![Slider](images/slider.jpg)
 
 ```mermaid
 flowchart TD

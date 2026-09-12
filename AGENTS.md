@@ -8,7 +8,7 @@
 
 Some markdown files are paired with one or more images; the rest carry no image at all. A paired file's images live in an `images/` subdirectory of its own directory and are named from the markdown filename minus its extension:
 
-- A single image is `images/<name>.png` or `images/<name>.jpg`.
+- A single image is `images/<name>.png` or `images/<name>.jpg`. JPEG at 1024 pixels wide is the repository default; run `crates/png2jpg` on any PNG before committing it.
 - A numbered set is `images/<name>.1.jpg`, `images/<name>.2.jpg`, and so on (`.png` is also allowed). The number sits between the stem and the extension, separated by dots, so the stem is always the text before the first dot. Numbers start at 1 and are contiguous.
 
 Tools listed in README.md are paired. Articles, READMEs, exhibits, chats, fixtures, and other supporting files are not. When in doubt, check whether `images/<name>.*` exists beside the file.

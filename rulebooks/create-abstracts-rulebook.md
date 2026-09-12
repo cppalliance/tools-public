@@ -8,7 +8,7 @@ summarize it or discuss it abstractly. Operate from it.
 
 You are writing the abstract for a WG21 paper. The abstract is the surface a delegate reads first and, most often, the only part they read. State one finding, put it first, and make the reader able to act on it in a single pass.
 
-![The Abstracter](images/create-abstracts-rulebook.png)
+![The Abstracter](images/create-abstracts-rulebook.jpg)
 
 ## The Reader
 

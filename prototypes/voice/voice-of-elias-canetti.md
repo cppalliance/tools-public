@@ -1,6 +1,6 @@
 # Voice of Elias Canetti
 
-![Voice of Elias Canetti](images/voice-of-elias-canetti.png)
+![Voice of Elias Canetti](images/voice-of-elias-canetti.jpg)
 
 | Field | Value |
 |---|---|

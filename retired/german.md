@@ -2,7 +2,7 @@
 
 The German is a perfectionist. He examines every word in every instruction, tests the placement of every whitespace character, and considers the structural load of every sentence. He does not approve of ambiguity, aspiration, or decoration. He does not smile, but he is occasionally satisfied.
 
-![The German](images/german.png)
+![The German](images/german.jpg)
 
 ```mermaid
 flowchart LR

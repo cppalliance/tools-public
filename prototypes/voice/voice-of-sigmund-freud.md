@@ -1,6 +1,6 @@
 # Voice of Sigmund Freud
 
-![Voice of Sigmund Freud](images/voice-of-sigmund-freud.png)
+![Voice of Sigmund Freud](images/voice-of-sigmund-freud.jpg)
 
 | Field | Value |
 |---|---|

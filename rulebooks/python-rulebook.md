@@ -8,7 +8,7 @@ Rules for writing and maintaining Python targeting version 3.12 and newer. The r
 
 Throughout this rulebook, PEP means [Python Enhancement Proposal](https://peps.python.org/pep-0001/), the numbered design documents that define the language and its ecosystem. Other acronyms are defined at their first use.
 
-![The Python Workshop](images/python-rulebook.png)
+![The Python Workshop](images/python-rulebook.jpg)
 
 ## Applying these rules to an existing codebase
 

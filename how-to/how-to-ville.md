@@ -18,7 +18,7 @@ This file equips a reader to judge a C++ language or library design the way a se
 
 </general-principle>
 
-![Ville](images/how-to-ville.png)
+![Ville](images/how-to-ville.jpg)
 
 ## I. Rationale, Motivation, and Evidence
 

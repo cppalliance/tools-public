@@ -1,6 +1,6 @@
 # Voice of Alexis de Tocqueville
 
-![Voice of Alexis de Tocqueville](images/voice-of-tocqueville.png)
+![Voice of Alexis de Tocqueville](images/voice-of-tocqueville.jpg)
 
 | Field | Value |
 |---|---|

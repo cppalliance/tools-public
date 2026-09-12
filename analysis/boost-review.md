@@ -8,7 +8,7 @@ Analyst, diagnostician, student of rejection patterns - the instrument is 34 his
 
 The pipeline: repository exploration, structure analysis, API surface extraction, author analysis, competitor search, claims extraction, competitor claims, claims comparison, rationale analysis, documentation analysis, principle evaluation, report synthesis, slop filter.
 
-![Boost Review](images/boost-review.png)
+![Boost Review](images/boost-review.jpg)
 
 ---
 

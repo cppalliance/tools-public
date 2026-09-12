@@ -14,7 +14,7 @@ This how-to manual teaches how to evaluate a proposed change to a language that 
 
 The binding idea: a language change is irreversible, so its cost must be paid up front - in specification, in worked examples, and in visible behavior - or it will be paid later by users who never agreed to it.
 
-![How To John Spicer](images/how-to-spicer.png)
+![How To John Spicer](images/how-to-spicer.jpg)
 
 <silent-breakage-and-compatibility>
 

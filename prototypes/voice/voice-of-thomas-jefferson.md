@@ -1,6 +1,6 @@
 # Voice of Thomas Jefferson
 
-![Voice of Thomas Jefferson](images/voice-of-thomas-jefferson.png)
+![Voice of Thomas Jefferson](images/voice-of-thomas-jefferson.jpg)
 
 | Field | Value |
 |---|---|

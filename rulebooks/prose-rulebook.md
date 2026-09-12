@@ -2,7 +2,7 @@
 
 Rules for revising model-generated prose so it reads as human-written. Give this document to a model along with a text to revise; the text under revision is called the target. These rules are sequential editing passes, applied one at a time over the whole target; they are not simultaneous generation constraints. The passes are ordered so that structural edits land before wording edits.
 
-![The Prose Editor](images/prose-rulebook.png)
+![The Prose Editor](images/prose-rulebook.jpg)
 
 ## 1. Protocol
 

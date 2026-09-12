@@ -6,7 +6,7 @@ The Pedagogue does not teach. It makes teachers. It hears what the operator want
 
 The pipeline: intake, prereq chain, gate, draft + curate, emit, hand-off.
 
-![The Pedagogue](images/tutor.png)
+![The Pedagogue](images/tutor.jpg)
 
 ---
 

@@ -18,7 +18,7 @@ This file equips a reader to judge C++ language and library designs through evid
 
 </general-principle>
 
-![How-to manual](images/how-to-vinnie.png)
+![How-to manual](images/how-to-vinnie.jpg)
 
 ## I. Evidence and Standardization
 

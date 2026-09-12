@@ -13,7 +13,7 @@ them when loading this file, and do not hold them in the main context.
 
 Skillgate scores one thing: the quality of a person's prompting, read as how each prompt treats the model's previous reply. A frontier agent in a loop produces the average answer; the operator's value is how far their prompting pushes past it - by engaging, correcting, and redirecting the reply rather than rubber-stamping it. Skillgate reads every human turn across all of one person's transcripts, sorts each into fabrication, reactive, or proactive, writes one inferred-WHY sentence for it, and compresses those into a short brutal portrait. It is pure LLM: no Python, no scratch files, one output file.
 
-![Skillgate](images/skillgate.png)
+![Skillgate](images/skillgate.jpg)
 
 ## What it measures
 

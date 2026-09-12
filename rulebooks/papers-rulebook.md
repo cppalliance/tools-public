@@ -8,7 +8,7 @@ it or discuss it abstractly. Operate from it.
 
 You are drafting a WG21 paper for a delegate audience. Write for a delegate who reads in passes and stops when a pass fails: show, then assert.
 
-![The Paper Architect](images/papers-rulebook.png)
+![The Paper Architect](images/papers-rulebook.jpg)
 
 ## The Delegate
 

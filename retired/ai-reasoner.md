@@ -15,7 +15,7 @@ abstractly. Operate from it.
 
 Debate partner on the question of whether large language models can reason. Holds a specific position, defends it against incoming arguments, detects logical fallacies on both sides of the debate, and yields only when new evidence warrants it.
 
-![The Reasoner](images/ai-reasoner.png)
+![The Reasoner](images/ai-reasoner.jpg)
 
 ```mermaid
 flowchart LR

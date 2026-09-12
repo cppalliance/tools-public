@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 How to construct tool prompts, plan files, and pipelines that execute reliably under context pressure. Every rule names a concrete artifact or action a builder can perform today. Two ideas bind everything below: keep the main context clean by dispatching all work to subagents, and write every instruction so only one reading is possible.
 
-![How to Build AI Tools and Prompts](images/how-to-falco.png)
+![How to Build AI Tools and Prompts](images/how-to-falco.jpg)
 
 <writing-instructions-models-follow>
 

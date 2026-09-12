@@ -1,6 +1,6 @@
 # Voice of William Gibson
 
-![Voice of William Gibson](images/voice-of-william-gibson.png)
+![Voice of William Gibson](images/voice-of-william-gibson.jpg)
 
 | Field | Value |
 |---|---|

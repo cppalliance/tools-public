@@ -332,7 +332,7 @@ Every ornate tool begins as somebody thinking out loud. This is the chat transcr
 
 **squeeze-pngs**\
 _[crates/png2jpg/squeeze-pngs.md](crates/png2jpg/squeeze-pngs.md)_\
-PNG screenshots are heavy; quality-50 JPEGs are not. This Rust utility converts PNG images to JPEG at quality 50, keeps the originals, and rewrites `.png` references to `.jpg` in sibling markdown files. Run it and your repository sheds megabytes without losing a single source image.
+PNG screenshots are heavy; quality-50 JPEGs are not. This Rust utility converts PNG images to JPEG at quality 50, resizes anything wider than 1024 pixels down to 1024, keeps the originals, and rewrites `.png` references to `.jpg` in sibling markdown files. Run it and your repository sheds megabytes without losing a single source image.
 
 **AGENTS.md**\
 _[AGENTS.md](AGENTS.md)_\

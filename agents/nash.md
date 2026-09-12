@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 Point this tool at a markdown file. It maintains a structured game document - players, moves, payoffs, sequential games - through conversation. You talk, it accumulates. On command, it compresses what you said into the document schema. On request, it analyzes the game state using game theory. The document format is inviolable.
 
-![The Game Editor](images/nash.png)
+![The Game Editor](images/nash.jpg)
 
 ```mermaid
 flowchart LR

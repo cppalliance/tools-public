@@ -10,7 +10,7 @@ Point it at a chapter. It finds what needs fixing - a misspelled compound, a par
 
 Seven groups: mechanical, structural, trust, architecture, resonance, dialogue, vitality. Thirty-five patterns total. Seven preservation rules that protect formal devices AI editors habitually damage. Five serial analysis passes - each a sub-agent with its own pattern scope - merged into one flags file. One interactive session for flags, one for vitality insertions, ordered by line number, top to bottom through the chapter.
 
-![The Workshop](images/workshop.png)
+![The Workshop](images/workshop.jpg)
 
 ```mermaid
 flowchart LR

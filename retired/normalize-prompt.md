@@ -4,7 +4,7 @@
 
 Take any prompt-as-prose and produce a dual-use markdown document: structured prompt an LLM executes directly, pipeline definition a Python runner parses without hard-coded strings.
 
-![Normalize](images/normalize-prompt.png)
+![Normalize](images/normalize-prompt.jpg)
 
 ```mermaid
 flowchart TD
