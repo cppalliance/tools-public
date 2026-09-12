@@ -1,1 +1,7 @@
 *.png
+*.jpg
+*.jpeg
+images/
+/retired/
+/prototypes/
+/vibe/

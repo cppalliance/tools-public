@@ -1,16 +1,26 @@
 ## Structure
 
-- When any tool is added, moved, or removed, update README.md to reflect the change.
-- Tools live in `tools/` or in sibling groups (`tools-wg21/`) and subdirectory groups (`tools/code/`, `tools/voice/`). Retired tools live in the group's `retired/` subdirectory (e.g., `tools-wg21/retired/`). Retired files are not listed in the README; the entry is removed, not moved.
-- Dossiers live in `dossiers/`. These are composite behavioral models - aggregate profiles of populations, not individuals.
-- Every directory that contains tools or dossiers also contains an `images/` subdirectory for their paired images.
-- Every `.md` file pairs with `images/<name>.png` in the same directory group. The image filename always matches the `.md` filename (minus extension).
-- Directory-style tools (e.g., `voice/voice.md`) key on the parent directory name: `voice/` pairs with `images/voice.png`. Sub-tools inside a directory may have their own images in the same `images/`.
+- Directory entries with a leading slash in `.cursorindexingignore` are exactly the top-level directories not listed in README.md. Every other entry in that file (extension patterns such as `*.png`, and the unanchored `images/`) only excludes binary art from indexing; those entries do not affect the README.
+- When a listed tool is added, moved, or removed, update README.md to reflect the change.
+- `retired/` holds tools removed from the README. It may contain subgroups (for example `retired/wg21/`), each with its own `images/`. Retired tools are not listed in the README.
 
-## Image invariant
+## Paired images
 
-The image travels with its file. On create, move, rename, delete, or retire - both files move together, never one without the other. Images always live in `images/` within the file's directory group, never loose alongside the `.md` files.
+Some markdown files are paired with one or more images; the rest carry no image at all. A paired file's images live in an `images/` subdirectory of its own directory and are named from the markdown filename minus its extension:
 
-The `<img src>` in every tool or dossier is a relative path to `images/<name>.png`. Never an absolute URL. Never a bare filename without `images/`.
+- A single image is `images/<name>.png` or `images/<name>.jpg`.
+- A numbered set is `images/<name>.1.jpg`, `images/<name>.2.jpg`, and so on (`.png` is also allowed). The number sits between the stem and the extension, separated by dots, so the stem is always the text before the first dot. Numbers start at 1 and are contiguous.
 
-If the paired image is missing, stop and ask. Do not proceed with a lone file.
+Tools listed in README.md are paired. Articles, READMEs, exhibits, chats, fixtures, and other supporting files are not. When in doubt, check whether `images/<name>.*` exists beside the file.
+
+The rules below apply only to paired files.
+
+- The markdown embeds each of its images with a markdown image reference: `![<alt>](images/<name>.png)`, `![<alt>](images/<name>.jpg)`, or `![<alt>](images/<name>.<n>.jpg)`. Never an HTML `<img>` tag, never an absolute URL, never a bare filename without `images/`, never a `../` prefix.
+- The image travels with its file. On create, move, rename, or delete, the markdown and all of its images move together, never one without the other. Images always live in `images/`, never loose alongside the `.md` files.
+- On retire, move the markdown and its images to `retired/` together and remove the file's README entry.
+- If a paired file's image is missing, stop and ask. Do not proceed with a lone file.
+
+## Hygiene
+
+- Do not commit build or cache output. The root `.gitignore` excludes `__pycache__/`, `*.pyc`, `.pytest_cache/`, and Rust `target/` directories; subprojects may add their own `.gitignore` for their own artifacts.
+- `artwork/` holds standalone images that pair with no markdown file. It is the only directory where images live outside an `images/` subdirectory.

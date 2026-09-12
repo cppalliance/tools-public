@@ -14,6 +14,8 @@ This manual teaches the craft of building software with coding agents while you 
 
 The whole manual holds one idea together: generation is cheap and understanding is expensive, so every rule below spends a little output to buy the control that makes the work survive.
 
+![How to Build Software With Coding Agents Without Losing Control](images/how-to-mario-zechner.jpg)
+
 ## I. Deciding What To Build And What To Refuse
 
 <deciding-what-to-build-and-what-to-refuse>

@@ -1,3 +1,4 @@
-temp/*
-!temp/README.md
+__pycache__/
+*.pyc
+.pytest_cache/
 crates/**/target/

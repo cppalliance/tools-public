@@ -14,7 +14,7 @@ This manual teaches the craft of building software with AI tools while you keep 
 
 The whole manual holds one idea together: speed is cheap and discipline is rare, so every rule below spends a little speed to buy the durability that makes the work survive.
 
-![Greg Bildson](images/how-to-greg-bildson-1.jpg)
+![Greg Bildson](images/how-to-greg-bildson.1.jpg)
 
 ## I. Steering AI Coding Sessions
 
@@ -151,7 +151,7 @@ This group covers the external environment: regulation, licensing, pricing, fund
 
 </markets-policy-and-business-strategy>
 
-![Field Manual](images/how-to-greg-bildson-2.jpg)
+![Field Manual](images/how-to-greg-bildson.2.jpg)
 
 ## The Approach Behind the Rules
 

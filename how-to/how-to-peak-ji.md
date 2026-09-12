@@ -14,7 +14,7 @@ This manual teaches the craft of building an autonomous AI agent that survives c
 
 The whole manual holds one idea together: the agent is its context, so every discipline below, from caching to memory to action space to evaluation, is a way of shaping context so the model's own intelligence can do the work.
 
-![Yichao "Peak" Ji](images/how-to-peak-ji-1.jpg)
+![Yichao "Peak" Ji](images/how-to-peak-ji.1.jpg)
 
 ## I. Cache Discipline
 

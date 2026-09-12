@@ -14,7 +14,7 @@ A cinematographer and filmmaker whose work spans documentary, narrative, commerc
 
 **Binding idea:** Start from purpose, stay in the discomfort, let the camera serve the truth, and ship before conditions are perfect.
 
-<img src="images/how-to-collier-landry.png" alt="How to Think Like Collier Landry" width="100%">
+![How to Think Like Collier Landry](images/how-to-collier-landry.png)
 
 <story-truth-and-purpose>
 

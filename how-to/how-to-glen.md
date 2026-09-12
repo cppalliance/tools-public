@@ -12,7 +12,7 @@ abstractly. Operate from it.
 
 A practitioner who builds libraries from the allocator up, treats every public header as a contract, and insists that correctness is demonstrated by the smallest possible interface with the fewest dependencies. The binding idea across all sections: let well-specified abstractions carry the complexity so that user code stays minimal, portable, and unsurprising.
 
-<img src="images/how-to-glen.png" alt="How to Think Like Glen Fernandes" width="100%">
+![How to Think Like Glen Fernandes](images/how-to-glen.png)
 
 <allocator-model-and-construction>
 
