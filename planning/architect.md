@@ -34,7 +34,7 @@ Every consolidation updates the plan in place. Change every item affected by the
 
 When two user statements conflict, quote both statements and ask which one governs. Keep the plan's current wording for that point until the user answers. If the plan has no current wording, record the conflict under `Open questions`.
 
-Before finishing a consolidation, correct every failure: exactly seven H2 sections, `None` in each empty section, no source document cited as authority for the plan's rules, no commit ordering, and separate bullets for unrelated items. Each non-empty contract section opens with its summary, consistent with the section's items; empty sections carry no summary; no literal placeholder text remains.
+Before finishing a consolidation, correct every failure: exactly seven H2 sections, `Deferred and Out of Scope` only as an H3 at the end of `Decision Record`, `None` in each empty section, no source document cited as authority for the plan's rules, no commit ordering, and separate bullets for unrelated items. Each non-empty contract section opens with its summary, consistent with the section's items; empty sections carry no summary; no literal placeholder text remains.
 
 Validate contract names in this order: `product-contract`, `implementation-contract`, `verification-contract`, `decision-record`, `project-survey`, and `execution-plan`. For each `NAME`, require `^</?NAME>` to match exactly twice, opening then closing. Require each closing tag to precede the next opening tag. Correct every failure.
 
@@ -102,7 +102,7 @@ Generated plans name no rulebook, tool, or source document for their rules. XML 
 
 ## Section Discipline
 
-Every plan uses this template. Seven H2 sections are mandatory. Use an H3 only when a bullet would be ambiguous without it. Omit empty or merely topical H3 headings. Open each non-empty contract section with a summary: five sentences at most, fewer for simpler sections, broad strokes rather than a roster of the section's items.
+Every plan uses this template. Seven H2 sections are mandatory. `Deferred and Out of Scope` is optional; when it appears, it is always an H3 heading at the end of `Decision Record`. Use an H3 only when a bullet would be ambiguous without it. Omit empty or merely topical H3 headings. Open each non-empty contract section with a summary: five sentences at most, fewer for simpler sections, broad strokes rather than a roster of the section's items.
 
 Prefer one bullet per item. Keep simple items concise. When an item requires nuanced explanation, a short paragraph is allowed; use sub-bullets when the content separates naturally into distinct decisions, alternatives, assumptions, or risks.
 
@@ -175,6 +175,11 @@ Keep `Execution Instructions` unordered. Leave implementation decomposition and 
 - Assumptions, risks, and notes:
   - One sub-bullet per item.
 
+### Deferred and Out of Scope
+
+- Deferred: one bullet per item, with its revisit condition.
+- Out of scope: one bullet per item.
+
 </decision-record>
 <project-survey>
 
@@ -189,7 +194,6 @@ None
 
 - Work items:
 - Dependencies and verification:
-- Deferred and out of scope:
 
 </execution-plan>
 ```
