@@ -292,6 +292,8 @@ Tests first. Write the step's tests, run them with the survey's focused test com
 
 Run the step's focused tests before returning. Do not run the full suite.
 
+Leave every change unstaged in the worktree. Never run `git add`, `git commit`, `git stash`, or any command that rewrites history; the session that dispatched you owns staging and the commit.
+
 When the step requires a hard-to-reverse choice, do not make it: return blocked with the choice and its options stated.
 
 Return under 500 tokens: done or blocked, files touched, the test command string, the focused test result, and one clause per new test naming the break it catches. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
@@ -370,6 +372,8 @@ Read the findings file. A finding without an appended closing clause is open. Re
 
 Close each finding by appending one clause stating how it was fixed or why it was rejected. Never close a finding without a code change or a stated rejection, and never alter its original text.
 
+Leave every change unstaged in the worktree. Never run `git add`, `git commit`, `git stash`, or any command that rewrites history; the session that dispatched you amends the fixes into the provisional commit.
+
 When a fix changes the tests, return the updated test command string. When a fix requires a hard-to-reverse choice, stop and return blocked with the choice and its options stated.
 
 Return under 1,000 tokens: findings closed, findings still open, each count by severity, files changed, and the updated test command string when there is one. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
@@ -422,6 +426,8 @@ Read `vibe/archdoc.md` if present.
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Read <LOG PATH>. Return blocked with the path when the file is missing or unreadable. Identify the first failed command and its failure signature. Change only the code or tests required to correct that failure. Run the failed command once after the fix. Return blocked without changing files when the failure requires a hard-to-reverse choice or no repository change can correct it.
+
+Leave every change unstaged in the worktree. Never run `git add`, `git commit`, `git stash`, or any command that rewrites history; the session that dispatched you amends the repair into the provisional commit.
 
 Return under 500 tokens: done or blocked, scope, round number, failure signature, files changed, commands run, and result lines. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
 
