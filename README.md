@@ -312,6 +312,10 @@ AI is good at judging; AI is bad at creating. This article explains the fan-out 
 _[lessons/semantic-blur-effect.md](lessons/semantic-blur-effect.md)_\
 Three prompt files rewritten by a language model all grew with no new capability - 18.7%, 43.6%, and 145.8% in characters. This article explains the semantic blur effect: rewriting a prompt file is like passing a photograph repeatedly through a latent space, still recognizable but every surface encrusted with detail. Read it and you will never let a model sand a sharp, checkable instruction into a claim that reads well and cannot be verified.
 
+**Structure Before Code: How PromptForge Ships Tens of Thousands of Lines a Day Without Reading Them**\
+_[lessons/structure-first-development.md](lessons/structure-first-development.md)_\
+One developer with a planning agent and a coding agent pushed 498 commits and a quarter of a million inserted lines in sixteen days, and nobody read them. This field report shows what replaced line-by-line review: humans read the plan before generation, the build checks the crate graph and public surfaces on every commit, and tests accumulate as a ratchet rather than a gate. Read it and you will know what structure actually is - everything whose cost-to-change grows with the code built on it, names and patterns included - and why that is the only review surface that survives agent-written software.
+
 ![Exhibits](images/exhibits.jpg)
 
 ## Exhibits
