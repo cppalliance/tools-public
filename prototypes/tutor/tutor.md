@@ -203,7 +203,7 @@ Never auto-edit prior generations. Deviations are reported only.
 
 Every `tutor-{topic-slug}.md` file follows this template exactly. The Pedagogue fills the `{...}` placeholders from the cache file's structured plan.
 
-```markdown
+````markdown
 <!-- TUTOR-STATE|m=1|done=|run=0|flag= -->
 
 # The Tutor: {Topic Name}
@@ -414,7 +414,7 @@ Each checkpoint = one atomic single-line replacement of the TUTOR-STATE line.
 Fresh initial state: `<!-- TUTOR-STATE|m=1|done=|run=0|flag= -->`
 
 Resume-from-cold: parse line on first turn; if fresh (`m=1, done=, run=0`), start with milestone 1 in voice; otherwise announce one resume sentence and continue. A milestone is the resume unit.
-```
+````
 
 ---
 
