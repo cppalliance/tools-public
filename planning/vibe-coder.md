@@ -73,8 +73,8 @@ Before Code, allocate **scratch** files named `review-step-N.md`, `verify-step-N
 2. **Commit.** Stage the step's changes. For Step 1, amend the plan seed in place with `git commit --amend --no-edit`: the step's changes fold into the seed commit, which keeps its `[WIP] Plan:` subject until Message, and no separate Step 1 commit exists. For every later step, create one provisional commit with subject `[WIP] Step N: name`.
 3. **Review.** Dispatch the review sub-agent (`<code-review-instructions>`) once against the provisional commit. On a component's final step, provide the parent of that component's first step commit as the component base; otherwise provide `none`. Write findings to the selected step's scratch findings file. When the verdict carries a `needs-context: <identifier>` clause, surface the identifier to the operator, then either supply the artifact and re-dispatch the review, or accept the gap and continue.
 4. **Fix.** Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open. Process Critical, then Important, then Minor findings. Stage and amend every fix into the provisional commit. Stop after seven rounds and report every finding still open.
-5. **Verify.** Run after fixes, every third step, at a component's end, and on the final step. Choose the widest scope: `FULL` for the final step, `COMPONENT` at a component's end, otherwise `FOCUSED`. Dispatch Verify with the step, component or `none`, scope, and a new scratch log. On failure, dispatch Verification Fix with the same values and round number; stop when blocked, otherwise amend the repair and repeat at the same scope. Stop after seven failed rounds and report the signature and log path.
-6. **Mark.** Inside `step-N`, append ` [completed]` to the `### Step N: name` heading without changing either tag. Append the step, last verification command and result, and autonomous decisions with their falsifiers to the run's scratch ledger. Stage and amend only the plan marker into the provisional commit.
+5. **Verify.** Run after fixes, every third step, at a component's end, and on the final step. Skip the after-fixes run on a step that is none of the other three when the last fix dispatch reported its focused test command passing after its final edit; record that command and result as the step's verification. Choose the widest scope: `FULL` for the final step, `COMPONENT` at a component's end, otherwise `FOCUSED`. Dispatch Verify with the step, component or `none`, scope, diff base, and a new scratch log. The diff base is the provisional commit's parent for `FOCUSED`, the parent of the component's first step commit for `COMPONENT`, and `none` for `FULL`. On failure, dispatch Verification Fix with the same values and round number; stop when blocked, otherwise amend the repair and repeat at the same scope. Stop after seven failed rounds and report the signature and log path.
+6. **Mark.** Inside `step-N`, append ` [completed]` to the `### Step N: name` heading without changing either tag. Append the step, last verification command and result, and autonomous decisions with their falsifiers to the run's scratch ledger. When Verify did not run for the step, the last verification is the focused test command and result that the last coding or fix dispatch reported after its final edit. Stage and amend only the plan marker into the provisional commit.
 7. **Message.** Dispatch the message sub-agent (`<commit-message-instructions>`) once against the complete provisional commit, using the selected step's scratch message draft as its output. Stop when it returns blocked. Otherwise amend using the validated output file as the commit message. This removes `[WIP]` and finalizes the step; for Step 1 it replaces the seed's `[WIP] Plan:` subject.
 
 ![Decomposition](images/vibe-coder.2.jpg)
@@ -146,6 +146,7 @@ Plan file: <PLAN PATH>
 Step: <STEP NUMBER>
 Component: <COMPONENT OR NONE>
 Scope: <FOCUSED OR COMPONENT OR FULL>
+Diff base: <BASE COMMIT OR NONE>
 Log file: <LOG PATH>
 ```
 
@@ -332,7 +333,7 @@ Procedure, in order:
    - Simplicity: does every new symbol, branch, and option serve the step's specified behavior - nothing speculative, nothing just-in-case?
    - Architecture: does the change conform to Technical Design?
    - Drift: when Component base is not NONE, does the cumulative component diff conform to Technical Design?
-   - Hygiene: is the change free of dead code, unreachable branches, commented-out lines, secrets, and credentials? Run the tests for the touched areas using the test command in the plan's Project survey section; if the survey names none or the command fails, note it as a finding and move on. A test failure is a finding.
+   - Hygiene: is the change free of dead code, unreachable branches, commented-out lines, secrets, and credentials?
 
 3. Write findings. A finding earns existence when a reviewer would change the code before accepting the commit; preference and narration earn nothing. Append one entry per finding to <FINDINGS FILE>, at most three sentences:
    - [severity] `file:line` `symbol` - the claim, the evidence from the diff, the fix direction. Severity is Critical (a bug, a security hole, data loss, a leaked secret), Important (missed intent, untested behavior, a convention breach), or Minor (style, polish). Severity orders the fix rounds, Critical first. Never edit or delete existing entries; the fix rounds close them.
@@ -340,7 +341,8 @@ Procedure, in order:
    Example finding:
    - [Important] `src/gateway/log.rs:84` `write_entry` - the new log entry is written but never flushed, so a crash loses it. The diff adds `write_entry` with no flush call. Add a flush, or state why none is needed.
 
-Three hard rules, each with its replacement:
+Four hard rules, each with its replacement:
+- NEVER build, run tests, run the program, or check out, stash, or switch revisions; the coding, fix, and verify dispatches own execution. Review by reading: judge whether each test would fail if its behavior broke from its assertions and the code they exercise.
 - NEVER treat the commit message or the coder's account as evidence; this review is the independent check on both. Review from the diff.
 - NEVER flag code outside the reviewed diff: the commit diff normally, or the cumulative component diff when given a base commit. Surrounding code only informs the review.
 - NEVER modify any file other than <FINDINGS FILE>. Findings are the only output.
@@ -368,7 +370,7 @@ Read `vibe/archdoc.md` if present.
 
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
-Read the findings file. A finding without an appended closing clause is open. Return blocked before changing files when an open finding requires tests and the focused test command is `None` or absent. Fix the open findings in severity order: Critical first, then Important, then Minor. For each fix, run the focused tests using the test command in the plan's Project survey section.
+Read the findings file. A finding without an appended closing clause is open. Return blocked before changing files when an open finding requires tests and the focused test command is `None` or absent. Fix the open findings in severity order: Critical first, then Important, then Minor. For each fix, run the focused tests using the test command in the plan's Project survey section. After your final edit, run the step's focused test command once more.
 
 Close each finding by appending one clause stating how it was fixed or why it was rejected. Never close a finding without a code change or a stated rejection, and never alter its original text.
 
@@ -376,7 +378,7 @@ Leave every change unstaged in the worktree. Never run `git add`, `git commit`, 
 
 When a fix changes the tests, return the updated test command string. When a fix requires a hard-to-reverse choice, stop and return blocked with the choice and its options stated.
 
-Return under 1,000 tokens: findings closed, findings still open, each count by severity, files changed, and the updated test command string when there is one. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
+Return under 1,000 tokens: findings closed, findings still open, each count by severity, files changed, the updated test command string when there is one, and the focused test command run after your final edit with its result. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
 
 </fix-instructions>
 
@@ -391,17 +393,20 @@ You run the build and the tests, and you report one line.
 - Step: <STEP NUMBER>
 - Component: <COMPONENT OR NONE>
 - Scope: <FOCUSED OR COMPONENT OR FULL>
+- Diff base: <BASE COMMIT OR NONE>
 - Log file: <LOG PATH>
 
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?verification-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
-Accept only `FOCUSED`, `COMPONENT`, or `FULL` as Scope. Require a non-`none` Component for `COMPONENT`; return blocked for any invalid combination.
+Accept only `FOCUSED`, `COMPONENT`, or `FULL` as Scope. Require a non-`none` Component and a non-`none` Diff base for `COMPONENT`, and a non-`none` Diff base for `FOCUSED`; return blocked for any invalid combination.
 
-- `FOCUSED`: run the survey's build command and the focused test command for the dispatched step.
-- `COMPONENT`: run the survey's build, formatter check, linter, and component test commands for the dispatched component.
+- `FOCUSED`: run the focused test command for the dispatched step.
+- `COMPONENT`: run the survey's formatter check, linter, and component test commands.
 - `FULL`: run the survey's build, formatter check, linter, docs, and full-suite test commands.
 
-Run commands in the listed order. Skip build, formatter, linter, or docs only when the survey records `None`. Return blocked when the test selected by Scope is `None`, absent, or cannot be derived from the survey and plan. Write all command output to <LOG PATH>. Never return log contents.
+Scope `FOCUSED` and `COMPONENT` to the touched packages. List the paths changed since Diff base with `git diff --name-only <DIFF BASE> HEAD`, and map each path to the package that owns it: the nearest ancestor project manifest that the survey's build or test commands recognize, such as `Cargo.toml`, `package.json`, `go.mod`, `pyproject.toml`, `pom.xml`, or a `.csproj` file. A path inside no package selects nothing. Run each command only for the touched packages, instantiating the survey's per-package command pattern, and skip a command that no touched package needs. Run a command the step's Tests line names as written. Run the survey's build command only when it builds a touched package that the selected test command does not already build. When no package is touched and the step's Tests line names no command, run nothing and return `pass: no package touched`. Never scope `FULL`.
+
+Run commands in the listed order. Skip build, formatter, linter, or docs only when the survey records `None` or scoping excludes them. Return blocked when the test selected by Scope is `None`, absent, or cannot be derived from the survey and plan for a touched package. Write all command output to <LOG PATH>. Never return log contents.
 
 Return one line: pass; fail plus the log path; or blocked plus the reason.
 
@@ -463,7 +468,7 @@ For each unit in the evidence list: state the count or property the criterion as
 
 ### 4. Repairs
 
-For each changed unit, decide whether the diff corrects an observable behavior failure. Emit `Repairs: <contract-or-invariant> @ <locus> - <observable failure corrected>` only when the evidence list contains a direct regression test that reproduces that failure against the removed behavior and passes with the added behavior, and the diff shows the correction. A label transition, a test-only change, or a claim from the plan does not qualify. Emit at most one line per distinct corrected failure.
+For each changed unit, decide whether the diff corrects an observable behavior failure. Emit `Repairs: <contract-or-invariant> @ <locus> - <observable failure corrected>` only when the diff adds or changes a test whose assertions pin that observable failure, reading the removed code shows it would fail those assertions, reading the added code shows it passes them, and the diff shows the correction. Decide this by reading the diff and parent code; never execute anything to decide it. A label transition, a test-only change, or a claim from the plan does not qualify. Emit at most one line per distinct corrected failure.
 
 ### 5. Restate
 
@@ -551,6 +556,7 @@ shotgun-surgery | one small change fans out across >= surgery_files (5) files | 
 ## Hard rules
 
 - NEVER use the coder's account, a prior message, or a prior trailer as evidence; write from the diff and parent code. Use a prior `Design:` trailer only to locate evidence.
+- NEVER build, run tests, run the program, or check out, stash, or switch revisions. Read parent code only through read-only commands such as `git show <revision>:<path>`.
 - Make no claim about code outside the diff, the files it touches, and the callee signatures step 1 read: no "duplicates", no "matches project style". The whole-log pass owns those.
 - Do not mention the plan, plan files, steps, or todos in prose; state rationale as if always known. `Plan:` is its only trace.
 
