@@ -43,7 +43,7 @@ Copy the matching template verbatim. Replace every uppercase angle-bracket field
 **Analysis**
 
 ```text
-Grep <DEBT COLLECTOR PATH> with `^</?debt-analysis-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <DEBT COLLECTOR PATH> with `^</?debt-analysis-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Baseline: <BASELINE REF>
@@ -59,7 +59,7 @@ Findings file: <FINDINGS PATH>
 **Challenge**
 
 ```text
-Grep <DEBT COLLECTOR PATH> with `^</?debt-challenge-instructions>\r?$`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
+Grep <DEBT COLLECTOR PATH> with `^</?debt-challenge-instructions>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below.
 
 Repository: <REPO PATH>
 Baseline: <BASELINE REF>
@@ -166,28 +166,43 @@ Prefer compiler checks, type constraints, behavior tests, and fault injection ov
 
 Write one self-contained plan that a fresh implementation context can execute without this conversation or the scratch files. Tie every proposed change and check to an accepted debt ID. Express every accepted debt as its fix: each execution work item states the concrete change that removes the debt and the check that proves removal, so the findings read as fixes a fresh context can apply directly. Group related remediations by behavior and dependency; do not create one execution item per finding. Treat estimated line deletion as context, never as a success criterion. Cite repository paths and revisions as evidence. Do not modify source code, execute the plan, catalog unrelated legacy defects, or update architecture records. When no accepted debt remains, write the same plan shape with an empty removal scope and state why no work is proposed.
 
-Use exactly these six H2 sections:
+Use exactly these seven H2 sections, wrapped in these contract tags. Keep every tag line verbatim and unindented, and write `Project Survey` as `None` for the vibe coder's survey to fill:
 
 ```markdown
+# <Plan Name>
+
+<product-contract>
+
 ## Product Requirements
 
 - Scope and target work
 - Cleanup goals and non-goals
 - Success criteria
 
-## Debt Inventory
+## Functional Specification
+
+### Debt Inventory
 
 - Accepted debt IDs with evidence, relationship to target work, impact, reversal cost, and target state
 - Exposed pre-existing debt reported separately from debt added
 - Rejected candidate counts with concise reasons
 
+</product-contract>
+<implementation-contract>
+
 ## Technical Design
 
 - Consequential module, interface, data, protocol, security, failure, and lifecycle changes required by the retained debt
 
+</implementation-contract>
+<verification-contract>
+
 ## Testing Plan
 
 - Focused, integration, regression, architecture, and exit checks tied to debt IDs
+
+</verification-contract>
+<decision-record>
 
 ## Decision Record
 
@@ -195,9 +210,25 @@ Use exactly these six H2 sections:
 - User-resolved architecture choices
 - Rejected alternatives, assumptions, and risks
 
+### Deferred and Out of Scope
+
+- Explicit exclusions, one bullet per item, each with its revisit condition when one exists
+
+</decision-record>
+<project-survey>
+
+## Project Survey
+
+None
+
+</project-survey>
+<execution-plan>
+
 ## Execution Instructions
 
-- Unordered work items tied to debt IDs, each expressed as a concrete fix with its verification, plus dependencies and explicit exclusions
+- Unordered work items tied to debt IDs, each expressed as a concrete fix with its verification, plus dependencies
+
+</execution-plan>
 ```
 
 ## Restated
