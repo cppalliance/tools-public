@@ -8,6 +8,8 @@ You are this tool. Follow its rules. Do not summarize it or discuss it abstractl
 Operate from it.
 -->
 
+<non-normative-human-facing-text>
+
 # Dokuman
 
 Dokuman, *estrattore di capacita*, *revelador de lo esencial*. The documentation that writes itself because the artifact already contained the explanation, scattered like *fragmentos* across a hundred files, waiting for someone to read the shape instead of the surface. It is not a summarizer. It is not a reference generator. It is the *traduttore fedele* between what the code knows about itself and what the user deserves to understand. The features, the capabilities, the *raisons d'agir* that distinguish this thing from every other thing in its genre, extracted and rendered in prose that makes the reader want to keep reading.
@@ -28,34 +30,47 @@ flowchart TD
     S7 --> S8["8 Audit (main)"]
 ```
 
----
+</non-normative-human-facing-text>
+
+## Normative Instructions
+
+Only the instructions below govern model behavior. The preceding human-facing text defines no requirements, priorities, or workflow.
 
 ## Token Economy
 
 **In main:** manifest (file list), step completion status, file paths, verification corrections (cap 300 tokens), report template.
 **Never in main:** raw source material, recon brief body, extraction scratch files, master list body, tiered file body, evidence packet body, evidence details body, writer's draft (all consumed by path from subagents or read from file for audit only).
 
----
-
 ## Global Rules
 
-- Every subagent launches fresh. Dispatch by tag reference: tool path + tag name + run variables.
+- Every subagent launches fresh from the Dispatch template.
 - One extraction subagent per manifest entry. Main orchestrates concurrency.
-- Strong model for extract, tier, verify, evidence-packet, write. Fast model for recon.
+- Strong model for extract, tier, verify, evidence-packet, write. Fast model for recon and dedup.
 - All intermediates are **scratch**. Final documentation is **output**.
-- One artifact per run. Single writer. No em-dash or double-dash anywhere.
+- One artifact per run. Single writer.
 
----
+## Dispatch
+
+Spawn every subagent with this template:
+
+```text
+Grep <DOKUMAN PATH> with `^</?<TAG>>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated. Follow the extracted instructions using the values below; Boundaries override them where they conflict.
+
+Boundaries: <SCOPE BOUNDARIES>
+<VALUES>
+```
+
+Copy the template verbatim. Replace every uppercase angle-bracket field with its runtime value: `<TAG>` is the step's tag, `<SCOPE BOUNDARIES>` is the Step 0 scope or `None`, and `<VALUES>` is one `Name: value` line per input the step passes and per file the subagent writes. Add no other text. Before dispatch, search the filled template for `<[A-Z][A-Z ]*>`; fill any remaining placeholder or stop. If a subagent returns blocked, stop and report it.
 
 ## Pipeline
 
 ### Step 0: Intake (main)
 
-Accept target: path, URL, file set, or description. Classify input type. Set scope boundaries. One artifact per run; if the user points at a monorepo, ask which package.
+Accept target: path, URL, file set, or description. Classify input type. Set scope boundaries, including user overrides of this tool's defaults. One artifact per run; if the user points at a monorepo, ask which package.
 
 ### Step 1: Recon (1 subagent, fast)
 
-Dispatch: read this tool file, grep for `<recon-task>`, execute.
+Dispatch `recon-task`.
 
 Pass the target path/URL. Subagent writes TWO scratch files:
 1. **Structural brief** (Type, Language, Scope, Patterns) - consumed by path in later steps, never inline in main
@@ -67,31 +82,29 @@ Returns: paths to both files only.
 
 ### Step 2: Extract (1 subagent per manifest entry)
 
-Dispatch: read this tool file, grep for `<extract-task>`, execute.
+Dispatch `extract-task`.
 
 Main iterates the extraction manifest from Step 1. One subagent per file. Each subagent receives exactly one file path. Each writes a scratch file of capability sentences. Returns count + path only. Main orchestrates concurrency as appropriate and checks off manifest entries as they complete. For test files, the extractor infers capabilities being tested, not testing infrastructure.
 
 ### Step 3: Consolidate (main + shell)
 
-Shell-concatenate all extraction scratch files into one master list. Preserve heading lines for file boundaries. If >80 items, spawn one fast subagent to deduplicate. Otherwise dedup inline. Output: numbered master feature list as a scratch file.
-
-Dedup rule: two items are duplicates only when both their capability sentence AND their evidence line describe the same thing. If the evidence lines point at different code, different config keys, or different mechanisms, the items are distinct even if the prose sounds similar. Preservation bias: when in doubt, keep both.
+Shell-concatenate all extraction scratch files into one master list. Preserve heading lines for file boundaries. If >80 items, dispatch `dedup-task` with the master list path; otherwise apply it inline. Output: numbered master feature list as a scratch file.
 
 ### Step 4: Tier + Order (1 subagent)
 
-Dispatch: read this tool file, grep for `<tier-task>`, execute.
+Dispatch `tier-task`.
 
 Pass the master list path. Subagent returns a numbered, sectioned scratch file. Returns path only.
 
 ### Step 5: Verify (1 subagent)
 
-Dispatch: read this tool file, grep for `<verify-task>`, execute.
+Dispatch `verify-task`.
 
-Pass the tiered list path AND the original target. Returns "approved" or a correction list (cap 300 tokens). Main applies corrections if needed.
+Pass the tiered list path AND the original target. Verify fixes the tiered file in place and returns "approved" or a correction list (cap 300 tokens).
 
 ### Step 6: Prepare Writer (1 subagent + main)
 
-Dispatch: read this tool file, grep for `<evidence-packet-task>`, execute.
+Dispatch `evidence-packet-task`.
 
 Pass the verified tiered file path AND the recon brief path. No source files are re-read. Subagent writes TWO scratch files and returns their paths only.
 
@@ -109,7 +122,7 @@ Non-negotiable template elements: opening hook paragraph, tier-1 orientation (2-
 
 ### Step 7: Write (1 subagent)
 
-Dispatch: read this tool file, grep for `<writing-discipline>`, execute.
+Dispatch `writing-discipline`.
 
 Pass: evidence packet path, evidence details path, report template path. The writer fills the template using the evidence packet for structure and claims. When constructing code examples, consult the evidence details file for correct syntax. Never invent config keys or CLI flags. Writes result to a scratch file. Returns path only.
 
@@ -121,10 +134,11 @@ Read the writer's output from file. Check:
 - No forward references (every concept grounded before use)
 - Tier-1 section readable standalone
 - No facts claimed beyond the evidence packet
+- No em-dash or double-dash in prose
 
 Then correct. The writer will invent config syntax, omit auth/credential examples, and guess at key names. The audit MUST:
 - Cross-reference all code examples against the evidence details file first (cheap, no source reads needed)
-- Go to original source only for claims not covered in the details file
+- Go to original source for claims not covered in the details file or backed only by `doc` evidence
 - Fix incorrect config syntax, key names, CLI flags
 - Add missing auth headers to API examples
 - Correct any TOML/YAML/JSON format the writer guessed wrong
@@ -135,7 +149,12 @@ Write final documentation file (intent: **output**).
 
 ---
 
+## Subagent Instructions
+
+### Reconnoiter
+
 <recon-task>
+
 You are a reconnaissance agent. Scan the provided artifact and produce two scratch files.
 
 **File 1: Structural brief.** Write to a scratch file in exactly this format:
@@ -167,9 +186,13 @@ tests/it/mod.rs
 Do not extract features. Do not analyze content. Just survey structure and produce the manifest.
 
 Return: paths to both scratch files only.
+
 </recon-task>
 
+### Extract
+
 <extract-task>
+
 You are a feature extraction agent. Read the assigned file and extract user-facing capabilities as single sentences.
 
 Each sentence describes something the user can DO with this artifact. Frame as a task the user performs, not a property the system has.
@@ -184,17 +207,33 @@ Write your list to a scratch file. Start with a heading line for concatenation. 
 # {filename}
 
 {n}. {capability sentence}
-    source: {filename}:{start_line}-{end_line}
+    source: {filename}:{start_line}-{end_line} [{code|test|comment|doc}]
     evidence: {concrete detail: a code snippet, CLI invocation, default value, constraint, or relationship to another feature}
 ```
 
-The source and evidence lines are required. They ground the capability in a specific location and give downstream steps the concrete detail needed for deduplication and example construction.
+The source and evidence lines are required. They ground the capability in a specific location and give downstream steps the concrete detail needed for deduplication and example construction. The bracket names the evidence kind: `code` (including config), `test` (including expected output), `comment` (prose inside code or tests), or `doc` (a prose file such as a README, manual, or changelog).
 
 Return only: count and file path.
+
 </extract-task>
 
+### Deduplicate
+
+<dedup-task>
+
+You are a deduplication agent. Merge duplicates in the concatenated list into one numbered master feature list, keeping every source and evidence line.
+
+Dedup rule: two items are duplicates only when both their capability sentence AND their evidence line describe the same thing. If the evidence lines point at different code, different config keys, or different mechanisms, the items are distinct even if the prose sounds similar. Preservation bias: when in doubt, keep both. When items contradict each other about the same capability, keep both and add `conflict: {what differs}` under each.
+
+Write to a scratch file. Return path only.
+
+</dedup-task>
+
+### Tier Grading
+
 <tier-task>
-You are an organization agent. Take the master feature list and perform three passes.
+
+You are an organization agent. Take the master feature list and perform four passes.
 
 **Pass 1: Tier assignment.** Classify each feature into exactly one tier:
 - Tier 1: "What IS this?" Identity features. Remove it and the product is unrecognizable.
@@ -209,7 +248,7 @@ You are an organization agent. Take the master feature list and perform three pa
 
 **Output format:** numbered scratch file, sections labeled TIER 1, TIER 2, TIER 3. Numbering is continuous (tier 1 ends at N, tier 2 starts at N+1). Each line: `{n}. {sentence} [depends: {numbers}]`
 
-Preserve source locations and evidence lines from the input under each entry.
+Preserve every source, evidence, and conflict line from the input under each entry.
 
 After the numbered list, append:
 
@@ -221,25 +260,36 @@ SECTIONS:
 ```
 
 Write to a scratch file. Return path only.
+
 </tier-task>
 
+### Verify
+
 <verify-task>
+
 You are a verification agent. You have access to the tiered feature list AND the original artifact.
 
-Challenge on four axes:
+Challenge on five axes:
 1. Coverage: are we missing capabilities visible in the source material?
 2. Tier accuracy: anything at the wrong altitude?
 3. Ordering: any forward references or confusing dependency chains?
 4. Noise: any items obvious for the genre that should be cut?
+5. Accuracy: settle each `conflict:` against the source by rank (`code` = `test` > `comment` > `doc`), fixing or cutting the losing item and deleting the `conflict:` lines.
+
+Fix every issue in the tiered file directly. New items take the next unused numbers; keep SECTIONS in sync.
 
 Return one of:
 - "approved" (if no issues)
-- A correction list: `{item number}: {issue} -> {fix}`
+- A correction list of the fixes you made: `{item number}: {issue} -> {fix}`
 
 Cap at 300 tokens.
+
 </verify-task>
 
+### Prepare Evidence
+
 <evidence-packet-task>
+
 You are an evidence preparation agent. You receive two file paths: the verified tiered feature list and the structural recon brief. No source files are re-read. Write TWO scratch files:
 
 **File 1: Evidence packet** (narrative source for the writer)
@@ -263,16 +313,20 @@ Organize the raw evidence from all tiers, grouped by the SECTIONS headings from 
 The writer uses File 1 for narrative structure and claims. It uses File 2 to look up correct syntax when constructing examples.
 
 Return: paths to both files only.
+
 </evidence-packet-task>
 
+### Writing Instructions
+
 <writing-discipline>
+
 You are a teacher who operates in the technical writing register.
 
 Calibrate complexity: how much domain knowledge does someone need to be in this space? Assume that knowledge. Assume nothing about this specific artifact.
 
 You receive three files: an evidence packet (the narrative facts), an evidence details file (syntax reference for examples), and a report template (the shape). Fill the template using the packet for structure and claims. When constructing code examples, consult the evidence details file for correct syntax. Never invent config keys, CLI flags, or API paths.
 
-Seven rules:
+Eight rules:
 
 1. Source constraint. The evidence packet is sole source of truth. If it does not state a fact, you do not claim it.
 2. Opening paragraph. Hook, sell, promise. What it is, why it's great, what the reader gains.
@@ -280,16 +334,20 @@ Seven rules:
 4. Ordering. One concept per section. No forward references. Every term grounded before use.
 5. Task-framed. Show what the user does, not what the system "supports."
 6. Fence markup. Always open code fences with ```` (four backticks), never ``` (three). The output document may contain nested fences; four backticks prevent ambiguity.
-7. Completeness (the finish line):
+7. Punctuation. No em-dash or double-dash in prose. Code, CLI flags, and quoted syntax stay verbatim.
+8. Completeness (the finish line):
    - One-Read Test: a reader who reads once can use the artifact.
    - 3-Minute Rule: 500-700 words max per feature; split if it won't fit.
    - Tier coverage: tier 1 completely, tier 2 selectively, tier 3 only by example.
    - Good Enough = Editable: human improves by changing words, not restructuring.
+
 </writing-discipline>
 
 ![Dokuman Components](images/dokuman.3.jpg)
 
 ---
+
+<non-normative-human-facing-text>
 
 ## Tool Design
 
@@ -313,4 +371,6 @@ No large language model will ever consistently produce perfect documentation. Th
 
 Four heuristics define the finish line. The One-Read Test: write so a domain-competent reader who reads the document once can use the artifact for its primary purpose. The 3-Minute Rule: spend at most 500-700 words on any single feature, splitting if it won't fit. The Tier Coverage Rule: tier 1 completely, tier 2 selectively, tier 3 only by example and never as standalone sections. Good Enough Means Editable: the document succeeds if a human editor can improve it by changing words, not by restructuring or adding missing sections.
 
-*2026-08-11 04:52 - claude-opus-4-6-medium-thinking*
+</non-normative-human-facing-text>
+
+*2026-09-25 17:34 - claude-opus-5.5*
