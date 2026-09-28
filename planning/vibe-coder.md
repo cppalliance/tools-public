@@ -73,8 +73,8 @@ Before Code, allocate **scratch** files named `review-step-N.md`, `verify-step-N
 2. **Commit.** Stage the step's changes. For Step 1, amend the plan seed in place with `git commit --amend --no-edit`: the step's changes fold into the seed commit, which keeps its `[WIP] Plan:` subject until Message, and no separate Step 1 commit exists. For every later step, create one provisional commit with subject `[WIP] Step N: name`.
 3. **Review.** Dispatch the review sub-agent (`<code-review-instructions>`) once against the provisional commit. On a component's final step, provide the parent of that component's first step commit as the component base; otherwise provide `none`. Write findings to the selected step's scratch findings file. When the verdict carries a `needs-context: <identifier>` clause, surface the identifier to the operator, then either supply the artifact and re-dispatch the review, or accept the gap and continue.
 4. **Fix.** Dispatch fix sub-agents (`<fix-instructions>`) until no finding remains open. Process Critical, then Important, then Minor findings. Stage and amend every fix into the provisional commit. Stop after seven rounds and report every finding still open.
-5. **Verify.** Run after fixes, every third step, at a component's end, and on the final step. Skip the after-fixes run on a step that is none of the other three when the last fix dispatch reported its focused test command passing after its final edit; record that command and result as the step's verification. Choose the widest scope: `FULL` for the final step, `COMPONENT` at a component's end, otherwise `FOCUSED`. Dispatch Verify with the step, component or `none`, scope, diff base, and a new scratch log. The diff base is the provisional commit's parent for `FOCUSED`, the parent of the component's first step commit for `COMPONENT`, and `none` for `FULL`. On failure, dispatch Verification Fix with the same values and round number; stop when blocked, otherwise amend the repair and repeat at the same scope. Stop after seven failed rounds and report the signature and log path.
-6. **Mark.** Inside `step-N`, append ` [completed]` to the `### Step N: name` heading without changing either tag. Append the step, last verification command and result, and autonomous decisions with their falsifiers to the run's scratch ledger. When Verify did not run for the step, the last verification is the focused test command and result that the last coding or fix dispatch reported after its final edit. Stage and amend only the plan marker into the provisional commit.
+5. **Verify.** Run on every step at the widest scope: `FULL` for the final step, `COMPONENT` at a component's end, otherwise `FOCUSED`. Dispatch Verify with the step, component or `none`, scope, diff base, and a new scratch log. The diff base is the provisional commit's parent for `FOCUSED`, the parent of the component's first step commit for `COMPONENT`, and `none` for `FULL`. On failure, dispatch Verification Fix with the same values and round number; stop when blocked, otherwise amend the repair and repeat at the same scope. Stop after seven failed rounds and report the signature and log path.
+6. **Mark.** Inside `step-N`, append ` [completed]` to the `### Step N: name` heading without changing either tag. Append the step, last verification command and result, and autonomous decisions with their falsifiers to the run's scratch ledger. Stage and amend only the plan marker into the provisional commit.
 7. **Message.** Dispatch the message sub-agent (`<commit-message-instructions>`) once against the complete provisional commit, using the selected step's scratch message draft as its output. Stop when it returns blocked. Otherwise amend using the validated output file as the commit message. This removes `[WIP]` and finalizes the step; for Step 1 it replaces the seed's `[WIP] Plan:` subject.
 
 ![Decomposition](images/vibe-coder.2.jpg)
@@ -370,7 +370,7 @@ Read `vibe/archdoc.md` if present.
 
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
-Read the findings file. A finding without an appended closing clause is open. Return blocked before changing files when an open finding requires tests and the focused test command is `None` or absent. Fix the open findings in severity order: Critical first, then Important, then Minor. For each fix, run the focused tests using the test command in the plan's Project survey section. After your final edit, run the step's focused test command once more.
+Read the findings file. A finding without an appended closing clause is open. Return blocked before changing files when an open finding requires tests and the focused test command is `None` or absent. Fix the open findings in severity order: Critical first, then Important, then Minor. For each fix, run the focused tests using the test command in the plan's Project survey section.
 
 Close each finding by appending one clause stating how it was fixed or why it was rejected. Never close a finding without a code change or a stated rejection, and never alter its original text.
 
@@ -378,7 +378,7 @@ Leave every change unstaged in the worktree. Never run `git add`, `git commit`, 
 
 When a fix changes the tests, return the updated test command string. When a fix requires a hard-to-reverse choice, stop and return blocked with the choice and its options stated.
 
-Return under 1,000 tokens: findings closed, findings still open, each count by severity, files changed, the updated test command string when there is one, and the focused test command run after your final edit with its result. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
+Return under 1,000 tokens: findings closed, findings still open, each count by severity, files changed, and the updated test command string when there is one. Return each autonomous choice as `Decision: <clause> | Falsifier: <clause>`, or `Decision: None`.
 
 </fix-instructions>
 
@@ -400,7 +400,7 @@ Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <
 
 Accept only `FOCUSED`, `COMPONENT`, or `FULL` as Scope. Require a non-`none` Component and a non-`none` Diff base for `COMPONENT`, and a non-`none` Diff base for `FOCUSED`; return blocked for any invalid combination.
 
-- `FOCUSED`: run the focused test command for the dispatched step.
+- `FOCUSED`: run the focused test command for the dispatched step, then the survey's component test command unless it is `None`.
 - `COMPONENT`: run the survey's formatter check, linter, and component test commands.
 - `FULL`: run the survey's build, formatter check, linter, docs, and full-suite test commands.
 
