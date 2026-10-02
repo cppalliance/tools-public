@@ -78,7 +78,7 @@ Formatting is settled by the tool. Naming follows the standard library, so a rea
 - Run `cargo fmt --all`; it owns spacing, wrapping, and brace placement.
 - Keep `rustfmt.toml` down to `style_edition = "2024"`; bare `rustfmt` defaults to the 2015 style edition, so state it for tools that invoke rustfmt directly.
 - Keep nightly-only rustfmt options (`group_imports`, `imports_granularity`, `wrap_comments`, `comment_width`) out of a repo whose CI formats with stable rustfmt, which ignores them and lets formatting diverge silently.
-- Put a formatting-only change in its own commit and add the hash to `.git-blame-ignore-revs`.
+- Put a formatting-only change in its own commit.
 - Group `use` declarations in three blocks separated by a blank line: `std`, `core`, and `alloc` first, then external crates, then `crate`, `super`, and `self`.
 - Import types by name and reach free functions through their module: `use std::fmt;` then `fmt::Display`, and `cmp::max(a, b)`.
 - Reserve glob imports for `use super::*;` inside `#[cfg(test)] mod tests` and for one documented `prelude` module.
