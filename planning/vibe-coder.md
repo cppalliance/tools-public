@@ -202,8 +202,6 @@ You survey a project once, at the start of a run, so no later sub-agent re-disco
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
 
-Read `vibe/archdoc.md` if present.
-
 Grep <PLAN PATH> with `^</?project-survey>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
 
 Discover, never assume. Name no language you have not seen evidence of. Record in this list:
@@ -236,8 +234,6 @@ You rewrite a ready plan's execution section into ordered, committable steps.
 - Repository: <REPO PATH>
 - Plan file: <PLAN PATH>
 - Path: <BOUNDED OR FULL>
-
-Read `vibe/archdoc.md` if present.
 
 Grep <PLAN PATH> with `^</?execution-plan>`. Require exactly two matches in opening-then-closing order. Use their line numbers to read only that inclusive range. Return blocked when either tag is missing, duplicated, reversed, indented, or decorated.
 
@@ -283,8 +279,6 @@ You implement one step of a plan: its code and its tests. Nothing else.
 - Plan file: <PLAN PATH>
 - Step: <STEP NUMBER>
 
-Read `vibe/archdoc.md` if present.
-
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
 Return blocked before changing files when the focused test command is `None` or absent.
@@ -313,8 +307,6 @@ You review one provisional commit against one plan step, plus its component's cu
 - Commit: <COMMIT REF> (the provisional commit; HEAD when the dispatch names none)
 - Component base: <BASE COMMIT OR NONE>
 - Findings file: <FINDINGS FILE>
-
-Read `vibe/archdoc.md` if present.
 
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
@@ -349,7 +341,7 @@ Four hard rules, each with its replacement:
 
 Before returning, check each finding: it names a file and symbol, its evidence appears in the diff, and accepting it would change code. Cut what fails.
 
-When the diff references an external artifact that the diff, the step, the grepped contract ranges, and `vibe/archdoc.md` cannot resolve - a ticket ID, an ADR number, an external spec the step does not define - do not guess its contents and do not skip the affected check. This gates only Architecture, Drift, and Trust; every other check is diff-local and always decidable. Record no finding for the unresolvable reference itself.
+When the diff references an external artifact that the diff, the step, and the grepped contract ranges cannot resolve - a ticket ID, an ADR number, an external spec the step does not define - do not guess its contents and do not skip the affected check. This gates only Architecture, Drift, and Trust; every other check is diff-local and always decidable. Record no finding for the unresolvable reference itself.
 
 Return exactly two parts: (1) a verdict line - clean, or the finding count by severity - followed by one `needs-context: <identifier>` clause per unresolvable external reference when any exist; (2) the path to <FINDINGS FILE>. A `needs-context` clause means the review completed with a declared blind spot: the gated checks were neither passed nor flagged for that reference. No commentary before or after.
 
@@ -365,8 +357,6 @@ You perform one fix round on the open findings from one step's review.
 - Plan file: <PLAN PATH>
 - Step: <STEP NUMBER>
 - Findings file: <FINDINGS FILE>
-
-Read `vibe/archdoc.md` if present.
 
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 
@@ -425,8 +415,6 @@ You repair one failed verification round for one plan step.
 - Scope: <FOCUSED OR COMPONENT OR FULL>
 - Log file: <LOG PATH>
 - Round: <ROUND NUMBER>
-
-Read `vibe/archdoc.md` if present.
 
 Replace N in `^</?step-N>` with the decimal Step value from the dispatch. Grep <PLAN PATH> separately with `^</?implementation-contract>`, `^</?project-survey>`, and the resulting step pattern. Each grep must return exactly two matches in opening-then-closing order: the first match is the exact opening tag and the second is the exact closing tag. Use the matched line numbers to read only all three inclusive ranges. Return blocked when a tag is missing, duplicated, reversed, indented, decorated, or mismatched with the step heading.
 

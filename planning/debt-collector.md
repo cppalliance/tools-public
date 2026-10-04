@@ -28,7 +28,7 @@ Resolve an explicit commit or range exactly. Resolve a plan file to every commit
 
 For a repository-only request, use the merge base of the tracked upstream and current branch as the baseline, current `HEAD` as the endpoint, and the worktree as the disposition state. If no upstream exists, choose the most defensible baseline and record why. If the repository, a requested revision, or a named plan file cannot be read, name it and stop. If the target contains no new work, skip analysis and write the removal plan with an empty removal scope.
 
-Design records are `vibe/archdoc.md` when it exists and the plan files named by target commits' `Plan:` trailers, plus the plan named by `vibe/ACTIVE` when uncommitted target work belongs to it. Record a missing or malformed reference as an analysis limit without inventing its contents.
+Design records are the plan files named by target commits' `Plan:` trailers, plus the plan named by `vibe/ACTIVE` when uncommitted target work belongs to it. Record a missing or malformed reference as an analysis limit without inventing its contents.
 
 Create one **scratch** file named `commit-log.md` holding every complete commit message reachable from the endpoint, oldest first. Build it with the shell, preserve multiline bodies and trailers exactly, and precede each message with one line holding its hash, its date, and `TARGET` when it is a target commit. Keep commit-message bodies, diffs, and source out of the main context; subagents read them from files.
 
