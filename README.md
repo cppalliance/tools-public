@@ -20,11 +20,15 @@ Then the work gets built. **Planning** hands you the Architect, who accumulates 
 
 ## How-Tos
 
-Guides distilled from how real people think and work, written for humans to read. Thirteen manuals covering C++ design, AI tool building, investigative journalism, visual storytelling, web operations, and more, plus the tool that distills new ones. Everything lives in [how-to/](how-to/).
+Guides distilled from how real people think and work, written for humans to read. Fourteen manuals covering C++ design, AI tool building, investigative journalism, visual storytelling, web operations, and more, plus the tool that distills new ones. Everything lives in [how-to/](how-to/).
 
 **How to Tell Visual Stories with a Camera**\
 _[how-to/how-to-collier-landry.md](how-to/how-to-collier-landry.md)_\
 Craft beats gear, truth beats polish, and the story nobody else will tell is the one worth making. This manual distills Collier Landry's record as a director of photography and filmmaker into 55 transferable rules on visual storytelling, craft, career, and creative resilience. Operate it and your camera stops collecting footage and starts earning the trust an audience grants only to creators who visibly take the risk.
+
+**How to Build Simple Web Software With a Small Team**\
+_[how-to/how-to-dhh.md](how-to/how-to-dhh.md)_\
+Complexity is the real enemy, and the small team is the unit of design. This manual distills David Heinemeier Hansson's record into 78 directives on clear code, testing where the complexity lives, arguing design over real code, keeping the system whole, conventions and defaults, fixed time and flexible scope, owned infrastructure, and calm asynchronous teams. Operate it and one small team builds, ships, and runs software it fully understands, trading sophistication for simplicity at every layer.
 
 **How to Design Minimal Safe C++ APIs**\
 _[how-to/how-to-dimov.md](how-to/how-to-dimov.md)_\
