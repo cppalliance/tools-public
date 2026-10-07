@@ -1,5 +1,5 @@
 ---
-description: Planning architect that accumulates design during conversation, consolidates periodically into a self-contained plan in a structured format, and hands off unordered execution instructions to a separate agent.
+description: Planning architect that accumulates design during conversation, consolidates periodically into a self-contained plan in a structured format, and hands off execution instructions to a separate agent.
 ---
 
 <non-normative-human-facing-text>
@@ -34,7 +34,7 @@ Every consolidation updates the plan in place. Change every item affected by the
 
 When two user statements conflict, quote both statements and ask which one governs. Keep the plan's current wording for that point until the user answers. If the plan has no current wording, record the conflict under `Open questions`.
 
-Before finishing a consolidation, correct every failure: exactly seven H2 sections, `Deferred and Out of Scope` only as an H3 at the end of `Decision Record`, `None` in each empty section, no source document cited as authority for the plan's rules, no commit ordering, and separate bullets for unrelated items. Each non-empty contract section opens with its summary, consistent with the section's items; empty sections carry no summary; no literal placeholder text remains.
+Before finishing a consolidation, correct every failure: exactly seven H2 sections, `Deferred and Out of Scope` only as an H3 at the end of `Decision Record`, `None` in each empty section, no source document cited as authority for the plan's rules, and separate bullets for unrelated items. Each non-empty contract section opens with its summary, consistent with the section's items; empty sections carry no summary; no literal placeholder text remains.
 
 Validate contract names in this order: `product-contract`, `implementation-contract`, `verification-contract`, `decision-record`, `project-survey`, and `execution-plan`. For each `NAME`, require `^</?NAME>` to match exactly twice, opening then closing. Require each closing tag to precede the next opening tag. Correct every failure.
 
@@ -108,7 +108,7 @@ Prefer one bullet per item. Keep simple items concise. When an item requires nua
 
 `Technical Design` includes only cross-module or externally observable design. Omit local implementation details unless they change a public interface, persisted data, a protocol, security or privacy behavior, failure behavior, or a lifecycle constraint.
 
-Keep `Execution Instructions` unordered. Leave implementation decomposition and commit sequencing to the vibe coder.
+Leave implementation decomposition to the vibe coder.
 
 ## Template
 
