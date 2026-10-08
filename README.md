@@ -20,7 +20,7 @@ Then the work gets built. **Planning** hands you the Architect, who accumulates 
 
 ## How-Tos
 
-Guides distilled from how real people think and work, written for humans to read. Fourteen manuals covering C++ design, AI tool building, investigative journalism, visual storytelling, web operations, and more, plus the tool that distills new ones. Everything lives in [how-to/](how-to/).
+Guides distilled from how real people think and work, written for humans to read. Seventeen manuals covering C++ design, AI tool building, investigative journalism, visual storytelling, web operations, and more, plus the tool that distills new ones. Everything lives in [how-to/](how-to/).
 
 **How to Tell Visual Stories with a Camera**\
 _[how-to/how-to-collier-landry.md](how-to/how-to-collier-landry.md)_\
@@ -29,6 +29,10 @@ Craft beats gear, truth beats polish, and the story nobody else will tell is the
 **How to Build Simple Web Software With a Small Team**\
 _[how-to/how-to-dhh.md](how-to/how-to-dhh.md)_\
 Complexity is the real enemy, and the small team is the unit of design. This manual distills David Heinemeier Hansson's record into 78 directives on clear code, testing where the complexity lives, arguing design over real code, keeping the system whole, conventions and defaults, fixed time and flexible scope, owned infrastructure, and calm asynchronous teams. Operate it and one small team builds, ships, and runs software it fully understands, trading sophistication for simplicity at every layer.
+
+**How to Argue Politics Fairly and Hold Your Ground**\
+_[how-to/how-to-dhh-politics.md](how-to/how-to-dhh-politics.md)_\
+Shared facts and consistent principles settle a political argument; labels, pressure, and apparent consensus do not. This manual distills David Heinemeier Hansson's public record on politics into 69 directives on testing claims against evidence, answering labels and accusations, exposing double standards, weighing policy trade-offs, defending open speech, building your own positions, persuading under social pressure, and keeping conflict proportionate. Operate it and you take part in culture-war fights without trading away your fairness or your position, because every claim gets tested and every principle gets applied to both sides.
 
 **How to Design Minimal Safe C++ APIs**\
 _[how-to/how-to-dimov.md](how-to/how-to-dimov.md)_\
@@ -45,6 +49,14 @@ Build libraries from the allocator up, and treat every public header as a contra
 **How to Build Software with AI Without Cutting Corners**\
 _[how-to/how-to-greg-bildson.md](how-to/how-to-greg-bildson.md)_\
 Speed is cheap and discipline is rare, so spend a little speed to buy durability. This manual distills Greg Bildson's written record into 63 directives on steering AI coding sessions, durable plans and records, design judgment, security and data governance, teams, network health, and business strategy. Operate it and your AI-built software survives, because a decision that is not written down in a durable artifact does not exist.
+
+**How to Steer a Standards Proposal to Consensus**\
+_[how-to/how-to-jf-bastien.md](how-to/how-to-jf-bastien.md)_\
+A committee can only agree on what it can check. This manual distills JF Bastien's record into 82 directives on evidence and measurement, paper readiness and scope, feedback and objections, prior art and alternatives, polls and consensus, breakage and safe defaults, language and library design, and specification against real hardware. Operate it and your proposal advances on measured evidence and stated scope to a decision that survives the wider vote, with wording that shipping implementations can actually meet.
+
+**How to Make AI Coding Agents Ship Well-Designed, Tested Code**\
+_[how-to/how-to-joel-quenneville.md](how-to/how-to-joel-quenneville.md)_\
+When the output disappoints, fix the system that produced it rather than the mistake. This manual distills Joël Quenneville's written and spoken record into 100 directives on closing the feedback loop on agent output, turning every human intervention into a harness fix, encoding rules in tools the agent runs, sizing agent work, shaping conditionals and objects, testing and debugging, modeling data so invalid states cannot exist, and weighing trade-offs. Operate it and your agent checks its own work inside a harness that improves every time you step in, so the code it ships is code you would be proud of.
 
 **How to Design Precise Technical Interfaces**\
 _[how-to/how-to-klemens.md](how-to/how-to-klemens.md)_\
