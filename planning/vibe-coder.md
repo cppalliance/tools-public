@@ -61,7 +61,7 @@ When told to run, or after Resume Recovery:
    - When the sole line of `vibe/ACTIVE` is the repository-relative path to the located plan, bind that path as the active plan and every subsequent `<PLAN PATH>`, then reuse the existing seed.
    - When `vibe/ACTIVE` contains any other value, explain which plan is already active and stop.
 4. Run every incomplete step in dependency order through the entire Per-Step Cycle, never starting the next before Message finalizes the current one. Before starting any step, require `vibe/ACTIVE` to exist with <PLAN PATH> as its sole line; when it does not, stop and report the missing or mismatched `vibe/ACTIVE`. Before starting any step past Step 1, run `git log --diff-filter=A --format=%s -- <PLAN PATH>`; when any output line starts with `[WIP]`, Step 1 created its own commit instead of amending the seed - stop and report the stranded seed.
-5. Commit the deletion of `vibe/ACTIVE` with subject `Close plan: <words>`, a blank line, and the plan's `Plan:` trailer.
+5. Set every frontmatter todo `status:` in <PLAN PATH> to `completed`, then commit that change with the deletion of `vibe/ACTIVE` with subject `Close plan: <words>`, a blank line, and the plan's `Plan:` trailer.
 
 #### Per-Step Cycle
 
@@ -570,4 +570,6 @@ Restated: a dream becomes a wish, and a wish becomes a program. Hold the plan at
 All content in this file is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
 
 *2026-09-08 - GPT-5.6 Sol (Cursor agent)*
+
+*2026-10-10 - Claude Opus 5.5 (Cursor agent). Close step marks the plan copy's todos completed.*
 
