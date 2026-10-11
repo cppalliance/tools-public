@@ -253,13 +253,14 @@ Rewrite only the inclusive `execution-plan` range. Keep `<execution-plan>` as th
 ### Step N: name
 
 - Component: name or `none`
+- Tests: commands Verify runs as written, or none
 
 ...
 
 </step-N>
 ```
 
-For a Bounded path, require Component `none`. For a Full path, require a component name and keep every component's steps contiguous. Each step names concrete artifacts - files, modules, functions, structs - without a full implementation. Across all steps, cover every requirement in the plan. Completed steps later add ` [completed]` to the heading without changing the tag.
+For a Bounded path, require Component `none`. For a Full path, require a component name and keep every component's steps contiguous. Each step names concrete artifacts - files, modules, functions, structs - without a full implementation. The coding, review, and fix sub-agents read only the implementation contract, the project survey, and their step, so copy into each step every test case, error text, and acceptance detail it needs from the product, verification, and decision contracts. Never assign the plan's seed copy, `vibe/ACTIVE`, or the close commit to a step, since the Run Sequence owns them. Across all steps, cover every requirement in the plan. Completed steps later add ` [completed]` to the heading without changing the tag.
 
 Preserve the plan's YAML frontmatter verbatim. Keep the plan self-contained: a reader who never saw the conversation must be able to execute it. When a hard-to-reverse design choice is missing, add it to the plan's decision record and flag it in your return.
 
@@ -572,4 +573,6 @@ All content in this file is dedicated to the public domain under [CC0 1.0 Univer
 *2026-09-08 - GPT-5.6 Sol (Cursor agent)*
 
 *2026-10-10 - Claude Opus 5.5 (Cursor agent). Close step marks the plan copy's todos completed.*
+
+*2026-10-11 - Claude Opus 5.5 (Cursor agent). Steps carry their tests and a Tests line; seeding and the close stay out of steps.*
 
