@@ -175,7 +175,7 @@ Prefer compiler checks, type constraints, behavior tests, and fault injection ov
 
 ## Removal Plan
 
-Write one self-contained plan that a fresh implementation context can execute without this conversation or the scratch files. Express every kept finding as its fix: each work item names its debt IDs, the concrete change, and the check that proves removal. Give each fix of incorrect behavior a regression test that fails before the change; a test that already passes proves the finding false, so keep the test and skip the change. Group related fixes by behavior and dependency rather than one work item per finding. Treat estimated line deletion as context, never as a success criterion. Cite repository paths and revisions as evidence. Do not modify source code, execute the plan, catalog unrelated pre-existing defects, or update architecture records. When no finding is kept, write the same plan shape with an empty removal scope and state why no work is proposed.
+Write one self-contained plan that a fresh implementation context can execute without this conversation or the scratch files. Express every kept finding as its fix: each work item names its debt IDs, the concrete change, and the check that proves removal. Give each fix of incorrect behavior a regression test that fails before the change; a test that already passes proves the finding false, so keep the test and skip the change. Before writing a regression test into the plan, read the endpoint code it exercises and name the assertion that fails there; an assertion the endpoint already satisfies is not that test. Group related fixes by behavior and dependency rather than one work item per finding. Treat estimated line deletion as context, never as a success criterion. Cite repository paths and revisions as evidence. Do not modify source code, execute the plan, catalog unrelated pre-existing defects, or update architecture records. When no finding is kept, write the same plan shape with an empty removal scope and state why no work is proposed.
 
 Use exactly these seven H2 sections, wrapped in these contract tags. Keep every tag line verbatim and unindented, and write `Project Survey` as `None` for the vibe coder's survey to fill:
 
@@ -253,3 +253,5 @@ All content in this file is dedicated to the public domain under [CC0 1.0 Univer
 *2026-09-08 - GPT-5.6 Sol (Cursor agent)*
 
 *2026-09-27 - Claude Opus 5.5 (Cursor agent). Plan-file targets, cheap fixes, merged challenge, label tiers; old ledger formats removed.*
+
+*2026-10-11 - Claude Opus 5.5 (Cursor agent). Planned regression tests are checked against the endpoint code.*
