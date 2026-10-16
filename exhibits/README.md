@@ -50,14 +50,14 @@ Codebase idiom surveys, produced by [planning/what-to-steal.md](../planning/what
 
 - [what-to-steal/compare-server-delivery-human-idioms.md](what-to-steal/compare-server-delivery-human-idioms.md) - server-delivered UI in Rust
 - [what-to-steal/compare-spa-crate-server-idioms.md](what-to-steal/compare-spa-crate-server-idioms.md) - single-crate SPA servers in Rust
-- [what-to-steal/compare-ui-stack-human-idioms.md](what-to-steal/compare-ui-stack-human-idioms.md) - human code organization versus the PromptForge workshop
+- [what-to-steal/compare-ui-stack-human-idioms.md](what-to-steal/compare-ui-stack-human-idioms.md) - human code organization versus the Runvil workshop
 
 ## Single exhibits
 
 - [P3155R1-assay.md](P3155R1-assay.md) - Assay of P3155R1, from [prototypes/assay.md](../prototypes/assay.md)
 - [boost-review-int128.md](boost-review-int128.md) - Boost review of an Int128 library, from [analysis/boost-review.md](../analysis/boost-review.md)
 - [booksmith/story-farther-away.md](booksmith/story-farther-away.md) - "Farther Away", a story from [writing/booksmith.md](../writing/booksmith.md)
-- [dokuman-promptforge-gateway.md](dokuman-promptforge-gateway.md) - PromptForge Gateway documentation, from [writing/dokuman.md](../writing/dokuman.md)
+- [dokuman-runvil-gateway.md](dokuman-runvil-gateway.md) - Runvil Gateway documentation, from [writing/dokuman.md](../writing/dokuman.md)
 - [ietf125-iabopen-minutes.md](ietf125-iabopen-minutes.md) - IAB Open minutes, IETF 125, 18 March 2026
 
 ## Tool reviews

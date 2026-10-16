@@ -1,6 +1,6 @@
 # Server-Delivered UI in Rust: What the Field Does and What to Steal
 
-Report type: evaluation / review. It judges the promptforge-ws-server crate (the axum server that delivers the workshop UI) against six popular Rust codebases that use the same technique - a Rust HTTP server serving its own embedded web UI - and prescribes structures to adopt, in payoff order. It is the server-side companion to compare-ui-stack-human-idioms.md, which covered the frontend and shell.
+Report type: evaluation / review. It judges the runvil-ws-server crate (the axum server that delivers the workshop UI) against six popular Rust codebases that use the same technique - a Rust HTTP server serving its own embedded web UI - and prescribes structures to adopt, in payoff order. It is the server-side companion to compare-ui-stack-human-idioms.md, which covered the frontend and shell.
 
 ## Executive summary
 
@@ -150,6 +150,6 @@ Standing directives for the plan that wraps this report. Everything here derives
 
 - TabbyML/tabby, openobserve/openobserve, windmill-labs/windmill, spacedriveapp/spacedrive, trailbaseio/trailbase, ekzhang/rustpad: shallow clones analyzed 2026-08-27; authorship verified against the GitHub commits API the same day; Rustpad's server core and test harness additionally read first-hand in full.
 - Candidate survey of twenty Rust projects serving their own web UI, verified against source, 2026-08-27.
-- PromptForge Workshop server crate promptforge-ws-server, self-profile carried over from the 2026-08-26 UI-stack study.
+- Runvil Workshop server crate runvil-ws-server, self-profile carried over from the 2026-08-26 UI-stack study.
 
 *2026-08-27 08:40 - claude-fable-5-thinking*

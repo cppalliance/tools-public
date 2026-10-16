@@ -1,6 +1,6 @@
-# Human Code Organization vs PromptForge Workshop: What to Steal
+# Human Code Organization vs Runvil Workshop: What to Steal
 
-Report type: evaluation / review. It judges the PromptForge Workshop crates (promptforge-ws, promptforge-ws-server, and their embedded TypeScript UI) against five popular human-organized codebases that share the same stack, and prescribes fixes in severity order.
+Report type: evaluation / review. It judges the Runvil Workshop crates (runvil-ws, runvil-ws-server, and their embedded TypeScript UI) against five popular human-organized codebases that share the same stack, and prescribes fixes in severity order.
 
 ## Executive summary
 
@@ -33,7 +33,7 @@ VS Code carries one instructive caveat: the largest and least disciplined files 
 
 ## Baseline: our weaknesses cluster in five places
 
-The self-profile found the shell crate (promptforge-ws, roughly 1.3K lines over 5 files) genuinely well organized: one concern per module, documented failure modes in the OLE drop target, degrade-not-crash startup. Our test discipline exceeds three of the five references; Weylus has zero tests, the Dioxus desktop crate has two, and SiYuan tests only extracted pure logic. The structural weaknesses concentrate in: flat 30-50KB Rust server modules mixing protocol and policy (`transcribe.rs`, `chat_ws.rs`, `voice.rs`, `app.rs`); WebSocket session scaffolding copied between `chat_ws` and `voice` rather than abstracted; module-level mutable state in `main.ts` (`modelCatalog`, `currentModel`); one 27KB `style.css` plus two indent conventions split between vendored and workshop code; and a 44KB serial god-test (`smoke.mjs`) atop a hand-ordered chain of 14 test scripts.
+The self-profile found the shell crate (runvil-ws, roughly 1.3K lines over 5 files) genuinely well organized: one concern per module, documented failure modes in the OLE drop target, degrade-not-crash startup. Our test discipline exceeds three of the five references; Weylus has zero tests, the Dioxus desktop crate has two, and SiYuan tests only extracted pure logic. The structural weaknesses concentrate in: flat 30-50KB Rust server modules mixing protocol and policy (`transcribe.rs`, `chat_ws.rs`, `voice.rs`, `app.rs`); WebSocket session scaffolding copied between `chat_ws` and `voice` rather than abstracted; module-level mutable state in `main.ts` (`modelCatalog`, `currentModel`); one 27KB `style.css` plus two indent conventions split between vendored and workshop code; and a 44KB serial god-test (`smoke.mjs`) atop a hand-ordered chain of 14 test scripts.
 
 ## Detailed findings, ranked by payoff
 
@@ -131,6 +131,6 @@ Guidance for wrapping this report in a long-horizon refactor plan. The report ra
 ## Sources
 
 - microsoft/vscode, siyuan-note/siyuan, DioxusLabs/dioxus, H-M-H/Weylus, silverbulletmd/silverbullet: shallow clones analyzed 2026-08-26; authorship verified against the GitHub commits API the same day.
-- PromptForge Workshop crates promptforge-ws and promptforge-ws-server, including the embedded UI, profiled 2026-08-26.
+- Runvil Workshop crates runvil-ws and runvil-ws-server, including the embedded UI, profiled 2026-08-26.
 
 *2026-08-26 18:10 - claude-fable-5-thinking*

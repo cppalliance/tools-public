@@ -1,6 +1,6 @@
-# PromptForge Gateway
+# Runvil Gateway
 
-PromptForge Gateway is a standalone Rust binary that sits between your callers and any LLM backend. Point any OpenAI SDK or curl command at it by changing one base URL, and the gateway handles routing, concurrency, local model hosting, and web search - all from a single TOML file. Models are named by capability (`reasoning-large`, not `gpt-4o`), so the same prompt works across deployments while the backing vendor changes in one config line. This guide walks you through every feature, from first request to full production config.
+Runvil Gateway is a standalone Rust binary that sits between your callers and any LLM backend. Point any OpenAI SDK or curl command at it by changing one base URL, and the gateway handles routing, concurrency, local model hosting, and web search - all from a single TOML file. Models are named by capability (`reasoning-large`, not `gpt-4o`), so the same prompt works across deployments while the backing vendor changes in one config line. This guide walks you through every feature, from first request to full production config.
 
 ## Drop-In Compatibility
 
@@ -63,13 +63,13 @@ default_max_tokens = 4096
 Start the gateway with a direct path:
 
 ```bash
-promptforge-gateway serve gateway.toml
+runvil-gateway serve gateway.toml
 ```
 
 Or with a named profile from a profiles directory:
 
 ```bash
-promptforge-gateway serve --profiles-dir ./profiles --profile analytical
+runvil-gateway serve --profiles-dir ./profiles --profile analytical
 ```
 
 ### Environment variables
@@ -171,12 +171,12 @@ When the queue is full, callers receive a 503 with a machine-readable `queue_ful
 
 ### Fair scheduling
 
-Fair round-robin scheduling is on by default. Instead of pure FIFO, the gateway interleaves requests from different clients. Clients identify themselves with the `X-PromptForge-Client` header:
+Fair round-robin scheduling is on by default. Instead of pure FIFO, the gateway interleaves requests from different clients. Clients identify themselves with the `X-Runvil-Client` header:
 
 ```bash
 curl http://127.0.0.1:8080/v1/chat/completions \
   -H "Authorization: Bearer $GATEWAY_KEY" \
-  -H "X-PromptForge-Client: batch-pipeline" \
+  -H "X-Runvil-Client: batch-pipeline" \
   -H "Content-Type: application/json" \
   -d '{"model": "reasoning-large", "messages": [{"role": "user", "content": "Hello"}]}'
 ```
@@ -269,11 +269,11 @@ gpu_layers = 0
 
 ### Cache and Hugging Face
 
-A custom cache directory replaces the default `~/.promptforge`:
+A custom cache directory replaces the default `~/.runvil`:
 
 ```toml
 [local]
-cache_dir = "/mnt/fast-ssd/promptforge-cache"
+cache_dir = "/mnt/fast-ssd/runvil-cache"
 ```
 
 Gated Hugging Face model downloads authenticate automatically using `HF_TOKEN` or `HUGGING_FACE_HUB_TOKEN` from the environment.

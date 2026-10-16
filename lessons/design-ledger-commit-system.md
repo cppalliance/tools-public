@@ -12,7 +12,7 @@ The system also includes one correction to the idea that started it. The origina
 
 Two more findings shape the design. Description survives where judgment fails: in the [hallucination study of code-change-to-text tasks](https://arxiv.org/html/2508.08661), about 20% of generated commit messages hallucinated against about 50% of generated review comments, and the [self-attribution study](https://doi.org/10.48550/arxiv.2603.04582) shows a model rating its own on-policy output loses discrimination on its worse outputs. The generator therefore stops at describing and labeling, and it runs as a fresh context; "separate classifier" here means that fresh context. History-based detection is the right primary source: co-change hotspots mined from revision history reached 44.1% precision at predicting bug-prone files where Designite, SonarQube, and DV8 reached 5.1% to 11.6% in the [Active Hotspot study](https://par.nsf.gov/servlets/purl/10194568). Sorting debt by reversal cost is absent from every published framework; the [technical debt prioritization review](https://arxiv.org/pdf/1904.12538v1) found only 4 of 44 studies measure refactoring cost at all. Reversal-cost ordering is therefore this report's own proposal, grounded in fan-in and exposure evidence rather than established practice. (medium confidence on the ordering axis: indirect evidence only)
 
-The cost is one `vibe/` directory containing `archdoc.md` (about 1,500 tokens, human-written), an empty `archdoc-next.md`, and the plans the repo already writes; one prompt of about 4,400 tokens installed in whatever agent harness the repo uses; and, for a repo with history, one rerun of the generator over that history. For PromptForge, the first adopter, that is one rerun over 604 commits.
+The cost is one `vibe/` directory containing `archdoc.md` (about 1,500 tokens, human-written), an empty `archdoc-next.md`, and the plans the repo already writes; one prompt of about 4,400 tokens installed in whatever agent harness the repo uses; and, for a repo with history, one rerun of the generator over that history. For Runvil, the first adopter, that is one rerun over 604 commits.
 
 This is an analytical report with a recommendation, followed by a specification. The first live run is still ahead. The convergent prior art, the [Lore protocol](https://arxiv.org/abs/2603.15566), is in the same position: it proposes design-fact trailers including a reversibility field and rests on proposal alone, without empirical data. The report is written so a reader can build the tool, the directory layout, and the whole-log pass from it alone; the specification in section 9 and the prompt in section 11 are the deliverables that make that possible.
 
@@ -36,7 +36,7 @@ Agents produce debt faster than humans can review it, and two terms name the two
 
 The second observation makes the problem tractable. "You can't detect technical debt from a single diff. You can only detect it as a pattern, over all the commits in the repo." A commit that says "add a function to update the status bar" is meaningless on its own; two such commits signal a duplicate function. The literature measures the same thing. [Feng et al.](https://par.nsf.gov/servlets/purl/10194568) mined co-revision clusters from revision history alone across 21 projects and reached 44.1% precision at predicting bug-prone files. SonarQube reached 11.6%, DV8 9.3%, and Designite 5.1%, and those tools reached their 60% to 75% recall only by flagging huge numbers of files. On those numbers the history is the better instrument. [Sas et al.](https://doi.org/10.1007/s42979-020-00407-5) found on 14 Java systems that where a co-change and an architectural smell coincide on a file pair, the co-change appeared first 90% of the time. The pattern shows in the history before the smell shows in the tree.
 
-The first attempt at the idea failed, and the failure shows what was missing. Vinnie rewrote the PromptForge commit log from the beginning, 604 commits from 2026-07-28 to 2026-08-28, using a prompt that collected the plan files, read the diffs, and tried to word each message so that design choices became visible. The result reads as high-quality diff summaries. Commit [`6450629`](https://github.com/vinniefalco/promptforge/commit/6450629) ("Create workspace with prompt parser and one-shot executor") explains that `promptforge-core` parses a prompt file into a `Prompt` tree and sends the entry section's prose to a chat endpoint. Commit [`4fceba3`](https://github.com/vinniefalco/promptforge/commit/4fceba3) ("Add promptforge-gateway and route the executor through it") explains that the vendor credential moves out of the executor so the gateway is the only process that talks to a backend. Both are accurate. Both leave out, in every form a second reader or a program could group on, the facts that a credential type with a private field was introduced, that the chat request and response types became a wire contract, and that a config field was parsed and then ignored. The design facts are present as prose and absent as data, so a reader can read the log while a program has nothing to query.
+The first attempt at the idea failed, and the failure shows what was missing. Vinnie rewrote the Runvil commit log from the beginning, 604 commits from 2026-07-28 to 2026-08-28, using a prompt that collected the plan files, read the diffs, and tried to word each message so that design choices became visible. The result reads as high-quality diff summaries. Commit [`6450629`](https://github.com/vinniefalco/runvil/commit/6450629) ("Create workspace with prompt parser and one-shot executor") explains that `runvil-core` parses a prompt file into a `Prompt` tree and sends the entry section's prose to a chat endpoint. Commit [`4fceba3`](https://github.com/vinniefalco/runvil/commit/4fceba3) ("Add runvil-gateway and route the executor through it") explains that the vendor credential moves out of the executor so the gateway is the only process that talks to a backend. Both are accurate. Both leave out, in every form a second reader or a program could group on, the facts that a credential type with a private field was introduced, that the chat request and response types became a wire contract, and that a config field was parsed and then ignored. The design facts are present as prose and absent as data, so a reader can read the log while a program has nothing to query.
 
 The obvious remedy, "use a structured commit format," fails on its own. A [replication over 50,673 security commits](https://arxiv.org/abs/2604.20461) found Conventional Commits-compliant messages less informative than non-compliant ones (p < 0.05): compliant messages were 19.2 points more often rated poor. An [ICSE 2023 study of commit message quality](https://doi.org/10.1109/icse48619.2023.00076) found about 44% of sampled open-source messages lack either what or why, and that quality declines over time while developers believe it improves. Adoption of the best-known structured format [plateaus near 10% of public commits](https://site.strijbol.be/articles/conventional-commits/), with hook enforcement near 2.1%. The one structured trailer with a measured track record, the Linux kernel's `Fixes:` tag, is mandated and checked by tooling; an [audit of 383 sampled tags](https://arxiv.org/abs/2308.05060) found 81% named the correct causal commit. Structure helped there because something enforced it. In this design, the generator enforces the structure.
 
@@ -60,7 +60,7 @@ It must resist ratification. The reference the code is checked against must chan
 
 Only the design ledger passes all five criteria; this section weighs it against two alternatives. The do-nothing option comes first because a recommendation is an assertion until it is weighed against an alternative.
 
-The do-nothing option keeps the current arrangement: the existing `commit.mdc` prompt writes a diff summary for each commit, and a human reviews pull requests when there is time. Its added cost is zero and it produces good messages; the PromptForge rewrite proves the prompt can describe a diff faithfully. It fails the first criterion outright, because a diff summary lacks any labeled design fact a second pass can group, and it fails the fourth, because at vibescale the human either reads everything or reads nothing. It passes the ratification test only for lack of a reference to ratify against, which amounts to skipping the check. Its one real merit is the baseline it sets: about 20% of generated commit descriptions hallucinate in the [code-change-to-text study](https://arxiv.org/html/2508.08661), so whatever the ledger adds must hold that rate or lower it.
+The do-nothing option keeps the current arrangement: the existing `commit.mdc` prompt writes a diff summary for each commit, and a human reviews pull requests when there is time. Its added cost is zero and it produces good messages; the Runvil rewrite proves the prompt can describe a diff faithfully. It fails the first criterion outright, because a diff summary lacks any labeled design fact a second pass can group, and it fails the fourth, because at vibescale the human either reads everything or reads nothing. It passes the ratification test only for lack of a reference to ratify against, which amounts to skipping the check. Its one real merit is the baseline it sets: about 20% of generated commit descriptions hallucinate in the [code-change-to-text study](https://arxiv.org/html/2508.08661), so whatever the ledger adds must hold that rate or lower it.
 
 The tree-indexing option builds detectors over the current source: clone detection, symbol indexes, dependency graphs, static smell tools. It catches duplication well and it leaves commit writing unchanged. It is blind to emergent structure spread across the tree, such as four free functions in three files that all take the same `(ctx, config, logger)` tuple. It is also blind to the history of a construct, such as a config type that has been a bag of state three times and encapsulated twice. The precision evidence is against it as a primary instrument: in the [Active Hotspot comparison](https://par.nsf.gov/servlets/purl/10194568), static smell tools reached 5.1% to 11.6% precision at predicting bug-prone files where history-derived hotspots reached 44.1%, and smell counts grow with project size while hotspot counts stay flat. It passes the linear-cost criterion only per run, since each run re-indexes the whole tree, and it leaves ratification unaddressed because it works without a reference. It remains the right tool for what it catches, and section 9.6 routes several candidate labels to linters for that reason.
 
@@ -128,7 +128,7 @@ History-based detection runs after the fact; [Xiao et al.](https://personal.stev
 
 ### F15 The plan is committed before the coder runs, and that gives every commit a `Plan:` trailer
 
-The sequence is: plan written, human approves, plan committed to `vibe/YYYY-MM-DD-N-words.md` (the commit's date, a disambiguator, and the plan's name), coder executes, plan ends, human reviews. Every commit the coder makes includes `Plan: YYYY-MM-DD-N-words`. Four things follow. Every commit has a rationale source the generator may quote under the admission rule (section 9.7, step 3), which lets a plan statement in only as the reason for something the diff shows. Proposals to amend the archdoc enter `archdoc-next.md` in the same commit as the plan, written by the plan-commit step (the step that commits the plan file, section 9.4), so authorization stays with the human who approved the plan and proposal writing stays outside the generator. The whole-log pass groups by plan, so the end-of-plan review has its commit set from one `git log --grep` query, and any hand-built plan-to-commit map, such as the one built for PromptForge, becomes a query. The plan is also the unit of human design review, since it is the unit of work; the queue at plan end holds the design pressure that plan generated. The sources are silent on these; they are decisions from the discussion of 2026-09-04. (high confidence: mechanical consequences of committing the plan)
+The sequence is: plan written, human approves, plan committed to `vibe/YYYY-MM-DD-N-words.md` (the commit's date, a disambiguator, and the plan's name), coder executes, plan ends, human reviews. Every commit the coder makes includes `Plan: YYYY-MM-DD-N-words`. Four things follow. Every commit has a rationale source the generator may quote under the admission rule (section 9.7, step 3), which lets a plan statement in only as the reason for something the diff shows. Proposals to amend the archdoc enter `archdoc-next.md` in the same commit as the plan, written by the plan-commit step (the step that commits the plan file, section 9.4), so authorization stays with the human who approved the plan and proposal writing stays outside the generator. The whole-log pass groups by plan, so the end-of-plan review has its commit set from one `git log --grep` query, and any hand-built plan-to-commit map, such as the one built for Runvil, becomes a query. The plan is also the unit of human design review, since it is the unit of work; the queue at plan end holds the design pressure that plan generated. The sources are silent on these; they are decisions from the discussion of 2026-09-04. (high confidence: mechanical consequences of committing the plan)
 
 ### F16 Abstention must be gated by an evidence criterion
 
@@ -148,7 +148,7 @@ The catalog gives numeric criteria to the labels the evidence says will be most 
 
 ## Recommendation: adopt the ledger, one repository at a time
 
-Repository owners should adopt the design ledger in any repository where an agent writes most of the commits. Each step below names its owner and applies to any such repository. PromptForge is the first adopter. (high confidence on adopting; medium on the specific thresholds, which are starting guesses)
+Repository owners should adopt the design ledger in any repository where an agent writes most of the commits. Each step below names its owner and applies to any such repository. Runvil is the first adopter. (high confidence on adopting; medium on the specific thresholds, which are starting guesses)
 
 The repository owner creates a top-level `vibe/` directory and writes `vibe/archdoc.md` by hand, under about 1,500 tokens, following the format in section 9.2 and including the thresholds section that sets the project's values for the catalog's named variables. The owner then creates an empty `vibe/archdoc-next.md` and commits both.
 
@@ -227,7 +227,7 @@ Adopters should expect trailer accuracy likely near 81% rather than 100%. That i
 
 ## Specification
 
-This section gives enough detail to build the tool. Each subsection is complete on its own and repeats what it needs rather than pointing at something "described above". The system is language-, repository-, and harness-agnostic. Where an example is needed, PromptForge, a multi-crate Rust workspace, supplies one instance and is labeled as an instance; section 9.8 gives a second worked example in a different language.
+This section gives enough detail to build the tool. Each subsection is complete on its own and repeats what it needs rather than pointing at something "described above". The system is language-, repository-, and harness-agnostic. Where an example is needed, Runvil, a multi-crate Rust workspace, supplies one instance and is labeled as an instance; section 9.8 gives a second worked example in a different language.
 
 ### 9.1 The `vibe/` layout
 
@@ -268,14 +268,14 @@ The archdoc is one flat markdown file of about 1,500 tokens or fewer, with six s
 
 Four rules hold across sections. Each invariant is one clause, because abstention accuracy falls as criterion components multiply. Each invariant stands alone, without reference to another. The identity paragraph is plain prose, free of symbols. Component names in invariants match the names in the components section character for character.
 
-A complete filled example follows, drawn from the PromptForge workspace's root [AGENTS.md](https://github.com/vinniefalco/promptforge/blob/master/AGENTS.md). It is one instance of the format; the format stands without it.
+A complete filled example follows, drawn from the Runvil workspace's root [AGENTS.md](https://github.com/vinniefalco/runvil/blob/master/AGENTS.md). It is one instance of the format; the format stands without it.
 
 ```markdown
-# PromptForge architecture
+# Runvil architecture
 
 ## Identity
 
-PromptForge is a multi-crate Rust workspace that ships three products: a lean
+Runvil is a multi-crate Rust workspace that ships three products: a lean
 inference gateway that runs as a tray-resident process and is the only process
 that talks to a vendor LLM backend; a library that runs prompt pipelines and
 agents; and a batteries-included desktop workshop that hosts its server
@@ -286,8 +286,8 @@ coding agents writing most commits.
 
 - gateway: lean server process, routes chat requests to configured vendor
   endpoints; depends on: shared
-- library: pipeline and agent runtime, the `promptforge` facade and
-  `promptforge-agent`; depends on: shared
+- library: pipeline and agent runtime, the `runvil` facade and
+  `runvil-agent`; depends on: shared
 - workshop: desktop shell that hosts workshop-server in-process; depends on:
   library, shared
 - shared: crates that ship in more than one product (progress, loopback,
@@ -669,25 +669,25 @@ Step 10, return. The final response is two parts and nothing else: the scratch f
 
 ### 9.8 Worked examples
 
-Four messages in the shape of section 9.5, each followed by a numbered annotation naming the rule that produced every line. Two are real PromptForge commits, re-messaged as if the archdoc of section 9.2 had governed them. That archdoc came later, which makes these the bootstrapping case, a history that predates its archdoc: both end with `Plan: none`, and the second shows an unauthorized violation the archdoc catches after the fact. Two are synthetic: one in TypeScript that matches a queue entry, one pure fix with an empty ledger. Every `Design:` label is quoted against its catalog criterion, with the count or property the criterion asks for stated first.
+Four messages in the shape of section 9.5, each followed by a numbered annotation naming the rule that produced every line. Two are real Runvil commits, re-messaged as if the archdoc of section 9.2 had governed them. That archdoc came later, which makes these the bootstrapping case, a history that predates its archdoc: both end with `Plan: none`, and the second shows an unauthorized violation the archdoc catches after the fact. Two are synthetic: one in TypeScript that matches a queue entry, one pure fix with an empty ledger. Every `Design:` label is quoted against its catalog criterion, with the count or property the criterion asks for stated first.
 
-**Example 1: commit `4fceba3` (example instance: PromptForge, Rust).** Diff summary, from the commit's stat: 17 files, 1,455 insertions, 44 deletions. New crate `crates/promptforge-gateway` with `config.rs` (364 lines), `error.rs` (118), `lib.rs` (105), `main.rs` (50), `routing.rs` (152), `upstream.rs` (90), `wire.rs` (34), `tests/it/main.rs` (135); `crates/promptforge-core/src/client.rs` changed (62 lines); `gateway.toml` added. Constructs relied on: `pub struct Secret(String)` with `impl From<String>` and redacting `Debug` and `Display`; `pub trait Upstream` with the single `impl Upstream for OpenAiUpstream`; `Routing { models: HashMap<String, Arc<Model>> }`; `ChatRequest` and `ChatResponse` with `#[serde(flatten)] pub rest`; `Client` renamed to `GatewayClient`, gaining `new()`; `default_max_tokens: Option<u32>` declared once; `MalformedRequest(String)` matched in `classify` with no construction site; four `#[tokio::test]` functions.
+**Example 1: commit `4fceba3` (example instance: Runvil, Rust).** Diff summary, from the commit's stat: 17 files, 1,455 insertions, 44 deletions. New crate `crates/runvil-gateway` with `config.rs` (364 lines), `error.rs` (118), `lib.rs` (105), `main.rs` (50), `routing.rs` (152), `upstream.rs` (90), `wire.rs` (34), `tests/it/main.rs` (135); `crates/runvil-core/src/client.rs` changed (62 lines); `gateway.toml` added. Constructs relied on: `pub struct Secret(String)` with `impl From<String>` and redacting `Debug` and `Display`; `pub trait Upstream` with the single `impl Upstream for OpenAiUpstream`; `Routing { models: HashMap<String, Arc<Model>> }`; `ChatRequest` and `ChatResponse` with `#[serde(flatten)] pub rest`; `Client` renamed to `GatewayClient`, gaining `new()`; `default_max_tokens: Option<u32>` declared once; `MalformedRequest(String)` matched in `classify` with no construction site; four `#[tokio::test]` functions.
 
 ```
-Add promptforge-gateway and route the executor through it
+Add runvil-gateway and route the executor through it
 
 Move the vendor credential out of the executor and into a new gateway process, which becomes the only process that talks to a model backend. The gateway loads a configuration file, checks a shared bearer token, resolves the requested model name to a configured endpoint, and forwards the chat completion unchanged. The executor's client is renamed and repointed at the gateway with the shared token.
 
 - `Secret` wraps the token and every API key in one private field and redacts itself in `Debug` and `Display`; `From<String>` performs no check, so an empty secret is accepted and `is_empty` exists to detect it.
 - `Upstream` is a trait with one implementation, `OpenAiUpstream`, and `Routing::from_config` constructs that implementation unconditionally, so nothing injects a stub through the seam and the four end-to-end tests drive a fake HTTP backend instead.
-- `GatewayClient::new` accepts any token without a check while `GatewayClient::from_env` still fails on a missing `PROMPTFORGE_TOKEN`; core no longer reads `ANTHROPIC_API_KEY`.
+- `GatewayClient::new` accepts any token without a check while `GatewayClient::from_env` still fails on a missing `RUNVIL_TOKEN`; core no longer reads `ANTHROPIC_API_KEY`.
 - `ModelConfig` accepts an `endpoints` list but `Routing::from_config` uses only the first entry.
 
-Design: new newtype @ crates/promptforge-gateway/src/config.rs::Secret
-Design: new surface-growth @ crates/promptforge-gateway/src/wire.rs boundary: wire
-Design: new speculative-abstraction @ crates/promptforge-gateway/src/upstream.rs::Upstream
-Design: new registry @ crates/promptforge-gateway/src/routing.rs::Routing
-Design: replaces store-boundary @ crates/promptforge-core/src/client.rs::GatewayClient was: crates/promptforge-core/src/client.rs::Client
+Design: new newtype @ crates/runvil-gateway/src/config.rs::Secret
+Design: new surface-growth @ crates/runvil-gateway/src/wire.rs boundary: wire
+Design: new speculative-abstraction @ crates/runvil-gateway/src/upstream.rs::Upstream
+Design: new registry @ crates/runvil-gateway/src/routing.rs::Routing
+Design: replaces store-boundary @ crates/runvil-core/src/client.rs::GatewayClient was: crates/runvil-core/src/client.rs::Client
 Deferred: default_max_tokens is parsed into ModelConfig and never read
 Deferred: GatewayError::MalformedRequest is classified but never constructed
 Deferred: upstream transport and non-success status paths have no test
@@ -712,7 +712,7 @@ Plan: none
 16. Third `Deferred:`: untested path; the four tests cover the happy path, unknown model, wrong token, and health.
 17. `Plan: none`: 9.5 presence rule, always present, always last. No plan existed; bootstrapping uses `none` for every commit before the first plan file.
 
-**Example 2: commit `6450629` (example instance: PromptForge, Rust).** Diff summary, from the commit's stat: 15 files, 2,258 insertions, all new. `crates/promptforge-core/src/parser.rs` (413 lines), `client.rs` (146), `lib.rs` (57), `execute.rs` (21); `crates/promptforge-cli/src/main.rs` (70). Constructs relied on: `pub struct Client` with four private fields and `from_env()` returning `Error::MissingEnv`; free functions `split_frontmatter`, `collect_headings`, `split_lua`, `build_sections(headings, pos: &mut usize, parent_level)`, `level_num`; `pub struct Prompt` with four `pub` fields, `Section` with five, `Frontmatter` with five including `default_return: Option<String>`; `entry()` indexing `self.sections[0]`; `Error` with `#[non_exhaustive]` and a boxed `Http` source; ten `#[test]` functions, all in `parser.rs`.
+**Example 2: commit `6450629` (example instance: Runvil, Rust).** Diff summary, from the commit's stat: 15 files, 2,258 insertions, all new. `crates/runvil-core/src/parser.rs` (413 lines), `client.rs` (146), `lib.rs` (57), `execute.rs` (21); `crates/runvil-cli/src/main.rs` (70). Constructs relied on: `pub struct Client` with four private fields and `from_env()` returning `Error::MissingEnv`; free functions `split_frontmatter`, `collect_headings`, `split_lua`, `build_sections(headings, pos: &mut usize, parent_level)`, `level_num`; `pub struct Prompt` with four `pub` fields, `Section` with five, `Frontmatter` with five including `default_return: Option<String>`; `entry()` indexing `self.sections[0]`; `Error` with `#[non_exhaustive]` and a boxed `Http` source; ten `#[test]` functions, all in `parser.rs`.
 
 ```
 Create workspace with prompt parser and one-shot executor
@@ -724,12 +724,12 @@ Introduce the workspace with a core library and a command-line tool. The library
 - `Prompt` exposes `sections` as a public field while `entry` indexes it relying on the guarantee `parse` gives, so the non-empty invariant is checked once and not enforced afterward.
 - `default_return` is deserialized into `Frontmatter` and read by nothing except one test asserting it is absent.
 
-Design: new store-boundary @ crates/promptforge-core/src/client.rs::Client
-Design: new encapsulated-invariant @ crates/promptforge-core/src/client.rs::Client
-Design: new pure-function @ crates/promptforge-core/src/parser.rs::split_frontmatter
-Design: new pure-function @ crates/promptforge-core/src/parser.rs::collect_headings
-Design: new pure-function @ crates/promptforge-core/src/parser.rs::split_lua
-Violates: A2 - promptforge-core reads ANTHROPIC_API_KEY and sends it to the vendor endpoint itself
+Design: new store-boundary @ crates/runvil-core/src/client.rs::Client
+Design: new encapsulated-invariant @ crates/runvil-core/src/client.rs::Client
+Design: new pure-function @ crates/runvil-core/src/parser.rs::split_frontmatter
+Design: new pure-function @ crates/runvil-core/src/parser.rs::collect_headings
+Design: new pure-function @ crates/runvil-core/src/parser.rs::split_lua
+Violates: A2 - runvil-core reads ANTHROPIC_API_KEY and sends it to the vendor endpoint itself
 Deferred: default_return is parsed into Frontmatter and never read
 Deferred: client.rs and execute.rs have no tests; the ten unit tests all target parser.rs
 Plan: none
@@ -1053,7 +1053,7 @@ The file the repository owner reads at plan end is short, `ledger/findings.md`, 
 
 ### 9.10 Bootstrapping an existing repository
 
-A repository that adopts the ledger with history already in it can have that history labeled; bootstrapping is the procedure that labels it. The procedure is general, and the last paragraph gives PromptForge as the worked instance.
+A repository that adopts the ledger with history already in it can have that history labeled; bootstrapping is the procedure that labels it. The procedure is general, and the last paragraph gives Runvil as the worked instance.
 
 Write the first `archdoc.md` from the current state. The repository owner writes it against the code as it stands today rather than at any past commit, following section 9.2. This is the one time the archdoc derives from the code, and the repository owner does it once; afterward the archdoc changes only by the drain procedure.
 
@@ -1065,7 +1065,7 @@ Accept that pre-design commits will show violations. The first archdoc describes
 
 Spot-check before trusting aggregates. Draw a random sample of at least 30 `Design:` trailers from the rewritten history and check each label against the code at that commit. Expect accuracy near the 81% the Linux kernel's enforced `Fixes:` trailer achieved under a [383-tag manual audit](https://arxiv.org/abs/2308.05060). If the sample falls well below that, the catalog criteria or the archdoc thresholds need tightening before the whole-log pass is worth running; if it meets that mark, run the pass and read the aggregates with that error rate in mind.
 
-PromptForge is the worked instance. Its master branch held 604 commits from 2026-07-28 to 2026-08-28 at the time of the rewrite that motivated this report, and a hand-built plan-to-commit map already exists. The map was built against 597 commits on master at scan time, seven fewer than the rewritten log's 604 because the rewrite ran after the scan. It attributes 546 of those 597 (91%) to 73 distinct plan files by recorded hashes, exact todo text, and subject clusters, leaving 51 unattributed commits that are mostly singleton fixes and the pre-plan genesis commits. Bootstrapping PromptForge therefore means writing `vibe/archdoc.md` from the root `AGENTS.md` as section 9.2 shows, then committing the 73 plans as `vibe/2026-07-28-1-...` through `vibe/2026-08-28-N-...`, each dated by the first commit in its range, with the map's ranges as their todo lists. The generator then reruns over the 604 commits with `Plan: none` on the 51 unattributed ones, a 30-label spot check follows, and the first pass runs after that. Section 9.8 rewrites the first two commits, `6450629` and `4fceba3`, as the worked examples.
+Runvil is the worked instance. Its master branch held 604 commits from 2026-07-28 to 2026-08-28 at the time of the rewrite that motivated this report, and a hand-built plan-to-commit map already exists. The map was built against 597 commits on master at scan time, seven fewer than the rewritten log's 604 because the rewrite ran after the scan. It attributes 546 of those 597 (91%) to 73 distinct plan files by recorded hashes, exact todo text, and subject clusters, leaving 51 unattributed commits that are mostly singleton fixes and the pre-plan genesis commits. Bootstrapping Runvil therefore means writing `vibe/archdoc.md` from the root `AGENTS.md` as section 9.2 shows, then committing the 73 plans as `vibe/2026-07-28-1-...` through `vibe/2026-08-28-N-...`, each dated by the first commit in its range, with the map's ranges as their todo lists. The generator then reruns over the 604 commits with `Plan: none` on the 51 unattributed ones, a 30-label spot check follows, and the first pass runs after that. Section 9.8 rewrites the first two commits, `6450629` and `4fceba3`, as the worked examples.
 
 ### 9.11 Invocation
 
@@ -1096,9 +1096,9 @@ Every external source the report relies on, hyperlinked once, with what it suppl
 Internal sources:
 
 - Vinnie Falco, chat messages of 2026-09-04, "Debtslop, vibescale, and commit messages as a design ledger," and the decision list that followed them - the originating claims and every binding design decision.
-- [PromptForge root AGENTS.md](https://github.com/vinniefalco/promptforge/blob/master/AGENTS.md) - source of the example archdoc's components, invariants, and principles.
-- The rewritten PromptForge commit log, 604 commits from 2026-07-28 to 2026-08-28 - the experiment that motivated the report; commits `6450629` and `4fceba3` are the worked-example sources.
-- The hand-built PromptForge plan-to-commit map - 546 of 597 commits attributed to 73 plans; the bootstrapping instance in section 9.10.
+- [Runvil root AGENTS.md](https://github.com/vinniefalco/runvil/blob/master/AGENTS.md) - source of the example archdoc's components, invariants, and principles.
+- The rewritten Runvil commit log, 604 commits from 2026-07-28 to 2026-08-28 - the experiment that motivated the report; commits `6450629` and `4fceba3` are the worked-example sources.
+- The hand-built Runvil plan-to-commit map - 546 of 597 commits attributed to 73 plans; the bootstrapping instance in section 9.10.
 - `commit.mdc`, the workspace rule file for commit message generation from staged diffs - the baseline prompt the section 11 prompt extends.
 
 History-based detection outperforms static tools:

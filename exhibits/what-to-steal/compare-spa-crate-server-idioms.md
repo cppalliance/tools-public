@@ -1,6 +1,6 @@
 # Single-Crate SPA Servers in Rust: What the Field Does and What to Steal
 
-Report type: evaluation / review. It judges the promptforge-ws-server crate (single axum crate serving an embedded TypeScript SPA via rust-embed) against ten popular Rust codebases sharing the same technique, surveyed across five domains (file/media, dashboards, dev tools, chat/LLM UIs, networking), and prescribes fixes in severity order. It is the third study in a series: compare-ui-stack-human-idioms covered the frontend and shell, compare-server-delivery-human-idioms covered server delivery. Where a finding here merely repeats a recommendation from those two, it is recorded as a confirmation, not restated as new.
+Report type: evaluation / review. It judges the runvil-ws-server crate (single axum crate serving an embedded TypeScript SPA via rust-embed) against ten popular Rust codebases sharing the same technique, surveyed across five domains (file/media, dashboards, dev tools, chat/LLM UIs, networking), and prescribes fixes in severity order. It is the third study in a series: compare-ui-stack-human-idioms covered the frontend and shell, compare-server-delivery-human-idioms covered server delivery. Where a finding here merely repeats a recommendation from those two, it is recorded as a confirmation, not restated as new.
 
 ## Executive summary
 
@@ -42,7 +42,7 @@ Five parallel researchers each surveyed one domain of Rust projects serving thei
 
 ### Finding 1 (Critical): block cross-site requests to the localhost server
 
-sql-studio shipped this on 2026-08-26 as part of a five-fix security day (commit 0009ac0): a `same_site()` filter rejecting any request carrying `Sec-Fetch-Site: cross-site` across the whole API (main.rs:5403-5413, applied at 5479), plus a `json_content_type()` guard requiring `application/json` on POST bodies (main.rs:5415-5431). Together these defeat CSRF and DNS-rebinding against a localhost server. A grep of promptforge-ws-server finds no origin or Sec-Fetch checks at all: the chat and voice WebSockets and the workspace write endpoints are reachable by any webpage the user has open. WebSocket upgrades bypass Sec-Fetch in older browsers, so an explicit Origin allowlist on WS upgrade is needed as well. Fold in the adjacent input-hygiene item from the same sweep: URL-decode path parameters before use (`decode_name`, main.rs:5518-5522; commit 29bb755), which applies directly to our workspace path params.
+sql-studio shipped this on 2026-08-26 as part of a five-fix security day (commit 0009ac0): a `same_site()` filter rejecting any request carrying `Sec-Fetch-Site: cross-site` across the whole API (main.rs:5403-5413, applied at 5479), plus a `json_content_type()` guard requiring `application/json` on POST bodies (main.rs:5415-5431). Together these defeat CSRF and DNS-rebinding against a localhost server. A grep of runvil-ws-server finds no origin or Sec-Fetch checks at all: the chat and voice WebSockets and the workspace write endpoints are reachable by any webpage the user has open. WebSocket upgrades bypass Sec-Fetch in older browsers, so an explicit Origin allowlist on WS upgrade is needed as well. Fold in the adjacent input-hygiene item from the same sweep: URL-decode path parameters before use (`decode_name`, main.rs:5518-5522; commit 29bb755), which applies directly to our workspace path params.
 
 Fix: one middleware layer (Sec-Fetch-Site filter plus content-type guard) on the API router, an Origin allowlist in both WS upgrade handlers, and URL-decoding on workspace path params. Confidence: high - small, mechanical, and the threat model (a browser on the same machine) is exactly ours.
 
@@ -54,7 +54,7 @@ Fix: extract one atomic-write helper, use it from both workspace.rs and menu.rs,
 
 ### Finding 3 (High): deadlines everywhere - the crate has no request timeouts
 
-Three references converge. RustyFile layers a 30s default timeout with 300s overrides for long routes and no timeout on SSE, composed by merging separately-layered sub-routers (src/api/mod.rs:33-36,205-229). rqbit adds a per-request `Timeout<const DEFAULT_MS, const MAX_MS>` axum extractor reading `?timeout_ms=` or a header, clamped to a server cap (librqbit/src/http_api/timeout.rs:10-49). scanopy bounds every readiness-path probe with an explicit `tokio::time::timeout` shorter than the caller's patience, and keeps the liveness endpoint dependency-free (bin/server.rs:427-485, rationale at 448-451). promptforge-ws-server has no TimeoutLayer at all; the gateway.rs HTTP calls to the LLM gateway are the analogous hang risk.
+Three references converge. RustyFile layers a 30s default timeout with 300s overrides for long routes and no timeout on SSE, composed by merging separately-layered sub-routers (src/api/mod.rs:33-36,205-229). rqbit adds a per-request `Timeout<const DEFAULT_MS, const MAX_MS>` axum extractor reading `?timeout_ms=` or a header, clamped to a server cap (librqbit/src/http_api/timeout.rs:10-49). scanopy bounds every readiness-path probe with an explicit `tokio::time::timeout` shorter than the caller's patience, and keeps the liveness endpoint dependency-free (bin/server.rs:427-485, rationale at 448-451). runvil-ws-server has no TimeoutLayer at all; the gateway.rs HTTP calls to the LLM gateway are the analogous hang risk.
 
 Fix: a default TimeoutLayer on the router with per-group overrides (none on the WS/SSE paths), an explicit timeout on gateway HTTP calls, and bounded probes in heartbeat.rs. Confidence: high - three independent references, small cost, and the hang risk is live today.
 
@@ -154,6 +154,6 @@ Patterns the survey validated in the subject, each against a named reference:
 
 - Domain surveys of 2026-08-27 covering ten projects: Urocissa (294 stars), RustyFile (7), scanopy (5,596), Parseable (2,447), sql-studio (3,685), cratery (183), mistral.rs (7,632), aichat (~10,400), rqbit (1,711), taxy (201). Shallow clones analyzed 2026-08-27; star counts from GitHub the same day. Citations are file:line at each clone's HEAD on that date.
 - Prior sibling studies deduplicated against: compare-ui-stack-human-idioms (2026-08-26) and compare-server-delivery-human-idioms (2026-08-27).
-- Subject: promptforge-ws-server, profiled in the prior studies; this consolidation adds no new self-profile.
+- Subject: runvil-ws-server, profiled in the prior studies; this consolidation adds no new self-profile.
 
 *2026-08-27 21:15 - claude-fable-5-thinking*
