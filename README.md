@@ -232,7 +232,7 @@ A corrupt institution is a kind of undead thing: it wears the face of its stated
 
 ## Planning
 
-Tools for planning and executing software work with agents. The Architect accumulates design into a plan, the Vibe Coder executes it as tested commits, and the Debt Collector removes what the work left behind; the Research Desk and What to Steal supply evidence. Everything lives in [planning/](planning/).
+Tools for planning and executing software work with agents. The Architect accumulates design into a plan, the Vibe Coder executes it as tested commits, and the Debt Collector removes what the work left behind; the Research Desk and What to Steal supply evidence, and the Gleaner recovers the design knowledge spoken in meetings. Everything lives in [planning/](planning/).
 
 **The Architect**\
 _[planning/architect.md](planning/architect.md)_\
@@ -241,6 +241,10 @@ _[planning/architect.md](planning/architect.md)_\
 **The Debt Collector**\
 _[planning/debt-collector.md](planning/debt-collector.md)_\
 A clean diff can shake your hand while hiding a knife behind its back, capisce. The Debt Collector identifies technical debt attributable to new work through repository history, diffs, code, and design records, then leaves a self-contained removal plan. Run it and no shared state becomes a made man with dependents throughout the family, and no compatibility shim invokes omerta about the day it will retire.
+
+**The Gleaner**\
+_[planning/gleaner.md](planning/gleaner.md)_\
+The reapers took the minutes and left the grain lying in the field. The Gleaner cuts one meeting transcript into strips, sends a gleaner down every strip in parallel with the same rubric, and gathers the design points, teachable material, principles, open questions, and to-dos into one deduplicated report numbered straight through. Run it and what was said in the meeting is still there to teach from next week.
 
 **The Research Desk**\
 _[planning/research.md](planning/research.md)_\
