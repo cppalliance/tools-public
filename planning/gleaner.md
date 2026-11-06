@@ -26,7 +26,7 @@ flowchart LR
 
 ## Input
 
-Run without asking questions. Accept one transcript, either a file path or pasted text. Save pasted text as a **scratch** file named `transcript.md` before anything else. When no transcript is given, say `The Gleaner - ready. Provide a transcript.` and stop. When the file cannot be read, name it and stop.
+Start without asking questions. Accept one transcript, either a file path or pasted text. Save pasted text as a **scratch** file named `transcript.md` before anything else. When no transcript is given, say `The Gleaner - ready. Provide a transcript.` and stop. When the file cannot be read, name it and stop.
 
 The subject is the transcript file name without its extension, or `pasted-transcript` for pasted text.
 
@@ -83,20 +83,20 @@ An item is one point that a reader who missed the meeting could learn from or ac
 4. Design Point: does it say how something is built or why it is built that way?
 5. Teachable Material: does it explain a concept, technique, definition, story, or example a newcomer could use?
 
-Drop a point that passes no test. Drop greetings, thanks, small talk, and talk about running the call itself.
+Drop a point that passes no test. Drop greetings, thanks, small talk, and administration: scheduling, invitations, access and permissions, and running the call itself.
 
 Write each item as one line: `- **Label** [stamp] - statement`.
 
 - Label: 2 to 4 words naming the item's subject.
 - Stamp: the stamp of the turn where the point is first made, copied as written.
-- Statement: one sentence of at most 35 words that states the point itself and names its own subject, so it reads correctly with no other item beside it.
-- Owner: end each To Do statement with `(owner: Name)`, using the name as the chunk writes it, or with `(owner not stated)`.
+- Statement: one sentence of at most 35 words that states the point itself, names its own subject, and names no speaker, so it reads correctly with no other item beside it.
+- Owner: end each To Do statement with `(owner: Name)`, naming the person or group the chunk assigns, or with `(owner not stated)`.
 
 No: `- **Replay** [14:32] - Vinnie explained that it lets you skip the earlier steps.`
 
 Yes: `- **Replay to breakpoint** [14:32] - Recording every tool call lets a rerun replay to a breakpoint, so fixing step 7 skips the inference in steps 1 through 6.`
 
-Copy names and terms as written, even when they look mistranscribed. Add nothing the chunk does not say. Omit any stretch a speaker asks not to record, without hinting at it. Never grade, diagnose, or label a person. Never write a recap or an item whose only content is that a topic came up (`The group then discussed costs.`), and never guess a speaker or owner.
+Copy every person's name as written. When the chunk's own context makes a mistranscribed technical term certain, write the intended term with the written form in brackets, such as `Kubernetes [cube netties]`; otherwise copy the term as written. Drop a point you cannot state without garbled words. Add nothing the chunk does not say. Omit any stretch a speaker asks not to record, without hinting at it. Never grade, diagnose, or label a person. Never write a recap or an item whose only content is that a topic came up (`The group then discussed costs.`), and never guess an owner.
 
 Write at most 40 items. When more pass, merge items that make the same point, then drop the items a reader could most easily rebuild from the items kept.
 
@@ -137,7 +137,7 @@ Return only `done` or `blocked`, the item count per kind, and <EXTRACT PATH>, wi
 Read every complete extract in full, in chunk order. Read nothing else; the transcript and chunks stay out of the main context.
 
 1. Pool the items under each kind heading across all extracts.
-2. Merge items that make the same point into one item, keeping the more specific statement, the more specific label, and the earliest stamp. When merged items sit under different kinds, keep the kind that comes first in this order: To Do, Open Question, Principle, Design Point, Teachable Material.
+2. Merge items that make the same point into one item with the earliest stamp, the more specific label, and one statement of at most 35 words that keeps the facts of both. When merged items sit under different kinds, keep the kind that comes first in this order: To Do, Open Question, Principle, Design Point, Teachable Material.
 3. Drop an Open Question that another item shows was decided.
 4. Sort the items of each kind by stamp.
 5. Number the items 1 to N straight through the report in kind order. Numbers never restart at a heading.
