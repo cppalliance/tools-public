@@ -471,7 +471,8 @@ The module tree is the first thing a reader navigates and the last thing anyone 
 - Name a module for its domain concept; `utils`, `helpers`, `common`, `misc`, `types`, and `models` accumulate unrelated code because nothing is out of scope for them.
 - Extract a third named module when two modules need the same code, rather than growing a junk drawer.
 - Keep the tree shallow: two levels under `src/` is normal, and four means the concepts are wrong.
-- Split any file past 500 lines, and any file holding a second unrelated concept.
+- Split a file when it holds a second unrelated concept, never for its length alone.
+- Watch type size, not file size: when a type keeps gaining inherent methods or fields, move a responsibility into a new type instead of spreading its `impl` blocks across more files.
 - Define a type in the module that owns its behavior; promote it only when a second module owns it equally.
 - Isolate platform code in one module per platform (`src/sys/unix.rs`, `src/sys/windows.rs`) behind a single `#[cfg]` on the `mod` line, so the conditional cannot drift out of sync.
 - Parse at the boundary into a type that cannot hold an invalid state, rather than validating and then trusting a `bool`.
