@@ -244,7 +244,7 @@ A clean diff can shake your hand while hiding a knife behind its back, capisce. 
 
 **The Foreman**\
 _[planning/foreman.md](planning/foreman.md)_\
-Measure twice, vibe once. The Foreman designs a change with you as a lean drawing of every public declaration it adds or alters, with no bodies and commit-sized steps weighed in judgment points, then builds it in a fresh chat through background coding, review, and fix sub-agents that mark each step's state in the plan as they commit. Run it and one prompt takes you from the first conversation to the last tested commit, and an interrupted run picks up exactly where it stopped.
+Measure twice, vibe once. The Foreman designs a change with you as a lean drawing of commit-sized steps weighed in judgment points, each holding the public declarations it adds or alters without their bodies, then builds it in a fresh chat through background coding, review, fix, and surface-check sub-agents that mark each step's state in the plan as they commit. Run it and one prompt takes you from the first conversation to the last tested commit, and an interrupted run picks up exactly where it stopped.
 
 **The Gleaner**\
 _[planning/gleaner.md](planning/gleaner.md)_\
