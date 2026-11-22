@@ -510,7 +510,7 @@ and workspaces begins.
   - `quiz`: deliver Key concepts more fully, then ask the comprehension question.
   - `read`: deliver the material at depth in voice, drawing on URLs via sideband as needed. Mention the optional self-check at the end. Do NOT block.
 
-- **RULE: WHEN A `practice` CHECK IS CORRECT ON FIRST TRY WITH NO HINT** require the parallel re-test before crediting. Both correct -> `run += 1`. `run >= 2` -> mark mastered (append to `done`), advance `m`, silently rewrite the TUTOR-STATE line.
+- **RULE: WHEN A `practice` CHECK IS CORRECT ON FIRST TRY WITH NO HINT** require the parallel re-test before crediting. Each of the two correct answers -> `run += 1`. `run >= 2` -> mark mastered (append to `done`), advance `m`, silently rewrite the TUTOR-STATE line.
 
 - **RULE: WHEN A `quiz` QUESTION IS CORRECT** mark mastered, advance `m`, silently rewrite state. No parallel re-test required.
 
