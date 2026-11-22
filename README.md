@@ -98,7 +98,7 @@ Every mind leaves a written record, and every record can become a manual. This m
 
 ## Rulebooks
 
-Style and format references to apply to prompts, plans, and reviews. Sixteen rulebooks covering programming languages, compiler maintenance, and writing forms. Everything lives in [rulebooks/](rulebooks/).
+Style and format references to apply to prompts, plans, and reviews. Seventeen rulebooks covering programming languages, compiler maintenance, and writing forms. Everything lives in [rulebooks/](rulebooks/).
 
 **Writing C++**\
 _[rulebooks/cpp-rulebook.md](rulebooks/cpp-rulebook.md)_\
@@ -107,6 +107,10 @@ Welcome to the C++ Workshop, where questions of style are settled by the tool, n
 **Writing Paper Abstracts**\
 _[rulebooks/create-abstracts-rulebook.md](rulebooks/create-abstracts-rulebook.md)_\
 A delegate triages your abstract in seconds, not minutes, and most often it is the only part they read. This rulebook writes the abstract for a WG21 paper as one actionable finding stated first, with no manufactured hook. Load it and your abstract survives triage, so the rest of your paper actually gets read.
+
+**Removing AI Smell from a Document**\
+_[rulebooks/deslop-rulebook.md](rulebooks/deslop-rulebook.md)_\
+AI smell is wording that marks a text as model-written and makes the reader work to recover its content. This rulebook rewrites a model-written document one sentence at a time to remove it - phrases that name a thing only to say it is absent, a report that talks about its own rows and sections, coined labels, slogans, missing context, and the common machine tells - while every number, quotation, claim, and link stays as written. Load it and a reader who is new to the work learns from every sentence what happens, who does it, and why it matters.
 
 **Writing Fiction**\
 _[rulebooks/fiction-rulebook.md](rulebooks/fiction-rulebook.md)_\
