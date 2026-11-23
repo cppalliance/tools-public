@@ -1,10 +1,14 @@
 ---
-description: Plan and run a bottom-up code review, from each source file up to the whole workspace, with tag-dispatched subagents, a verifier for each finding, and one report
+description: Plan and run a bottom-up code review, from each source file to the whole workspace, with tag-dispatched subagents, a verifier for each finding, and one report
 ---
 
-<!-- When this file loads, run Start. The blocks under Blocks instruct subagents; read them only for the file shapes your scripts parse. -->
+<!-- When this file loads, run Start. Read the blocks at the end only for the file shapes your scripts parse. -->
 
 # Rulebook: Reviewing Code from the Bottom Up
+
+Every part gets its own inspector. Each writes a card, the next tier reads only the cards, and a second inspector tries to break each finding.
+
+![The Inspectors](images/review-rulebook.jpg)
 
 Plan a review of the **target**, the code the user names, then run it.
 
@@ -91,7 +95,7 @@ Stop and re-plan with the user when a setup check fails, when 10 dispatches in a
    - `pairs-<n>.md`: the pairs of kept findings from different units whose first locations overlap, each finding with its tier, at most 35 pairs to a file.
 2. Give each pairs file to a duplicate judge (`dedupe-instructions`, writing `dups-<n>.md`), then rerun `merge` with their skip lines. It follows each chain to the ID that survives, drops the skipped entries, and lists each skipped ID with its survivor in `folded.md`.
 3. Give each group to a pattern reader (`pattern-instructions`, writing `patterns-<group>.md`).
-4. Read `counts.md` and the pattern files, and write the report's head: the target's state in plain words, its most serious findings, what to fix first, scope and method, the counts, and recurring causes with finding IDs. Append the rest unchanged with the shell, each under its own heading: `whole`, each package, unproven findings, open questions for the owner, leads outside the reviewed files (marked unverified), folded IDs, and `limits.md`. The report cites code as `path:line` relative to the target, so it outlives the scratch files.
+4. Read `counts.md` and the pattern files, and write the report's head: the target's state, its most serious findings, what to fix first, scope and method, the counts, and recurring causes with finding IDs. Append the rest unchanged with the shell, each under its own heading: `whole`, each package, unproven findings, open questions for the owner, leads outside the reviewed files (marked unverified), folded IDs, and `limits.md`. The report cites code as `path:line` relative to the target, so it outlives the scratch files.
 
 Close with the totals, the report's name, and how to remove `tree`. If the user wanted no report, stop after step 2 and name the merged files.
 
@@ -225,7 +229,7 @@ Review the Source file for the three kinds of finding, then write its card. Firs
 
 **Read** the Source file in full, the Brief, and the project rules it names for this file. Then read its history through the Brief's command, the rulebook sections the Brief gives a file reviewer, the index records that name the file, and the tests, callers, and types a candidate turns on.
 
-**Hunt** in the standard's order. Read every function body line by line, because the defects worth finding sit in branches that look routine. A defect whose faulty lines sit in another file gets one line under Seen elsewhere. The Source file's own part in a cross-file fault is a finding here.
+**Hunt** in the standard's order. Read every function body line by line; the defects worth finding sit in branches that look routine. A defect whose faulty lines sit in another file gets one line under Seen elsewhere. The Source file's own part in a cross-file fault is a finding here.
 
 **Write the Findings file**, with `None.` under Questions, and **the Card file**. The layer above works from the card's Assumes and Questions: list each thing the file relies on and leaves unchecked, and ask what you could not settle from inside the file, each specific enough to check.
 
@@ -235,7 +239,7 @@ Review the Source file for the three kinds of finding, then write its card. Firs
 
 Review how the members of one unit work together. Each file under it had its own review, so look for what one file cannot show. First load the standard the same way you loaded these instructions, with the pattern `^</?review-standard>`. Return blocked when it is missing.
 
-**Keep your context small.** Read the Inputs file, the Brief, and every member's card. A card is a map and never evidence; read the source of a member whose card is missing. Query the index for who uses what. Open source by line range to settle one question at a time, on both sides of an interaction, and cite only lines you read yourself. Read the rulebook sections the Brief gives a layer reviewer.
+Read the Inputs file, the Brief, and every member's card. A card is a map and never evidence; read the source of a member whose card is missing. Query the index for who uses what. Open source by line range to settle one question at a time, on both sides of an interaction, and cite only lines you read yourself. Read the rulebook sections the Brief gives a layer reviewer.
 
 **Hunt, in this order.**
 
@@ -272,7 +276,7 @@ Challenge every finding and every rejected candidate in the Findings file agains
 - Reach: the claimed input gets from its entry to the fault. Name what stops it when something does.
 - Tests: a test that asserts the opposite refutes the finding.
 - Intent and record: a stated rule makes the behavior deliberate; a record among the Brief's known gaps fills `Recorded`.
-- Remedy: a check, type, or test already protects the contract. Prefer the cheaper fix.
+- Remedy: a check, type, or test already protects the contract.
 - Grade: rate kind and severity yourself.
 
 Give each finding one verdict:
@@ -332,7 +336,7 @@ Write the Output file with one line per pair, `<skipped ID> | keep <kept ID> | <
 
 <pattern-instructions>
 
-Summarize one group's findings for the head of a review report. Read the Group's section of the Kept file. Before you cite a finding, read its entry by grepping the Merged folder for `^### <ID> `.
+Summarize one group's findings for the report's head. Read the Group's section of the Kept file. Before you cite a finding, read its entry by grepping the Merged folder for `^### <ID> `.
 
 Write the Output file in at most 90 lines, under these headings:
 
@@ -346,6 +350,6 @@ End the file with `END-OF-PATTERNS`. Return only `done` or `blocked`.
 
 ## Restated
 
-Plan first, coordinate while subagents read, dispatch the filled template and nothing else, count a finding once a fresh subagent has tested it against the code, and leave the target as it is.
+Plan first, coordinate while subagents read, dispatch the filled template and nothing else, count a finding once a fresh subagent has tested it against the code, and leave the target alone.
 
 *2026-11-23 - Claude Fable 5.2 (Cursor agent)*

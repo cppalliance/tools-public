@@ -98,7 +98,7 @@ Every mind leaves a written record, and every record can become a manual. This m
 
 ## Rulebooks
 
-Style and format references to apply to prompts, plans, and reviews. Seventeen rulebooks covering programming languages, compiler maintenance, and writing forms. Everything lives in [rulebooks/](rulebooks/).
+Style and format references to apply to prompts, plans, and reviews. Eighteen rulebooks covering programming languages, compiler maintenance, and writing forms. Everything lives in [rulebooks/](rulebooks/).
 
 **Writing C++**\
 _[rulebooks/cpp-rulebook.md](rulebooks/cpp-rulebook.md)_\
@@ -159,6 +159,10 @@ A disguised reader gap becomes a false defect, and a disguised defect becomes fa
 **Structuring Reports**\
 _[rulebooks/reports-rulebook.md](rulebooks/reports-rulebook.md)_\
 Lead with the answer, because scanners read the first two words and skip the rest. This rulebook writes or audits a report of any type for structure, evidence, uncertainty, sourcing, and format discipline. Load it and your reports get read and acted on, with facts that resist verification flagged instead of smoothed into certainty.
+
+**Reviewing Code**\
+_[rulebooks/review-rulebook.md](rulebooks/review-rulebook.md)_\
+Every part gets its own inspector, and a second inspector tries to break each finding. This rulebook plans and runs a bottom-up code review - each source file, then its module, package, seam, and workspace - with fresh subagents, cards in place of code, and one report. Load it and the user approves a plan first, and every finding in the report was tested against the code before it counted.
 
 **Writing Rust**\
 _[rulebooks/rust-rulebook.md](rulebooks/rust-rulebook.md)_\
